@@ -1,0 +1,28 @@
+{
+  "name": "woblocks",
+  "version": "1.0.0",
+  "description": "Blockly interface for Wollok and Wollok Game",
+  "main": "woblockSpace.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alejandroFerrante/Woblocks.git"
+  },
+  "keywords": [
+    "wollok",
+    "blocks",
+    "k12"
+  ],
+  "author": "Alejandro Ferrante",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alejandroFerrante/Woblocks/issues"
+  },
+  "homepage": "https://github.com/alejandroFerrante/Woblocks#readme",
+  "dependencies": {
+    "blockly": "^7.20211209.4",
+    "wollok-game-web": "^1.0.6"
+  }
+}
