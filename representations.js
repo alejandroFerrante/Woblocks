@@ -1,5 +1,6 @@
 function getRepresentationNames(){
 var names = [];
+names.push('bird.png');
 names.push('thumbsup.png');
 names.push('tick.png');
 names.push('add.png');

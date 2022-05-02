@@ -435,6 +435,390 @@ Blockly.Blocks['executor_param'] = {
 
 
 
+//=============================================================================================================================================
+//=============================================================================================================================================
+//=============================================================================================================================================
+//=============================================================================================================================================
+//Inherit base from Javascript, everything needed will be overiden
+Blockly.Wollok = Blockly.JavaScript
+
+//ACTION START
+//This Block serves as the starting point of an object or method definition. All other blocks are designed to not generate code if this block 
+//is not on top of the top of the block heriarchy. 
+Blockly.Blocks['action_start_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/play.png", 20, 20, "|>"));
+    this.setInputsInline(false);
+    this.setNextStatement(true, null);
+    this.setTooltip('');
+  }, isLinkedToActionStart : function(aBlock){
+    if(aBlock.previousConnection == null){return false;}
+    var iterator = aBlock.previousConnection.targetBlock();
+    for(var i  = 0; i < 5000; i++){
+      if(iterator == null){
+        return false;
+      }
+
+      if(iterator.type == 'action_start_wk'){
+        return true;
+      }
+
+      if(iterator.previousConnection == null){
+        return false;
+      }
+
+      iterator = iterator.previousConnection.targetBlock();
+
+    } 
+    return false;
+  }
+};
+
+Blockly.Wollok['action_start_wk'] = function(block) { 
+  if(block.nextConnection.targetBlock() != null){
+    return Blockly.Wollok[block.nextConnection.targetBlock().type](block.nextConnection.targetBlock());
+  }else{
+    return '';
+  } 
+};
+
+//OBJECT DEFINITION
+//This block is used to create an object.It takes a text block for the nme and properties definition statements.
+Blockly.Blocks['objetc_create_wk'] = {
+  init: function() {
+    //this.setMutator(new Blockly.Mutator(""));
+    this.setInputsInline(true);
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/wollokBW.png", 40, 40, "*"));
+    this.appendValueInput("objName")
+        .setCheck("String")
+    this.appendStatementInput('properties')
+    .appendField('')
+    .setCheck("objetc_property");
+    this.setPreviousStatement(true, null);
+    this.setTooltip('');
+    this.setWarningText('MENSAJES:');
+  },doActionWK : function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_objname = paramsMap['objName'];
+    var value_properties = paramsMap['properties']; 
+    var code = 'object ';
+    if(value_objname != undefined && value_objname != null && value_objname != ''){
+      code += value_objname.replaceAll("'","");
+    }else{
+      code += ' __objetc_create___objName__ ';
+    } 
+    code += ' { \n var name = ';
+    if(value_objname != undefined && value_objname != null && value_objname != ''){
+      code += value_objname;
+    }else{
+      code += ' __objetc_create___objName__ ';
+    }
+
+    if(value_properties != undefined && value_properties != null){
+      code += value_properties;
+    }else{
+      code += ' __object_create___value_properties__ ';
+    }
+    
+    code += ' \n}';
+    
+    return code;
+  },messagesOf : function(self){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return [];}
+
+    var methodCreateBlocks = workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'method_create_wk'});
+    var methods = [];
+    for(var i = 0; i < methodCreateBlocks.length; i++){
+      if(hasAncestorWithId(methodCreateBlocks[i] , self.id)){
+        methods.push( Blockly.Wollok.valueToCode(methodCreateBlocks[i], 'name', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','') );
+      }
+    }
+    
+
+    return methods;
+  }
+};
+
+Blockly.Wollok['objetc_create_wk'] = function(block) {
+  var value_objname = Blockly.Wollok.valueToCode(block, 'objName', Blockly.Wollok.ORDER_ATOMIC);
+  var value_properties = Blockly.Wollok.statementToCode(block, 'properties');
+  var code = Blockly.Blocks['objetc_create_wk'].doActionWK(block,{'objName':value_objname , 'properties':value_properties});
+  return code;
+};
+
+//OBJECT PROPERTY
+//used for defining a property. First block must be a text block and the second one can be any value
+Blockly.Blocks['objetc_property_wk'] = {
+  init: function() {
+    this.appendValueInput("name")
+        .setCheck("String");
+    this.appendValueInput("value")
+        .appendField(":");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip('');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_name = paramsMap['name'];
+    var value_value = paramsMap['value'];
+
+    var code = '\n var ';
+    if(value_name != undefined && value_name != null && value_name != ''){
+      code += value_name.replaceAll("'","");
+    }else{
+      code += ' __objetc_property___name__ ';
+    }
+
+    code += ' = ';
+    
+    if(value_value != undefined && value_value != null && value_value != ''){
+      code += value_value.replaceAll("'","")+' ';
+    }else{
+      code += ' __objetc_property___value__ '
+    }
+
+    return code;
+  }
+};
+
+Blockly.Wollok['objetc_property_wk'] = function(aBlock) {
+  var value_name = Blockly.Wollok.valueToCode(aBlock, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  if(value_name != undefined && value_name != null){value_name = removeInitialNumbers(value_name);}
+  var value_value = Blockly.Wollok.valueToCode(aBlock, 'value', Blockly.Wollok.ORDER_ATOMIC);
+  var code = Blockly.Blocks['objetc_property_wk'].doActionWK(aBlock,{'name':value_name , 'value':value_value});
+  return code;
+};
+
+//OBJECT METHOD
+//used for defining a method. 
+Blockly.Blocks['method_create_wk'] = {
+  init: function() {
+    this.appendValueInput("name")
+      .appendField(new Blockly.FieldImage("icons/action.png", 35, 35, "*"))
+        .setCheck("String");
+        //.appendField("METHOD");
+    this.appendValueInput("params")
+        .setCheck("Array");
+        //.appendField("(");
+    /*this.appendDummyInput()
+        .appendField(")");*/
+    this.appendStatementInput('instructions')
+    .appendField('');
+    this.setInputsInline(false);
+    this.setInputsInline(true);
+    this.setTooltip('');
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_name = paramsMap['name'];
+    var value_params = paramsMap['params'];
+    var value_instructions = paramsMap['instructions'];
+    var code = '\nmethod ';
+    if(value_name != undefined && value_name != null && value_name != ''){
+      code += value_name.replaceAll("'",""); 
+    }else{
+      code += ' __method_create___name__ ';
+    }
+    code += '(';
+    if(value_params != undefined && value_params != null && value_params != ''){
+      code += (''+value_params).replaceAll(']','').replaceAll('[','').replaceAll("'",""); 
+    }else{
+      code += ' __method_create___params__ ';
+    }
+    code += '){\n';
+
+    if(value_instructions != undefined && value_instructions != null /*&& value_instructions != ''*/){
+      code += value_instructions.replaceAll("'",""); 
+    }else{
+      code += ' __method_create___instructions__ ';
+    }
+
+    code += '}';
+
+    return code;  
+  }
+};
+Blockly.Wollok['method_create_wk'] = function(block) {
+  var value_name = Blockly.Wollok.valueToCode(block, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  var value_params = Blockly.Wollok.valueToCode(block, 'params', Blockly.Wollok.ORDER_ATOMIC);
+  if(value_params != undefined && value_params != null && value_params != '' ){
+    var originalList = eval(value_params);
+    var newList = [];
+    for(var i = 0; i < originalList.length; i++){
+      newList.push(removeInitialNumbers(originalList[i]));
+    }
+    value_params = '['+newList+']';
+
+  }
+  var value_instructions = Blockly.Wollok.statementToCode(block, 'instructions');
+  var code = Blockly.Blocks['method_create_wk'].doActionWK(block,{'name':value_name , 'params':value_params , 'instructions':value_instructions });
+  return code;
+    
+};
+
+//METHOD INSTRUCTION
+//a simple block that describes an instruction.It automatically appends the ; at the end
+Blockly.Blocks['method_instruction_wk'] = {
+  init: function() {
+    this.appendValueInput("instruction")
+        .setCheck("String");
+    this.setInputsInline(true);
+    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, null);
+    this.setTooltip('');
+  },doActionWK:function(self, paramsMap){
+      if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+      var value_instruction = paramsMap['instruction'];
+      var code = '';
+      if(value_instruction != undefined && value_instruction != null && value_instruction != ''){
+        code += value_instruction.replaceAll("'","");
+      }else{
+        code += ' __method_instruction___instruction__ ';
+      }
+      code +='\n';
+
+      return code;
+  }};
+
+  Blockly.Wollok['method_instruction_wk'] = function(block) {
+    var value_instruction = Blockly.Wollok.valueToCode(block, 'instruction', Blockly.Wollok.ORDER_ATOMIC);
+    var code = Blockly.Blocks['method_instruction_wk'].doActionWK(block,{'instruction':value_instruction});
+    return code;
+  };
+
+Blockly.Blocks['executor_wk'] = {
+  init: function() {
+    this.appendDummyInput().appendField(new Blockly.FieldImage("icons/Pointer.png", 30, 30, ""));
+    this.appendValueInput("executor")
+        .setCheck(null)
+        .appendField("");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
+    this.appendValueInput("method")
+        .setCheck(null)
+        .appendField("");
+    this.appendStatementInput('params')
+    .appendField('');    
+    this.setTooltip('');
+    this.setColour('#751072');
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+  },doActionWK:function(self, paramsMap){
+      if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+      var value_executor = paramsMap['executor'];
+      var value_method = paramsMap['method'];
+      var value_params = paramsMap['params'];
+      var messages;
+      var existingObjects;
+      var executorBlock = null;
+      //check if obj exists?
+      //check if has method?
+      //check if params coincide?
+      if(value_executor == undefined || value_executor == null || value_executor == ''){
+        //empty executor
+        alert('No se ha provisto un ejecutor');
+        sceneErrorLog = 'No se ha provisto un ejecutor';
+        return false;
+      }
+      if(value_method == undefined || value_method == null || value_method == ''){
+        //empty method
+        if(sceneAlertErrors){alert('No se ha provisto un mensaje a enviar');}
+        sceneErrorLog = 'No se ha provisto un mensaje a enviar';
+        return false;
+      }
+      if(value_params == undefined || value_params == null){
+        //empty params
+        if(sceneAlertErrors){alert('No se han provisto parametros de ejecucion');}
+        sceneErrorLog = 'No se han provisto parametros de ejecucion';
+        return false;
+      }
+
+      existingObjects = definedObjectNames.concat( workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'objetc_create_wk' && aBlock.previousConnection != null && aBlock.previousConnection.targetBlock().type == 'action_start_wk' }).map(function(x) {return Blockly.Wollok.valueToCode(x, 'objName', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');}) );
+      if(!existingObjects.includes(value_executor)){
+        //inexisting executor
+        if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' es inexistente');}
+        sceneErrorLog = 'El ejecutor \''+value_executor+'\' es inexistente';
+        return false;
+      }
+
+      var objectBlocks = workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'objetc_create_wk' && aBlock.previousConnection != null && aBlock.previousConnection.targetBlock().type == 'action_start_wk'});
+      for(var i = 0; i < objectBlocks.length; i++){
+          if(Blockly.Wollok.valueToCode(objectBlocks[i], 'objName', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','') == value_executor){
+            executorBlock = objectBlocks[i];
+            break;    
+          }
+      }
+      messages = [];
+      if(executorBlock != null){ messages = Blockly.Blocks['objetc_create_wk'].messagesOf(executorBlock);} 
+      if(! messages.includes(value_method) ){
+        //inexisting method
+        if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'');}
+        sceneErrorLog = 'El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'';
+        return false;
+      }
+
+      //if((value_params == '' && metaInfo.methods[value_method] != 0) || (value_params.split(',').length !=  metaInfo.methods[value_method]) ){
+      //  //wrong amount of params
+      //  if(sceneAlertErrors){alert('Los parametros provistos para el mensaje \''+value_method+'\' son incorrectos');}
+      //  sceneErrorLog = 'Los parametros provistos para el mensaje \''+value_method+'\' son incorrectos';
+      //  return false; 
+      //}
+
+      return value_executor+'.'+value_method+'('+value_params+')';
+    }
+};
+
+Blockly.Wollok['executor_wk'] = function(block) {
+  var value_executor = Blockly.Wollok.valueToCode(block, 'executor', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
+  var value_method = Blockly.Wollok.valueToCode(block, 'method', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
+  var value_params = Blockly.Wollok.statementToCode(block, 'params');
+  return Blockly.Blocks['executor_wk'].doActionWK(block,{'executor':value_executor,'method':value_method,'params':value_params});
+}
+
+
+Blockly.Blocks['executor_param_wk'] = {
+  init: function() {
+    this.appendValueInput("param")
+        .setCheck("String");
+    this.setInputsInline(true);
+    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, null);
+    this.setTooltip('');
+    this.setColour('#cf9c11');
+    
+  },doActionWK:function(self, paramsMap){
+    var value_instruction = paramsMap['param'];
+    var code = '';
+  
+     code += value_instruction.replaceAll('\'','');
+    if(self.getNextBlock() == undefined || self.getNextBlock() == null || self.getNextBlock().type != 'executor_param'){
+      
+    }else{
+      code += ',';
+    }
+      return code;
+    }
+ };
+
+  Blockly.Wollok['executor_param_wk'] = function(block) {
+    var value_instruction = Blockly.Wollok.valueToCode(block, 'param', Blockly.Wollok.ORDER_ATOMIC);
+    return Blockly.Blocks['executor_param_wk'].doActionWK(block,{'param':value_instruction});
+  };
+
+
+//=============================================================================================================================================
+//=============================================================================================================================================
+//=============================================================================================================================================
+//=============================================================================================================================================
 
 
 
@@ -442,8 +826,27 @@ Blockly.Blocks['executor_param'] = {
 
 
 
+function hasAncestorWithId(aBlock, anId){
+  if(aBlock.previousConnection == null){return false;}
+    var iterator = aBlock.previousConnection.targetBlock();
+    for(var i  = 0; i < 5000; i++){
+      if(iterator == null){
+        return false;
+      }
 
+      if(iterator.id == anId){
+        return true;
+      }
 
+      if(iterator.previousConnection == null){
+        return false;
+      }
+
+      iterator = iterator.previousConnection.targetBlock();
+
+    } 
+    return false;
+}
 
 function getMessagesOf(aBlockName){
 	var iterateAll = true;

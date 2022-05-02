@@ -19,15 +19,33 @@ var sceneAlertErrors;
 
 var clickEventFunction;
 
-function buildSources() {
+function buildSources(definitions,executions) {
+    /*
     const name = 'main.wlk'
-    const content = ''
+    const content = `import wollok.game.*
+
+  program main {
+    game.start()
+  }
+  `
+    console.log({ content })
+    return [{ name, content }]
+    */
+    const name = 'main.wlk'
+    const content = `
+  import wollok.game.*
+  program main {
+  	game.start()
+  	`+executions.join('\n')+`
+  }
+  `+definitions.join('\n')+`
+  `
     console.log({ content })
     return [{ name, content }]
 }
 
 function spaceInit(){
-	sceneAlertErrors = true;//////////////////////////////7
+	sceneAlertErrors = true;//////////////////////////////
 	definedObjectNames = [];
 	definedBehaviourNames = [];
 	definedObjectXmlContent = [];
@@ -83,6 +101,8 @@ function spaceInit(){
     });
 */
 
+/*
+	//WOLLOK GAME INIT EXAMPLE
 	var main = 'main';
 	var images = [];
     var sounds = [];
@@ -90,6 +110,7 @@ function spaceInit(){
     var project = { main, images, sounds, sources };
     var gameDiv = document.getElementById('sceneDiv'); 
     new Game(project).start(gameDiv);
+*/
 }
 
 function updateMessagesFor(aBlock){
@@ -194,7 +215,12 @@ function loadWorkspaceConent(stringXmlContent){
 }
 
 function mappinInfoComplete(aMappingInfo){
-	return (aMappingInfo.icon != undefined && aMappingInfo.icon != null && aMappingInfo.icon != '');
+	for (var key in aMappingInfo.replacements){
+ 		if(aMappingInfo.replacements[key] == undefined || aMappingInfo.replacements[key] == null || aMappingInfo.replacements[key].val == undefined || aMappingInfo.replacements[key].val == null || aMappingInfo.replacements[key].val == ''){
+ 			return false;
+ 		}
+	}
+	return (aMappingInfo.icon != undefined && aMappingInfo.icon != null && aMappingInfo.icon != '') && (aMappingInfo.color != undefined && aMappingInfo.color != null && aMappingInfo.color != '');
 }
 
 function ObjectsAndBehavioursAsBlocks(){
@@ -222,7 +248,7 @@ function ObjectsAndBehavioursAsBlocks(){
 				paramsMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });
 			}
 			createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color,params,paramsMappings/*,valueMappings*/, definedObjectXmlContent[i].join(' </br> '),document.getElementById('mapping_show_names').checked, 'obj' );
-		}
+		}else{ alert('La informacion provista es incompleta. Este objeto no se creará');}
 	}
 
 	for(var i = 0; i < definedBehaviourXmlContent.length; i++ ){
@@ -244,7 +270,7 @@ function ObjectsAndBehavioursAsBlocks(){
 				paramsMappings.push({k:''+key , v:definedBehavioursMappingInfo[i].replacements[key].val });
 			}
 			createAliasXML(definedBehaviourNames[i],definedBehavioursMappingInfo[i].icon,document.getElementById('mapping_color_back').value,params,paramsMappings,/*valueMappings,*/ definedBehaviourXmlContent[i].join(' '),document.getElementById('mapping_show_names').checked,'bh' );
-		}
+		}else{ alert('La informacion provista es incompleta. Este comportamiento no se creará');}
 	}
 
 }
@@ -488,6 +514,21 @@ function doPlayScene(alertErrors){
 	} 
 }
 
+function doPlaySceneWK(alertErrors){
+	var sceneText = getSceneCodeAsWKString('\n');
+	if(sceneErrorsFound){
+		///
+	}else{
+		var main = 'main';
+		var images = [];
+		var sounds = [];
+		var sources = buildSources(sceneText.definitions,sceneText.executions);
+		var project = { main, images, sounds, sources };
+		var gameDiv = document.getElementById('gameDiv'); 
+		new Game(project).start(gameDiv);
+	} 
+}
+
 function getSceneCodeAsString(){
 	var iterateAll = true;
 	result = [];
@@ -568,3 +609,54 @@ function getSceneCodeAsString(){
 	return result;
 }
 
+function getSceneCodeAsWKString(newlineSeparator){
+	sceneErrorsFound = false;
+	result = {definitions:[],executions:[]};
+
+	var objs = getAllParentlessObjects();
+	var partialMetaInfo;
+	var metaInfo;
+	var strsToEval = [];
+	var res;
+	sceneErrorsFound = false;
+	sceneErrorLog = '';
+	sceneSteps = [];
+
+	for(var i = 0; i < objs.length && !sceneErrorsFound; i++){
+		if(Blockly.Wollok[ objs[i].type ] != undefined){
+			
+			if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && objs[i].getNextBlock().type == 'executor_wk'){
+			
+								
+				var current = objs[i].getNextBlock();
+				res = Blockly.JavaScript['executor_wk'](current);
+					
+				//DETECT ERROR
+				if(typeof res === 'string'){
+					result.executions.push( res.replaceAll('\n','') );
+				}else{
+					sceneErrorsFound = true;
+				}
+				
+
+			}else if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && objs[i].getNextBlock().type == 'objetc_create_wk'){
+				res = Blockly.Wollok[ objs[i].type ](objs[i]);
+				if(typeof res === 'string'){
+					//console.log(res);
+					result.definitions.push(res.replaceAll('\n',newlineSeparator));
+				}else{
+					sceneErrorsFound = true;
+				}
+			}else if(definedObjectNames.includes(objs[i].type)){
+				res = Blockly.Wollok[ objs[i].type ](objs[i]);
+				if(typeof res === 'string'){
+					//console.log(res);
+					result.definitions.push(res.replaceAll('\n',newlineSeparator));
+				}else{
+					sceneErrorsFound = true;
+				}
+			}
+		}
+	}
+	return result;
+}
