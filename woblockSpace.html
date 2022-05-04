@@ -925,7 +925,7 @@
 
 		*/
 		//////////////////// W O L L O K ///////////////////////////////////////////
-		xmlStr += '		    <category name="WK">';
+		xmlStr += '		    <category name="WK DEFINICIONES">';
 
 		xmlStr += '			  <block type="action_start_wk" >';
 		xmlStr += '			  </block>';
@@ -953,7 +953,7 @@
 		xmlStr += '		            <field name="TEXT">aPropertyValue</field>';
 		xmlStr += '		          </block>';
 		xmlStr += '		        </value>';
-		xmlStr += '		      </block>';;
+		xmlStr += '		      </block>';
 
 		xmlStr += '			      <block type="method_create_wk">';
 		xmlStr += '			        <value name="name">';
@@ -967,7 +967,7 @@
 		xmlStr += '			          </block>';
 		xmlStr += '			        </value>';
 		xmlStr += '			        <statement name="instructions">';
-		xmlStr += '			          <block type="method_instruction_wk">';
+		xmlStr += '			          <block type="instruction_wk">';
 		xmlStr += '			            <value name="instruction">';
 		xmlStr += '			              <block type="text">';
 		xmlStr += '			                <field name="TEXT">anInstruction</field>';
@@ -978,13 +978,17 @@
 		xmlStr += '			      </block>';
 		
 
-		xmlStr += '		      <block type="method_instruction_wk">';
+		xmlStr += '		      <block type="instruction_wk">';
 		xmlStr += '		        <value name="instruction">';
 		xmlStr += '		          <block type="text">';
 		xmlStr += '		            <field name="TEXT">anInstruction</field>';
 		xmlStr += '		          </block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		      </block>';
+
+		xmlStr += '		    </category>';
+
+		xmlStr += '		    <category name="WK EJECUCION">';
 
 		xmlStr += '  		  <block deletable="false" type="action_start_wk">';
 		xmlStr += '			  	<next>';
@@ -1001,9 +1005,25 @@
 		xmlStr += '		      			</block>';
 		xmlStr += '			  	</next>';
 		xmlStr += '		      </block>';
+
 		xmlStr += '			  <block type="executor_param_wk"><value name="param">';
 		xmlStr += '		      	<block type="text"><field name="TEXT">aParam</field></block>';
 		xmlStr += '			  </value></block">';
+		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="var_objetc_wk">';
+		xmlStr += '		        <value name="name">';
+		xmlStr += '		          <block type="text">';
+		xmlStr += '		            <field name="TEXT">aVariableName</field>';
+		xmlStr += '		          </block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		        <value name="value">';
+		xmlStr += '		          <block type="text">';
+		xmlStr += '		            <field name="TEXT">aVariableValue</field>';
+		xmlStr += '		          </block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		      </block>';
+
 		xmlStr += '		    </category>';
 
 		if(definedObjectNames.length > 0){
@@ -1126,7 +1146,7 @@
 		xmlStr += '			          </block>';
 		xmlStr += '			        </value>';
 		xmlStr += '			        <statement name="instructions">';
-		xmlStr += '			          <block type="method_instruction_wk">';
+		xmlStr += '			          <block type="instruction_wk">';
 		xmlStr += '			            <value name="instruction">';
 		xmlStr += '			              <block type="text">';
 		xmlStr += '			                <field name="TEXT">anInstruction</field>';
@@ -1136,7 +1156,7 @@
 		xmlStr += '			        </statement>';
 		xmlStr += '			      </block>';
 
-		xmlStr += '		      <block type="method_instruction_wk">\n';
+		xmlStr += '		      <block type="instruction_wk">\n';
 		xmlStr += '		        <value name="instruction">\n';
 		xmlStr += '		          <block type="text">\n';
 		xmlStr += '		            <field name="TEXT">anInstruction</field>\n';

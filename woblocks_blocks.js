@@ -663,9 +663,9 @@ Blockly.Wollok['method_create_wk'] = function(block) {
     
 };
 
-//METHOD INSTRUCTION
-//a simple block that describes an instruction.It automatically appends the ; at the end
-Blockly.Blocks['method_instruction_wk'] = {
+//INSTRUCTION
+//a simple block that describes an instruction.can be used in an object or in a program
+Blockly.Blocks['instruction_wk'] = {
   init: function() {
     this.appendValueInput("instruction")
         .setCheck("String");
@@ -688,9 +688,9 @@ Blockly.Blocks['method_instruction_wk'] = {
       return code;
   }};
 
-  Blockly.Wollok['method_instruction_wk'] = function(block) {
+  Blockly.Wollok['instruction_wk'] = function(block) {
     var value_instruction = Blockly.Wollok.valueToCode(block, 'instruction', Blockly.Wollok.ORDER_ATOMIC);
-    var code = Blockly.Blocks['method_instruction_wk'].doActionWK(block,{'instruction':value_instruction});
+    var code = Blockly.Blocks['instruction_wk'].doActionWK(block,{'instruction':value_instruction});
     return code;
   };
 
@@ -743,7 +743,7 @@ Blockly.Blocks['executor_wk'] = {
       }
 
       existingObjects = definedObjectNames.concat( workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'objetc_create_wk' && aBlock.previousConnection != null && aBlock.previousConnection.targetBlock().type == 'action_start_wk' }).map(function(x) {return Blockly.Wollok.valueToCode(x, 'objName', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');}) );
-      if(!existingObjects.includes(value_executor)){
+      if(!existingObjects.includes(value_executor) && !wollokNativeObjects.includes(value_executor)){
         //inexisting executor
         if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' es inexistente');}
         sceneErrorLog = 'El ejecutor \''+value_executor+'\' es inexistente';
@@ -759,19 +759,12 @@ Blockly.Blocks['executor_wk'] = {
       }
       messages = [];
       if(executorBlock != null){ messages = Blockly.Blocks['objetc_create_wk'].messagesOf(executorBlock);} 
-      if(! messages.includes(value_method) ){
+      if(!wollokNativeObjects.includes(value_executor) && !messages.includes(value_method) ){
         //inexisting method
         if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'');}
         sceneErrorLog = 'El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'';
         return false;
       }
-
-      //if((value_params == '' && metaInfo.methods[value_method] != 0) || (value_params.split(',').length !=  metaInfo.methods[value_method]) ){
-      //  //wrong amount of params
-      //  if(sceneAlertErrors){alert('Los parametros provistos para el mensaje \''+value_method+'\' son incorrectos');}
-      //  sceneErrorLog = 'Los parametros provistos para el mensaje \''+value_method+'\' son incorrectos';
-      //  return false; 
-      //}
 
       return value_executor+'.'+value_method+'('+value_params+')';
     }
@@ -814,6 +807,51 @@ Blockly.Blocks['executor_param_wk'] = {
     return Blockly.Blocks['executor_param_wk'].doActionWK(block,{'param':value_instruction});
   };
 
+
+//VAR DECLARATION
+//used for defining a variabe within an execution.
+Blockly.Blocks['var_objetc_wk'] = {
+  init: function() {
+    this.appendValueInput("name")
+        .setCheck("String");
+    this.appendValueInput("value")
+        .appendField(":");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip('');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_name = paramsMap['name'];
+    var value_value = paramsMap['value'];
+
+    var code = '\n var ';
+    if(value_name != undefined && value_name != null && value_name != ''){
+      code += value_name.replaceAll("'","");
+    }else{
+      code += ' __objetc_property___name__ ';
+    }
+
+    code += ' = ';
+    
+    if(value_value != undefined && value_value != null && value_value != ''){
+      code += value_value.replaceAll("'","")+' ';
+    }else{
+      code += ' __objetc_property___value__ '
+    }
+
+    return code;
+  }
+};
+
+Blockly.Wollok['var_objetc_wk'] = function(aBlock) {
+  var value_name = Blockly.Wollok.valueToCode(aBlock, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  if(value_name != undefined && value_name != null){value_name = removeInitialNumbers(value_name);}
+  var value_value = Blockly.Wollok.valueToCode(aBlock, 'value', Blockly.Wollok.ORDER_ATOMIC);
+  var code = Blockly.Blocks['var_objetc_wk'].doActionWK(aBlock,{'name':value_name , 'value':value_value});
+  return code;
+};
 
 //=============================================================================================================================================
 //=============================================================================================================================================

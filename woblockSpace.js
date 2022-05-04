@@ -17,6 +17,8 @@ var sceneErrorsFound;
 var sceneSteps;
 var sceneAlertErrors;
 
+var wollokNativeObjects;
+
 var clickEventFunction;
 
 function buildSources(definitions,executions) {
@@ -56,6 +58,8 @@ function spaceInit(){
 	currentIndex = -1;
 	definedObjectsMappingInfo = [];
 	definedBehavioursMappingInfo = [];
+
+	wollokNativeObjects = ['console'];
 
 	var toolbox = document.getElementById("toolbox");
 	 
@@ -625,17 +629,23 @@ function getSceneCodeAsWKString(newlineSeparator){
 	for(var i = 0; i < objs.length && !sceneErrorsFound; i++){
 		if(Blockly.Wollok[ objs[i].type ] != undefined){
 			
-			if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && objs[i].getNextBlock().type == 'executor_wk'){
-			
+			if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && objs[i].getNextBlock().type == 'executor_wk'){			
 								
 				var current = objs[i].getNextBlock();
-				res = Blockly.JavaScript['executor_wk'](current);
-					
-				//DETECT ERROR
-				if(typeof res === 'string'){
-					result.executions.push( res.replaceAll('\n','') );
-				}else{
-					sceneErrorsFound = true;
+				var validTypes = ['executor_wk','var_objetc_wk','instruction_wk'];
+
+				while(current != null){
+					if(current.type != null && validTypes.includes(current.type)){
+						res = Blockly.Wollok[current.type](current);
+							
+						//DETECT ERROR
+						if(typeof res === 'string'){
+							result.executions.push( res.replaceAll('\n','') );
+						}else{
+							sceneErrorsFound = true;
+						}
+					}
+					current = current.getNextBlock();
 				}
 				
 
