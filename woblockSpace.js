@@ -17,28 +17,16 @@ var sceneErrorsFound;
 var sceneSteps;
 var sceneAlertErrors;
 
-var wollokNativeObjects;
-
 var clickEventFunction;
 
 function buildSources(definitions,executions) {
-    /*
-    const name = 'main.wlk'
-    const content = `import wollok.game.*
-
-  program main {
-    game.start()
-  }
-  `
-    console.log({ content })
-    return [{ name, content }]
-    */
-    const name = 'main.wlk'
-    const content = `
+    
+  const name = 'main.wlk'
+  const content = `
   import wollok.game.*
   program main {
-  	game.start()
-  	`+executions.join('\n')+`
+  game.start()
+  `+executions.join('\n')+`
   }
   `+definitions.join('\n')+`
   `
@@ -58,8 +46,6 @@ function spaceInit(){
 	currentIndex = -1;
 	definedObjectsMappingInfo = [];
 	definedBehavioursMappingInfo = [];
-
-	wollokNativeObjects = ['console'];
 
 	var toolbox = document.getElementById("toolbox");
 	 
@@ -115,6 +101,8 @@ function spaceInit(){
     var gameDiv = document.getElementById('sceneDiv'); 
     new Game(project).start(gameDiv);
 */
+	TryLoadSavedSCene();
+
 }
 
 function updateMessagesFor(aBlock){
@@ -523,13 +511,16 @@ function doPlaySceneWK(alertErrors){
 	if(sceneErrorsFound){
 		///
 	}else{
+		document.getElementById('playScenebutton').style.display = 'none';
+		document.getElementById('resetScenebutton').style.display = 'block';
 		var main = 'main';
 		var images = [];
 		var sounds = [];
 		var sources = buildSources(sceneText.definitions,sceneText.executions);
 		var project = { main, images, sounds, sources };
 		var gameDiv = document.getElementById('gameDiv'); 
-		new Game(project).start(gameDiv);
+		window.wkGame = new Game(project);
+		window.wkGame.start(gameDiv);
 	} 
 }
 
@@ -625,17 +616,17 @@ function getSceneCodeAsWKString(newlineSeparator){
 	sceneErrorsFound = false;
 	sceneErrorLog = '';
 	sceneSteps = [];
+	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk'];
 
 	for(var i = 0; i < objs.length && !sceneErrorsFound; i++){
 		if(Blockly.Wollok[ objs[i].type ] != undefined){
 			
-			if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && objs[i].getNextBlock().type == 'executor_wk'){			
+			if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock() != null && validExecutionTypes.includes(objs[i].getNextBlock().type)){			
 								
 				var current = objs[i].getNextBlock();
-				var validTypes = ['executor_wk','var_objetc_wk','instruction_wk'];
 
 				while(current != null){
-					if(current.type != null && validTypes.includes(current.type)){
+					if(current.type != null && validExecutionTypes.includes(current.type)){
 						res = Blockly.Wollok[current.type](current);
 							
 						//DETECT ERROR
@@ -669,4 +660,98 @@ function getSceneCodeAsWKString(newlineSeparator){
 		}
 	}
 	return result;
+}
+
+function saveCurrentXMLScene(){
+	saveCurrentContent();	
+	for(var i = 0; i < sceneXmlContent.length; i++ ){
+		sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
+	}
+	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
+		for(var j = 0; j < definedObjectXmlContent[i].length; j++ ){
+			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
+		}
+	}
+	window.localStorage.setItem("sceneXmlContent", JSON.stringify(sceneXmlContent));
+	window.localStorage.setItem("definedObjectNames", JSON.stringify(definedObjectNames));
+	window.localStorage.setItem("definedObjectXmlContent", JSON.stringify(definedObjectXmlContent));
+	window.localStorage.setItem("definedObjectsMappingInfo", JSON.stringify(definedObjectsMappingInfo));
+	window.localStorage.setItem("woblocksSavePeformed", true);
+}
+
+function loadXMLScene(removeData){
+	if(window.localStorage.getItem("woblocksSavePeformed") == 'true'){
+		sceneXmlContent = JSON.parse(window.localStorage.getItem("sceneXmlContent"));
+		definedObjectNames = JSON.parse(window.localStorage.getItem("definedObjectNames"));
+		definedObjectXmlContent = JSON.parse(window.localStorage.getItem("definedObjectXmlContent"));
+		definedObjectsMappingInfo = JSON.parse(window.localStorage.getItem("definedObjectsMappingInfo"));
+		if(removeData){
+			window.localStorage.removeItem("sceneXmlContent");
+			window.localStorage.removeItem("definedObjectNames");
+			window.localStorage.removeItem("definedObjectXmlContent");
+			window.localStorage.removeItem("definedObjectsMappingInfo");
+			window.localStorage.removeItem("woblocksSavePeformed");
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
+
+function Reset(){
+	saveCurrentXMLScene();
+	window.location.reload();
+}
+
+function TryLoadSavedSCene(){
+
+	var loadSuccesful = loadXMLScene(false);
+
+	if(loadSuccesful){
+		workspace.clear();
+		document.getElementById('sceneDiv').style.display = 'none';
+		var newContent = sceneXmlContent;
+		document.getElementById('mappingSection').style.display = 'none';
+		document.getElementById('sceneDiv').style.display = 'block';
+		
+		if(newContent != null && newContent != undefined && newContent.length > 0){
+			injectXmlToWorkspace(newContent);
+		}
+		redrawTabs();
+	}
+}
+
+function doFormat(aString, newLIneStr){
+	var lines = aString.split('\n');
+	var level = 0;
+	var line;
+	var tabStr = '    ';
+	
+	var result = '';
+
+	for(var i = 0; i < lines.length; i++){
+		line = lines[i].trim();
+		if( appearencesOf('}',line) == 1 ){
+			level --;
+		}
+		result += timesStr(line,tabStr,level)+newLIneStr;
+		if( appearencesOf('{',line) == 1 ){
+			level ++;
+		}
+	}
+
+	return '<pre>'+result+'</pre>';
+}
+
+function timesStr(aStr, aFiller, anAmount){
+	var result = '';
+	for(var i = 0; i < anAmount; i++){
+		result += aFiller;
+	}
+	result += aStr;
+	return result;
+}
+
+function appearencesOf(aSubsting, aString){
+	return aString.split(aSubsting).length - 1;
 }

@@ -556,7 +556,7 @@ Blockly.Blocks['objetc_property_wk'] = {
     this.appendValueInput("name")
         .setCheck("String");
     this.appendValueInput("value")
-        .appendField(":");
+        .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -696,19 +696,19 @@ Blockly.Blocks['instruction_wk'] = {
 
 Blockly.Blocks['executor_wk'] = {
   init: function() {
-    this.appendDummyInput().appendField(new Blockly.FieldImage("icons/Pointer.png", 30, 30, ""));
+    /*this.appendDummyInput().appendField(new Blockly.FieldImage("icons/Pointer.png", 30, 30, ""));*/
     this.appendValueInput("executor")
         .setCheck(null)
         .appendField("");
     this.appendDummyInput()
-        .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
+        .appendField(new Blockly.FieldImage("icons/mSend.png", 35, 35, ""));
     this.appendValueInput("method")
         .setCheck(null)
         .appendField("");
     this.appendStatementInput('params')
     .appendField('');    
     this.setTooltip('');
-    this.setColour('#751072');
+    this.setColour('#ab2ba7');
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },doActionWK:function(self, paramsMap){
@@ -743,11 +743,11 @@ Blockly.Blocks['executor_wk'] = {
       }
 
       existingObjects = definedObjectNames.concat( workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'objetc_create_wk' && aBlock.previousConnection != null && aBlock.previousConnection.targetBlock().type == 'action_start_wk' }).map(function(x) {return Blockly.Wollok.valueToCode(x, 'objName', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');}) );
-      if(!existingObjects.includes(value_executor) && !wollokNativeObjects.includes(value_executor)){
+      if(!existingObjects.includes(value_executor)){
         //inexisting executor
-        if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' es inexistente');}
-        sceneErrorLog = 'El ejecutor \''+value_executor+'\' es inexistente';
-        return false;
+        if(sceneAlertErrors){alert('Aviso: El ejecutor \''+value_executor+'\' no se ha definido en este ambiente');}
+        sceneErrorLog = 'Aviso: El ejecutor \''+value_executor+'\' no se ha definido en este ambiente';
+        //return false;
       }
 
       var objectBlocks = workspace.getAllBlocks().filter(function(aBlock){return aBlock.type == 'objetc_create_wk' && aBlock.previousConnection != null && aBlock.previousConnection.targetBlock().type == 'action_start_wk'});
@@ -757,13 +757,16 @@ Blockly.Blocks['executor_wk'] = {
             break;    
           }
       }
-      messages = [];
-      if(executorBlock != null){ messages = Blockly.Blocks['objetc_create_wk'].messagesOf(executorBlock);} 
-      if(!wollokNativeObjects.includes(value_executor) && !messages.includes(value_method) ){
-        //inexisting method
-        if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'');}
-        sceneErrorLog = 'El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'';
-        return false;
+
+      if(existingObjects.includes(value_executor)){
+        messages = [];
+        if(executorBlock != null){ messages = Blockly.Blocks['objetc_create_wk'].messagesOf(executorBlock);} 
+        if(!messages.includes(value_method) ){
+          //inexisting method
+          if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'');}
+          sceneErrorLog = 'El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'';
+          return false;
+        }
       }
 
       return value_executor+'.'+value_method+'('+value_params+')';
@@ -815,11 +818,12 @@ Blockly.Blocks['var_objetc_wk'] = {
     this.appendValueInput("name")
         .setCheck("String");
     this.appendValueInput("value")
-        .appendField(":");
+        .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setTooltip('');
+    this.setColour('#a1c932');
   },doActionWK:function(self, paramsMap){
     if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
 

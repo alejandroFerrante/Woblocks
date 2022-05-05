@@ -97,7 +97,15 @@
 
   			<td>
   				<div id="sceneDiv" style="height: 650px; width:800px; padding-top:5px;">
-  					<table><tr><td><img src="icons/playScene.png" style="width:40px;height:40px;" onclick="doPlaySceneWK(true)"/></td> <td><h3 class="customFont" style="text-align: center;">Escena</h3></td></tr></table>
+  					<table><tr>
+  						<td>
+  							<h3 class="customFont" style="text-align: center;">Escena</h3>
+  						</td>
+  						<td>
+	  						<img id="playScenebutton" src="icons/playScene.png" style="width:40px;height:40px;" onclick="doPlaySceneWK(true)"/>
+	  						<img id="resetScenebutton" src="icons/stopScene.png" style="width:40px;height:40px;display:none" onclick="Reset()"/>
+  						</td> 
+  				</tr></table>
   					<div id="gameDiv"></div>
 
   				</div>
@@ -277,7 +285,10 @@
 	$( "#code_generate" ).click(function() {
 		var strCode = getSceneCodeAsWKString('<br/>');
 		if(currentTab == 'Scene'){
-			$('#code_container')[0].innerHTML = buildSources(strCode.definitions,strCode.executions)[0].content.replaceAll('\n','<br/>');
+			//$('#code_container')[0].innerHTML = buildSources(strCode.definitions,strCode.executions)[0].content.replaceAll('\n','<br/>');
+			var sceneCode = getSceneCodeAsWKString('\n');
+			var unformatedSceneText = buildSources(sceneCode.definitions,sceneCode.executions)[0].content;
+			document.getElementById('code_container').innerHTML = doFormat(unformatedSceneText,'\n');
 		}
 
 		if(currentTab == 'Object'){
@@ -991,21 +1002,20 @@
 		xmlStr += '		    <category name="WK EJECUCION">';
 
 		xmlStr += '  		  <block deletable="false" type="action_start_wk">';
-		xmlStr += '			  	<next>';
-		xmlStr += '		      		<block type="executor_wk" >';		
-		xmlStr += '		      			<value name="executor">';
-		xmlStr += '		        			<block type="text"><field name="TEXT">anObj</field></block>';
-		xmlStr += '		        		</value>';
-		xmlStr += '		      			<value name="method">';
-		xmlStr += '		        			<block type="text"><field name="TEXT">aMethod</field></block>';
-		xmlStr += '		        		</value>';
-		xmlStr += '		        		<statement name="params"><block type="executor_param_wk"><value name="param">';
-		xmlStr += ' 					<block type="text"><field name="TEXT">aParam</field></block>';
-		xmlStr += '		      			</value></block></statement>';
-		xmlStr += '		      			</block>';
-		xmlStr += '			  	</next>';
 		xmlStr += '		      </block>';
 
+		xmlStr += '		      <block type="executor_wk" >';		
+		xmlStr += '		      	<value name="executor">';
+		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		      	<value name="method">';
+		xmlStr += '		        	<block type="text"><field name="TEXT">aMethod</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
+		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
+		xmlStr += '		      	</value></block></statement>';
+		xmlStr += '		      </block>';
+		
 		xmlStr += '			  <block type="executor_param_wk"><value name="param">';
 		xmlStr += '		      	<block type="text"><field name="TEXT">aParam</field></block>';
 		xmlStr += '			  </value></block">';
@@ -1023,6 +1033,15 @@
 		xmlStr += '		          </block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="instruction_wk">';
+		xmlStr += '		        <value name="instruction">';
+		xmlStr += '		          <block type="text">';
+		xmlStr += '		            <field name="TEXT">anInstruction</field>';
+		xmlStr += '		          </block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		      </block>';
+
 
 		xmlStr += '		    </category>';
 
