@@ -450,7 +450,7 @@ Blockly.Blocks['action_start_wk'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage("icons/play.png", 20, 20, "|>"));
     this.setInputsInline(false);
-    this.setNextStatement(true, null);
+    this.setNextStatement(true, ['objetc_definition_wk','execution_wk','action_start_wk']);
     this.setTooltip('');
   }, isLinkedToActionStart : function(aBlock){
     if(aBlock.previousConnection == null){return false;}
@@ -487,16 +487,14 @@ Blockly.Wollok['action_start_wk'] = function(block) {
 //This block is used to create an object.It takes a text block for the nme and properties definition statements.
 Blockly.Blocks['objetc_create_wk'] = {
   init: function() {
-    //this.setMutator(new Blockly.Mutator(""));
     this.setInputsInline(true);
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage("icons/wollokBW.png", 40, 40, "*"));
-    this.appendValueInput("objName")
-        .setCheck("String")
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("anObjectName"), "name");
     this.appendStatementInput('properties')
-    .appendField('')
-    .setCheck("objetc_property");
-    this.setPreviousStatement(true, null);
+    .setCheck('objetc_definition_wk');
+    this.setPreviousStatement(true, 'objetc_definition_wk');
     this.setTooltip('');
     this.setWarningText('MENSAJES:');
   },doActionWK : function(self, paramsMap){
@@ -543,7 +541,7 @@ Blockly.Blocks['objetc_create_wk'] = {
 };
 
 Blockly.Wollok['objetc_create_wk'] = function(block) {
-  var value_objname = Blockly.Wollok.valueToCode(block, 'objName', Blockly.Wollok.ORDER_ATOMIC);
+  var value_objname = block.getFieldValue('name');
   var value_properties = Blockly.Wollok.statementToCode(block, 'properties');
   var code = Blockly.Blocks['objetc_create_wk'].doActionWK(block,{'objName':value_objname , 'properties':value_properties});
   return code;
@@ -553,13 +551,13 @@ Blockly.Wollok['objetc_create_wk'] = function(block) {
 //used for defining a property. First block must be a text block and the second one can be any value
 Blockly.Blocks['objetc_property_wk'] = {
   init: function() {
-    this.appendValueInput("name")
-        .setCheck("String");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("aPropertyName"), "name");
     this.appendValueInput("value")
         .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, 'objetc_definition_wk');
+    this.setNextStatement(true, 'objetc_definition_wk');
     this.setTooltip('');
   },doActionWK:function(self, paramsMap){
     if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
@@ -587,7 +585,7 @@ Blockly.Blocks['objetc_property_wk'] = {
 };
 
 Blockly.Wollok['objetc_property_wk'] = function(aBlock) {
-  var value_name = Blockly.Wollok.valueToCode(aBlock, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  var value_name = aBlock.getFieldValue('name');
   if(value_name != undefined && value_name != null){value_name = removeInitialNumbers(value_name);}
   var value_value = Blockly.Wollok.valueToCode(aBlock, 'value', Blockly.Wollok.ORDER_ATOMIC);
   var code = Blockly.Blocks['objetc_property_wk'].doActionWK(aBlock,{'name':value_name , 'value':value_value});
@@ -598,22 +596,18 @@ Blockly.Wollok['objetc_property_wk'] = function(aBlock) {
 //used for defining a method. 
 Blockly.Blocks['method_create_wk'] = {
   init: function() {
-    this.appendValueInput("name")
-      .appendField(new Blockly.FieldImage("icons/action.png", 35, 35, "*"))
-        .setCheck("String");
-        //.appendField("METHOD");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("aMethodName"), "name")
+        .appendField(new Blockly.FieldImage("icons/action.png", 35, 35, "*"));
     this.appendValueInput("params")
         .setCheck("Array");
-        //.appendField("(");
-    /*this.appendDummyInput()
-        .appendField(")");*/
     this.appendStatementInput('instructions')
-    .appendField('');
+    .appendField('').setCheck('instruction_wk');
     this.setInputsInline(false);
     this.setInputsInline(true);
     this.setTooltip('');
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, 'objetc_definition_wk');
+    this.setNextStatement(true, 'objetc_definition_wk');
   },doActionWK:function(self, paramsMap){
     if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
 
@@ -646,7 +640,7 @@ Blockly.Blocks['method_create_wk'] = {
   }
 };
 Blockly.Wollok['method_create_wk'] = function(block) {
-  var value_name = Blockly.Wollok.valueToCode(block, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  var value_name = block.getFieldValue('name');
   var value_params = Blockly.Wollok.valueToCode(block, 'params', Blockly.Wollok.ORDER_ATOMIC);
   if(value_params != undefined && value_params != null && value_params != '' ){
     var originalList = eval(value_params);
@@ -670,8 +664,8 @@ Blockly.Blocks['instruction_wk'] = {
     this.appendValueInput("instruction")
         .setCheck("String");
     this.setInputsInline(true);
-    this.setNextStatement(true, null);
-    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, ['instruction_wk','execution_wk']);
+    this.setPreviousStatement(true, ['instruction_wk','execution_wk']);
     this.setTooltip('');
   },doActionWK:function(self, paramsMap){
       if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
@@ -696,7 +690,6 @@ Blockly.Blocks['instruction_wk'] = {
 
 Blockly.Blocks['executor_wk'] = {
   init: function() {
-    /*this.appendDummyInput().appendField(new Blockly.FieldImage("icons/Pointer.png", 30, 30, ""));*/
     this.appendValueInput("executor")
         .setCheck(null)
         .appendField("");
@@ -706,11 +699,11 @@ Blockly.Blocks['executor_wk'] = {
         .setCheck(null)
         .appendField("");
     this.appendStatementInput('params')
-    .appendField('');    
+    .appendField('').setCheck('executor_param_wk');    
     this.setTooltip('');
     this.setColour('#ab2ba7');
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, ['instruction_wk','method_instructions_wk','action_start_wk','execution_wk']);
+    this.setNextStatement(true, ['instruction_wk','execution_wk','execution_wk']);
   },doActionWK:function(self, paramsMap){
       if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
 
@@ -786,8 +779,8 @@ Blockly.Blocks['executor_param_wk'] = {
     this.appendValueInput("param")
         .setCheck("String");
     this.setInputsInline(true);
-    this.setNextStatement(true, null);
-    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, 'executor_param_wk');
+    this.setPreviousStatement(true, 'executor_param_wk');
     this.setTooltip('');
     this.setColour('#cf9c11');
     
@@ -815,13 +808,13 @@ Blockly.Blocks['executor_param_wk'] = {
 //used for defining a variabe within an execution.
 Blockly.Blocks['var_objetc_wk'] = {
   init: function() {
-    this.appendValueInput("name")
-        .setCheck("String");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput("aVariableName"), "name");
     this.appendValueInput("value")
         .appendField(new Blockly.FieldImage("icons/Arrow.png", 30, 30, ""));
     this.setInputsInline(true);
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
+    this.setPreviousStatement(true, 'execution_wk');
+    this.setNextStatement(true, 'execution_wk');
     this.setTooltip('');
     this.setColour('#a1c932');
   },doActionWK:function(self, paramsMap){
@@ -850,7 +843,7 @@ Blockly.Blocks['var_objetc_wk'] = {
 };
 
 Blockly.Wollok['var_objetc_wk'] = function(aBlock) {
-  var value_name = Blockly.Wollok.valueToCode(aBlock, 'name', Blockly.Wollok.ORDER_ATOMIC);
+  var value_name = aBlock.getFieldValue('name');
   if(value_name != undefined && value_name != null){value_name = removeInitialNumbers(value_name);}
   var value_value = Blockly.Wollok.valueToCode(aBlock, 'value', Blockly.Wollok.ORDER_ATOMIC);
   var code = Blockly.Blocks['var_objetc_wk'].doActionWK(aBlock,{'name':value_name , 'value':value_value});

@@ -6,7 +6,8 @@
   <meta name="google" value="notranslate">
   <title>Blockly Demo:</title>
   
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+  <script src="jquery.min.js"></script>
   <script src="node_modules/blockly/blockly_compressed.js"></script>
   <script src="node_modules/blockly/blocks_compressed.js"></script>
   <script src="node_modules/blockly/javascript_compressed.js"></script>
@@ -132,8 +133,29 @@
   			<td>
 	  			<div id="codeDiv" style="height: 250px; width: 1000px;">
 					<h3 style="text-align: center;" class="customFont">Codigo Generado</h3>
-					<button id="code_generate" class="customFont">Generar</button>
-					<div id="code_container" class="codeFont" style="height:200px;color:white;background-color:black;overflow-y:scroll;"></div>
+					<button id="code_generate" class="customFont">Mostrar Codigo</button>
+					<div id="code_container" class="codeFont" style="display:none;height:200px;color:white;background-color:black;overflow-y:scroll;"></div>
+				</div>
+			</td>
+			<td>
+	  			<div id="configDiv" style="height: 250px; width: 1000px;">
+					<h3 style="text-align: center;" class="customFont">Configuracion del Juego</h3>
+					<table>
+						<tr>
+							<td>
+								<div class="customFont" >
+									<br/> Imagenes Disponibles <br/>
+								</div>
+								<input id="input-project" type="file" webkitdirectory multiple><br/>
+								<label id="loadedImages" />
+							</td>
+							<td style="padding-left:30%">
+								<label class="customFont">Tablero</label> <br/> 
+								Ancho<input id="gameWidthComp"  style="width:20%" type="number" value="15">
+								x Alto<input id="gameHeightComp" style="width:20%" type="number" value="15">
+							</td>
+						</tr>
+					</table>
 				</div>
 			</td>
   		</tr>
@@ -155,6 +177,8 @@
 	 		</tr>
 	 	</table>
 	 </div>
+
+
 
 <!-- TOOLBOX -->
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
@@ -238,7 +262,7 @@
 	        <value name="name">
 	          <block type="text">
 	            <field name="TEXT">aMethodName</field>
-	          </block>
+	          </block>	
 	        </value>
 	        <value name="params">
 	          <block type="lists_create_with">
@@ -283,6 +307,21 @@
 	};
 
 	$( "#code_generate" ).click(function() {
+
+		if(document.getElementById('code_container').style.display == 'none'){
+
+			fillCodeSection();
+
+			document.getElementById('code_container').style.display = 'block';
+			document.getElementById('code_generate').innerHTML = 'Ocultar Codigo';
+
+		}else{
+			document.getElementById('code_container').style.display = 'none';
+			document.getElementById('code_generate').innerHTML = 'Mostrar Codigo';
+		}
+	});
+
+	function fillCodeSection(){
 		var strCode = getSceneCodeAsWKString('<br/>');
 		if(currentTab == 'Scene'){
 			//$('#code_container')[0].innerHTML = buildSources(strCode.definitions,strCode.executions)[0].content.replaceAll('\n','<br/>');
@@ -292,9 +331,11 @@
 		}
 
 		if(currentTab == 'Object'){
-			$('#code_container')[0].innerHTML = strCode.executions.join('<br/>').replaceAll('\n','<br/>')+'<br/>'+strCode.definitions.join('<br/>').replaceAll('\n','<br/>');
+			//$('#code_container')[0].innerHTML = strCode.executions.join('<br/>').replaceAll('\n','<br/>')+'<br/>'+strCode.definitions.join('<br/>').replaceAll('\n','<br/>');
+			var sceneCode = getSceneCodeAsWKString('\n').definitions[0];
+			document.getElementById('code_container').innerHTML = doFormat(sceneCode,'\n');
 		}
-	});
+	}
 
 	function onWorkspaceChange( event){
 		//console.log(event.type);
@@ -723,6 +764,20 @@
 		}
 	}
 
+	function buildImage(file) {
+	    const possiblePaths = [file.name]
+	    const url = URL.createObjectURL(file)
+	    return { possiblePaths, url }
+	}
+	function isImageFile(file) { return file.name.endsWith('png') }
+	const input = document.getElementById('input-project');
+	input.onchange = async () => {
+	    const files = Array.from(input.files);
+	    const imageFiles = files.filter(isImageFile);
+	    wkImages = imageFiles.map(buildImage);
+	    document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
+	}
+
 
 
 
@@ -944,21 +999,11 @@
 		xmlStr += '			  <block type="action_start_wk">';
 		xmlStr += '			    <next>';
 		xmlStr += '			      <block type="objetc_create_wk">';
-		xmlStr += ' 				<value name="objName">';
-		xmlStr += '			          <block type="text">';
-		xmlStr += '			            <field name="TEXT">anObjectName</field>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </value>';
 		xmlStr += '			      </block>';
 		xmlStr += '			    </next>';
 		xmlStr += '			  </block>';
 
 		xmlStr += '		      <block type="objetc_property_wk">';
-		xmlStr += '		        <value name="name">';
-		xmlStr += '		          <block type="text">';
-		xmlStr += '		            <field name="TEXT">aPropertyName</field>';
-		xmlStr += '		          </block>';
-		xmlStr += '		        </value>';
 		xmlStr += '		        <value name="value">';
 		xmlStr += '		          <block type="text">';
 		xmlStr += '		            <field name="TEXT">aPropertyValue</field>';
@@ -967,11 +1012,6 @@
 		xmlStr += '		      </block>';
 
 		xmlStr += '			      <block type="method_create_wk">';
-		xmlStr += '			        <value name="name">';
-		xmlStr += '			          <block type="text">';
-		xmlStr += '			            <field name="TEXT">aMethodName</field>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </value>';
 		xmlStr += '			        <value name="params">';
 		xmlStr += '			          <block type="lists_create_with">';
 		xmlStr += '			            <mutation items="0"></mutation>';
@@ -1022,11 +1062,6 @@
 		xmlStr += '		      </block>';
 
 		xmlStr += '		      <block type="var_objetc_wk">';
-		xmlStr += '		        <value name="name">';
-		xmlStr += '		          <block type="text">';
-		xmlStr += '		            <field name="TEXT">aVariableName</field>';
-		xmlStr += '		          </block>';
-		xmlStr += '		        </value>';
 		xmlStr += '		        <value name="value">';
 		xmlStr += '		          <block type="text">';
 		xmlStr += '		            <field name="TEXT">aVariableValue</field>';

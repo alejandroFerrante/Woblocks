@@ -19,12 +19,24 @@ var sceneAlertErrors;
 
 var clickEventFunction;
 
+var wkImages;
+
 function buildSources(definitions,executions) {
     
   const name = 'main.wlk'
-  const content = `
+  var content = `
   import wollok.game.*
-  program main {
+  program main { `;
+
+  if(document.getElementById('gameWidthComp') != null && document.getElementById('gameWidthComp').value != undefined && document.getElementById('gameWidthComp').value != null && document.getElementById('gameWidthComp').value != ''){
+  	content += `
+  	game.width(`+document.getElementById('gameWidthComp').value+')';
+  }
+    if(document.getElementById('gameHeightComp') != null && document.getElementById('gameHeightComp').value != undefined && document.getElementById('gameHeightComp').value != null && document.getElementById('gameHeightComp').value != ''){
+  	content += `
+  	game.height(`+document.getElementById('gameHeightComp').value+')';
+  }
+  content += `
   game.start()
   `+executions.join('\n')+`
   }
@@ -46,6 +58,7 @@ function spaceInit(){
 	currentIndex = -1;
 	definedObjectsMappingInfo = [];
 	definedBehavioursMappingInfo = [];
+	wkImages = [];
 
 	var toolbox = document.getElementById("toolbox");
 	 
@@ -72,6 +85,9 @@ function spaceInit(){
 	// Load blocks to workspace
 	workspaceBlocks = document.getElementById('workspaceBlocks'); 
 	Blockly.Xml.domToWorkspace(workspaceBlocks, workspace);
+
+	document.getElementById('gameWidthComp').value = 15;
+	document.getElementById('gameHeightComp').value = 15;
 
 	loadWorkspaceConent(getMainToolboxXmlString());
 
@@ -103,6 +119,7 @@ function spaceInit(){
 */
 	TryLoadSavedSCene();
 
+	$('#code_generate').click();
 }
 
 function updateMessagesFor(aBlock){
@@ -507,6 +524,15 @@ function doPlayScene(alertErrors){
 }
 
 function doPlaySceneWK(alertErrors){
+	if(wkImages == undefined || wkImages == null){wkImages = [];}
+	if( wkImages.length == 0){
+		if( !window.confirm("No se han cargdo imagenes.¿Esta seguro que quiere ejecutar la escena?")) {
+  			return;
+		}
+	}
+
+	fillCodeSection();
+
 	var sceneText = getSceneCodeAsWKString('\n');
 	if(sceneErrorsFound){
 		///
@@ -514,7 +540,7 @@ function doPlaySceneWK(alertErrors){
 		document.getElementById('playScenebutton').style.display = 'none';
 		document.getElementById('resetScenebutton').style.display = 'block';
 		var main = 'main';
-		var images = [];
+		var images = wkImages;
 		var sounds = [];
 		var sources = buildSources(sceneText.definitions,sceneText.executions);
 		var project = { main, images, sounds, sources };
@@ -676,6 +702,8 @@ function saveCurrentXMLScene(){
 	window.localStorage.setItem("definedObjectNames", JSON.stringify(definedObjectNames));
 	window.localStorage.setItem("definedObjectXmlContent", JSON.stringify(definedObjectXmlContent));
 	window.localStorage.setItem("definedObjectsMappingInfo", JSON.stringify(definedObjectsMappingInfo));
+	window.localStorage.setItem("definedWidth", document.getElementById('gameWidthComp').value);
+	window.localStorage.setItem("definedHeight", document.getElementById('gameHeightComp').value);
 	window.localStorage.setItem("woblocksSavePeformed", true);
 }
 
@@ -685,17 +713,26 @@ function loadXMLScene(removeData){
 		definedObjectNames = JSON.parse(window.localStorage.getItem("definedObjectNames"));
 		definedObjectXmlContent = JSON.parse(window.localStorage.getItem("definedObjectXmlContent"));
 		definedObjectsMappingInfo = JSON.parse(window.localStorage.getItem("definedObjectsMappingInfo"));
+		document.getElementById('gameWidthComp').value = window.localStorage.getItem("definedWidth", );
+		document.getElementById('gameHeightComp').value = window.localStorage.getItem("definedHeight");
 		if(removeData){
-			window.localStorage.removeItem("sceneXmlContent");
-			window.localStorage.removeItem("definedObjectNames");
-			window.localStorage.removeItem("definedObjectXmlContent");
-			window.localStorage.removeItem("definedObjectsMappingInfo");
-			window.localStorage.removeItem("woblocksSavePeformed");
+			clearSavedLocalStorageInfo();			
 		}
 		return true;
 	}else{
 		return false;
 	}
+}
+
+function clearSavedLocalStorageInfo(){
+	window.localStorage.removeItem("sceneXmlContent");
+	window.localStorage.removeItem("definedObjectNames");
+	window.localStorage.removeItem("definedObjectXmlContent");
+	window.localStorage.removeItem("definedObjectsMappingInfo");
+	window.localStorage.removeItem("woblocksSavePeformed");
+	window.localStorage.removeItem("definedWidth");
+	window.localStorage.removeItem("definedHeight");
+	window.localStorage.setItem("woblocksSavePeformed", false);
 }
 
 function Reset(){
