@@ -47,7 +47,7 @@ function buildSources(definitions,executions) {
 }
 
 function spaceInit(){
-	sceneAlertErrors = true;//////////////////////////////
+	sceneAlertErrors = false;//////////////////////////////
 	definedObjectNames = [];
 	definedBehaviourNames = [];
 	definedObjectXmlContent = [];
@@ -93,30 +93,18 @@ function spaceInit(){
 
 	workspace.addChangeListener( onWorkspaceChange );
 	
+	//clickEventFunction = Blockly.Events.Click;
+	//Blockly.registry.unregister("event", "click"); 
+	//Blockly.registry.register("event", "click",
+    //function(a,b,c){ 
+    //	var funk = clickEventFunction.bind(this); 
+    //	funk(a,b,c); 
+    //	if(c == 'block' && (a.type == 'objetc_create' || definedObjectNames.includes(a.type) ) ){
+    //		updateMessagesFor(a);
+    //	}
+    //});
 
-/*
-	clickEventFunction = Blockly.Events.Click;
-	Blockly.registry.unregister("event", "click"); 
-	Blockly.registry.register("event", "click",
-    function(a,b,c){ 
-    	var funk = clickEventFunction.bind(this); 
-    	funk(a,b,c); 
-    	if(c == 'block' && (a.type == 'objetc_create' || definedObjectNames.includes(a.type) ) ){
-    		updateMessagesFor(a);
-    	}
-    });
-*/
 
-/*
-	//WOLLOK GAME INIT EXAMPLE
-	var main = 'main';
-	var images = [];
-    var sounds = [];
-    var sources = buildSources();
-    var project = { main, images, sounds, sources };
-    var gameDiv = document.getElementById('sceneDiv'); 
-    new Game(project).start(gameDiv);
-*/
 	TryLoadSavedSCene();
 
 	$('#code_generate').click();
@@ -172,6 +160,18 @@ function updateMessagesFor(aBlock){
 
 function getJSCodeForCurrentWorkspace(){
 	var generator = Blockly.JavaScript;
+	var content = document.getElementById('blocklyDiv');
+	//content.textContent = '';
+	var code = '';
+	if (checkAllGeneratorFunctionsDefined(generator)) {
+	    code = generator.workspaceToCode(workspace);
+	    //content.textContent = code;
+	}
+	return code;
+}
+
+function getWKCodeForCurrentWorkspace(){
+	var generator = Blockly.Wollok;
 	var content = document.getElementById('blocklyDiv');
 	//content.textContent = '';
 	var code = '';
@@ -257,7 +257,7 @@ function ObjectsAndBehavioursAsBlocks(){
 				paramsMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });
 			}
 			createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color,params,paramsMappings/*,valueMappings*/, definedObjectXmlContent[i].join(' </br> '),document.getElementById('mapping_show_names').checked, 'obj' );
-		}else{ alert('La informacion provista es incompleta. Este objeto no se creará');}
+		}//else{ alert('La informacion provista es incompleta. Este objeto no se creará');}
 	}
 
 	for(var i = 0; i < definedBehaviourXmlContent.length; i++ ){
@@ -311,11 +311,12 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
 	}  	
   }
 
-/*
-  for(var i = 0; i < paramsList.length; i++){
-    functionString += '  this.appendValueInput("'+paramsList[i]+'").setCheck(null);\n';
-  }
-*/  
+
+  //for(var i = 0; i < paramsList.length; i++){
+  //  functionString += '  this.appendValueInput("'+paramsList[i]+'").setCheck(null);\n';
+  //}
+  
+
   if(type == 'obj'){functionString += '	this.setWarningText(\'MENSAJES:\');';}
   
 
@@ -323,17 +324,17 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   //functionString += '   this.setMutator(new Blockly.Mutator(""));\n';
   functionString += '   this.setColour(\''+backColor+'\');';
   functionString += ' },\n';
- /* 
-  functionString += ' mutationToDom : function (workspace) {\n';
-  functionString += '   var container = document.createElement(\'mutation\');\n';
-  functionString += '   return container;\n';
-  functionString += ' },\n';
+  
+  //functionString += ' mutationToDom : function (workspace) {\n';
+  //functionString += '   var container = document.createElement(\'mutation\');\n';
+  //functionString += '   return container;\n';
+  //functionString += ' },\n';
 
   
-  functionString += ' domToMutation : function (xmlElement) {\n';
-  functionString += '   this.updateShape_();\n';
-  functionString += ' },\n';
-*/
+  //functionString += ' domToMutation : function (xmlElement) {\n';
+  //functionString += '   this.updateShape_();\n';
+  //functionString += ' },\n';
+
   functionString += ' getDecompose : function (workspace) {\n';
   functionString += '   var innerXml = \'<xml> '+innerBlockXML+' </xml>\';\n';
   functionString += '   var newBlockId = Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(innerXml), workspace)[0];\n';
@@ -347,19 +348,17 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   //functionString += '   containerBlock.initSvg();';
   //functionString += '   return containerBlock';
   
-//  functionString += '   var innerXml = \'<xml> '+innerBlockXML+' </xml>\';\n';
-//  functionString += '   var newBlockId = Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(innerXml), workspace)[0];\n';
-//  functionString += '   workspace.getBlockById(newBlockId).initSvg();';
-//  functionString += '   return workspace.getBlockById(newBlockId);';
+  //functionString += '   var innerXml = \'<xml> '+innerBlockXML+' </xml>\';\n';
+  //functionString += '   var newBlockId = Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(innerXml), workspace)[0];\n';
+  //functionString += '   workspace.getBlockById(newBlockId).initSvg();';
+  //functionString += '   return workspace.getBlockById(newBlockId);';
   
 
   //functionString += ' },\n';
 
-/*
-  functionString += ' compose : function(containerBlock) {\n';
-  functionString += '   this.updateShape_();\n';
-  functionString += ' },\n';
-*/
+  //functionString += ' compose : function(containerBlock) {\n';
+  //functionString += '   this.updateShape_();\n';
+  //functionString += ' },\n';
 
   functionString += ' saveConnections : function(containerBlock) {},\n';
 
@@ -384,10 +383,10 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   //functionString += '  var decomposed = block.decompose(Blockly.getMainWorkspace());\n';
   functionString += '  var decomposed = block.getDecompose(Blockly.getMainWorkspace());\n';
   functionString += '  var replacements = [';
-  /*for(var i = 0; i < constantReplacements.length; i++){
-    if(i > 0){functionString += ',';}
-    functionString += '{ k:\''+constantReplacements[i].k+'\' , v: '+constantReplacements[i].v+'}';
-  }*/
+  //for(var i = 0; i < constantReplacements.length; i++){
+  //  if(i > 0){functionString += ',';}
+  //  functionString += '{ k:\''+constantReplacements[i].k+'\' , v: '+constantReplacements[i].v+'}';
+  //}
   functionString +='];\n';
   for(var i = 0; i < paramsReplacements.length; i++){
     functionString += '   replacements.push({k:\''+paramsReplacements[i].k+'\' , v: Blockly.JavaScript.valueToCode(block, \''+paramsReplacements[i].v+'\', Blockly.JavaScript.ORDER_ATOMIC) });\n';
@@ -642,7 +641,7 @@ function getSceneCodeAsWKString(newlineSeparator){
 	sceneErrorsFound = false;
 	sceneErrorLog = '';
 	sceneSteps = [];
-	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk'];
+	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk','keyboard_event_wk','tick_event_wk','collission_wk'];
 
 	for(var i = 0; i < objs.length && !sceneErrorsFound; i++){
 		if(Blockly.Wollok[ objs[i].type ] != undefined){
@@ -691,20 +690,74 @@ function getSceneCodeAsWKString(newlineSeparator){
 function saveCurrentXMLScene(){
 	saveCurrentContent();	
 	for(var i = 0; i < sceneXmlContent.length; i++ ){
-		sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
+		//sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
+		sceneXmlContent[i] = sceneXmlContent[i];
 	}
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
 		for(var j = 0; j < definedObjectXmlContent[i].length; j++ ){
-			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
+			//definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
+			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j];
 		}
 	}
+	var positionsMap = {};
+	var mainObjs = getAllParentlessObjects();
+	var positions;
+	for(var i = 0; i < mainObjs.length; i++){
+		positions = mainObjs[i].getSvgRoot().getAttribute('transform').replace('translate(','').replace(')','').split(',').map(function(a){return parseInt(a)})
+		positionsMap[ mainObjs[i].id ] = {x:positions[0],y:positions[1]}; 
+	}
+
 	window.localStorage.setItem("sceneXmlContent", JSON.stringify(sceneXmlContent));
 	window.localStorage.setItem("definedObjectNames", JSON.stringify(definedObjectNames));
 	window.localStorage.setItem("definedObjectXmlContent", JSON.stringify(definedObjectXmlContent));
 	window.localStorage.setItem("definedObjectsMappingInfo", JSON.stringify(definedObjectsMappingInfo));
 	window.localStorage.setItem("definedWidth", document.getElementById('gameWidthComp').value);
 	window.localStorage.setItem("definedHeight", document.getElementById('gameHeightComp').value);
+	window.localStorage.setItem("positions",  JSON.stringify(positionsMap) );
 	window.localStorage.setItem("woblocksSavePeformed", true);
+}
+
+function getSceneAsJSON(){
+	saveCurrentContent();	
+	for(var i = 0; i < sceneXmlContent.length; i++ ){
+		//sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
+		sceneXmlContent[i] = sceneXmlContent[i];
+	}
+	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
+		for(var j = 0; j < definedObjectXmlContent[i].length; j++ ){
+			//definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
+			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j];
+		}
+	}
+	var positionsMap = {};
+	var mainObjs = getAllParentlessObjects();
+	var positions;
+	for(var i = 0; i < mainObjs.length; i++){
+		positions = mainObjs[i].getSvgRoot().getAttribute('transform').replace('translate(','').replace(')','').split(',').map(function(a){return parseInt(a)})
+		positionsMap[ mainObjs[i].id ] = {x:positions[0],y:positions[1]}; 
+	}
+
+	var obj = {};
+	obj.sceneXmlContent =  JSON.stringify(sceneXmlContent);
+	obj.definedObjectNames =  JSON.stringify(definedObjectNames);
+	obj.definedObjectXmlContent =  JSON.stringify(definedObjectXmlContent);
+	obj.definedObjectsMappingInfo =  JSON.stringify(definedObjectsMappingInfo);
+	obj.definedWidth =  document.getElementById('gameWidthComp').value;
+	obj.definedHeight =  document.getElementById('gameHeightComp').value;
+	obj.positions = JSON.stringify(positionsMap);
+
+	return JSON.stringify(obj);
+}
+
+function saveJSONScenToLocalStorage(aJSON){
+	var obj = JSON.parse(aJSON);
+	window.localStorage.setItem("sceneXmlContent", obj.sceneXmlContent);
+	window.localStorage.setItem("definedObjectNames", obj.definedObjectNames);
+	window.localStorage.setItem("definedObjectXmlContent", obj.definedObjectXmlContent);
+	window.localStorage.setItem("definedObjectsMappingInfo", obj.definedObjectsMappingInfo);
+	window.localStorage.setItem("definedWidth", obj.definedWidth);
+	window.localStorage.setItem("definedHeight", obj.definedHeight);
+	window.localStorage.setItem("positions",  obj.positions);
 }
 
 function loadXMLScene(removeData){
@@ -745,6 +798,8 @@ function TryLoadSavedSCene(){
 	var loadSuccesful = loadXMLScene(false);
 
 	if(loadSuccesful){
+		ObjectsAndBehavioursAsBlocks();
+		loadWorkspaceConent( getMainToolboxXmlString() );
 		workspace.clear();
 		document.getElementById('sceneDiv').style.display = 'none';
 		var newContent = sceneXmlContent;
@@ -754,6 +809,13 @@ function TryLoadSavedSCene(){
 		if(newContent != null && newContent != undefined && newContent.length > 0){
 			injectXmlToWorkspace(newContent);
 		}
+
+		var positionsMap = JSON.parse(window.localStorage.getItem("positions"));
+		var mainObjs = getAllParentlessObjects();
+		for(var i = 0; i < mainObjs.length; i++){
+			mainObjs[i].moveTo(positionsMap[mainObjs[i].id]);
+		}
+
 		redrawTabs();
 	}
 }

@@ -850,12 +850,157 @@ Blockly.Wollok['var_objetc_wk'] = function(aBlock) {
   return code;
 };
 
+
+//KEYBOARD EVENT
+//used for defining keyboard events.
+Blockly.Blocks['keyboard_event_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/buttonPress.png", 35, 35, ""))
+        //.appendField(new Blockly.FieldDropdown([["Espacio", "Space"], ["Arriba", "up"], ["Abajo", "down"]]), "keyName");
+        .appendField(new Blockly.FieldDropdown(getKeyboardPicklist()),"keyName");
+    this.appendStatementInput("instructions").setCheck('execution_wk');
+    this.setPreviousStatement(true,'execution_wk');
+    this.setNextStatement(true,'execution_wk');
+    this.setColour('#ebdb34');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_keyname = paramsMap['keyName'];
+    var value_instructions = paramsMap['instructions'];
+    return 'keyboard.'+value_keyname+'().onPressDo { \n'+value_instructions+' \n}';
+  }
+};
+
+Blockly.Wollok['keyboard_event_wk'] = function(aBlock) {
+  var value_keyname = aBlock.getFieldValue('keyName');
+  var value_instructions = Blockly.Wollok.statementToCode(aBlock, 'instructions');
+  return Blockly.Blocks['keyboard_event_wk'].doActionWK(aBlock,{'keyName':value_keyname, 'instructions':value_instructions});
+};
+
+//TICKER EVENT
+//used for defining ticker events.
+Blockly.Blocks['tick_event_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/timer.png", 35, 35, ""))
+        .appendField(new Blockly.FieldTextInput("eventName"), "event_name")
+        .appendField(new Blockly.FieldNumber("1000"), "timer");
+    this.appendStatementInput("instructions").setCheck('execution_wk');
+    this.setPreviousStatement(true,'execution_wk');
+    this.setNextStatement(true,'execution_wk');
+    this.setColour('#ebdb34');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_event_name = paramsMap['evtName'];
+    var value_timer = paramsMap['timer'];
+    var value_instructions = paramsMap['instructions'];
+    return 'game.onTick('+value_timer+', "'+value_event_name+'",{ \n'+value_instructions+'\n })';
+  }
+};
+
+Blockly.Wollok['tick_event_wk'] = function(aBlock) {
+  var event_name = aBlock.getFieldValue('event_name');
+  var timer = aBlock.getFieldValue('timer');
+  var instructions = Blockly.Wollok.statementToCode(aBlock, 'instructions');
+  return Blockly.Blocks['tick_event_wk'].doActionWK(aBlock,{'evtName':event_name,'timer':timer, 'instructions':instructions});
+};
+
+//COLLISSION
+//used for defining ticker events.
+Blockly.Blocks['collission_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/crash.png", 35, 35, ""))
+        .appendField(new Blockly.FieldTextInput("targetName"), "target_name");
+    this.appendDummyInput().appendField(new Blockly.FieldTextInput("collidedParamName"), "collided_name")
+    this.appendStatementInput("instructions").setCheck('execution_wk');
+    this.setPreviousStatement(true,'execution_wk');
+    this.setNextStatement(true,'execution_wk');
+    this.setColour('#ebdb34');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_target_name = paramsMap['target'];
+    var value_param_name = paramsMap['param'];
+    var value_instructions = paramsMap['instructions'];
+    return 'game.whenCollideDo('+value_target_name+', \n{'+value_param_name+' =>  \n'+value_instructions+'\n})';
+  }
+};
+
+Blockly.Wollok['collission_wk'] = function(aBlock) {
+  var target_name = aBlock.getFieldValue('target_name');
+  var param_name = aBlock.getFieldValue('collided_name');
+  var instructions = Blockly.Wollok.statementToCode(aBlock, 'instructions');
+  return Blockly.Blocks['collission_wk'].doActionWK(aBlock,{'target':target_name,'param':param_name, 'instructions':instructions});
+};
+
+
 //=============================================================================================================================================
 //=============================================================================================================================================
 //=============================================================================================================================================
 //=============================================================================================================================================
 
-
+function getKeyboardPicklist(){
+  var result = [];
+  result.push(['a','a']);     
+  result.push(['alt','alt']);     
+  //result.push(['any','any']);     
+  //result.push(['arrow','arrow']);   
+  result.push(['b','b']);     
+  result.push(['borrar','backspace']);     
+  result.push(['c','c']);     
+  //result.push(['center','center']);      
+  result.push(['control','control']);     
+  result.push(['d','d']);     
+  //result.push(['del','del']);     
+  result.push(['abajo','down']);      
+  result.push(['e','e']);     
+  result.push(['enter','enter']);     
+  result.push(['f','f']);     
+  result.push(['g','g']);     
+  result.push(['h','h']);     
+  result.push(['i','i']);     
+  result.push(['j','j']);     
+  result.push(['k','k']);     
+  result.push(['l','l']);     
+  result.push(['izquierda','left']);      
+  //result.push(['letter','letter']);    
+  result.push(['m','m']);     
+  result.push(['-','minusKey']);      
+  result.push(['n','n']);     
+  //result.push(['num','num']);     
+  result.push(['num0','num0']);      
+  result.push(['num1','num1']);      
+  result.push(['num2','num2']);      
+  result.push(['num3','num3']);      
+  result.push(['num4','num4']);      
+  result.push(['num5','num5']);      
+  result.push(['num6','num6']);      
+  result.push(['num7','num7']);      
+  result.push(['num8','num8']);      
+  result.push(['num9','num9']);      
+  result.push(['o','o']);     
+  result.push(['p','p']);     
+  result.push(['+','plusKey']);     
+  result.push(['q','q']);     
+  result.push(['r','r']);     
+  result.push(['derecha','right']);     
+  result.push(['s','s']);     
+  result.push(['shift','shift']);     
+  //result.push(['slash','slash']);     
+  result.push(['espacio','space']);     
+  result.push(['t','t']);     
+  result.push(['u','u']);     
+  result.push(['arriba','up']);      
+  result.push(['v','v']);     
+  result.push(['w','w']);     
+  result.push(['x','x']);     
+  result.push(['y','y']);     
+  result.push(['z','z']); 
+  return result;   
+}
 
 
 

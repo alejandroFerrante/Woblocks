@@ -83,8 +83,18 @@
 <body>
 
 <!-- TABS -->
+	<table>
+		<tr>
+			<td><button class="tabButton customFont" onclick="onSaveSceneClicked()" >Guardar Escena Como</button><input id="saveSceneFileName" type="text" value="nombre de archivo"/></td>
+			<td><button class="tabButton customFont" >Cargar Escena<input id="input-wbk-file" type="file" ></button></td>
+		</tr>
+	</table>
+
 	<table id="tabsTable">
-		<tr><td><button id="sceneTab" class="tabButton customFont" onclick="ontabClick('Scene',-1)" ><b>Escena</b></button></td><td><button id="freeAreaTab" class="tabButton customFont" onclick="ontabClick('FreeArea',-1)" style="display:none">Area Libre</button></td></tr>
+		<tr>
+			<td><button id="sceneTab" class="tabButton customFont" onclick="ontabClick('Scene',-1)" ><b>Escena</b></button></td>
+			<td><button id="freeAreaTab" class="tabButton customFont" onclick="ontabClick('FreeArea',-1)" style="display:none">Area Libre</button></td>
+		</tr>
 		<tr><td><button onclick="showNewTabObjectModal()" class="customFont">+</button></td><td class="customFont" >Objetos</td></tr>
 		<!-- <tr><td><button onclick="showNewTabBehaviourModal()" class="customFont">+</button></td><td class="customFont" >Comportamientos</td></tr> -->
 	</table>
@@ -114,12 +124,10 @@
   				<div id="mappingSection" style="padding-bottom:500px;height: 50px; width: 1000px;display:none">
   					<h3 style="text-align: center" class="customFont">Definiciones</h3>
   					<table class="customFont"><tr>
-  						<td>Icono</td>
-  						<td><select id="icons" onchange="onIconSelected()">
-						  
+  						<td>Icono<br/><select id="icons" onchange="onIconSelected()">
 						</select></td>
 						<td><img id="selectedIcon" style="width:25px;height:25px;" ></td>
-						<td style="padding-left:50px;" >Color de Fondo<input id="mapping_color_back" type="color"/></td>
+						<td style="padding-left:50px;" >Color de Fondo<br/><input id="mapping_color_back" type="color"/></td>
   					</tr>
   					</table>
   					<table class="customFont">
@@ -439,7 +447,7 @@
 				document.getElementById('mappingSection').style.display = 'block';
 			}
 
-			$('#code_container')[0].innerHTML = /*getJSCodeForCurrentWorkspace().replaceAll('\n','<br/>');*/ getSceneCodeAsString().join('<br/>');
+			fillCodeSection();
 		}
 		
 	}
@@ -558,11 +566,12 @@
 				redrawTabs();
 
 				currentTab = 'Object';
-				currentIndex = definedObjectXmlContent.length - 1;
+				currentIndex = definedObjectNames.length - 1;
 				document.getElementById('mapping_color_back').value = '#ffffffff';
 				selectCurrentTab();
 				loadWorkspaceConent(getObjectToolboxXmlString());
 
+				fillCodeSection();
 			}
 			$('#newGlobalName').val('');
 			document.getElementById("box").style.display = "none";
@@ -708,7 +717,7 @@
 		}
 
 		//FREE PARAMS
-		var freeParams = getAllUnasignedValuesFrom(getJSCodeForCurrentWorkspace() );
+		var freeParams = getAllUnasignedValuesFrom(getWKCodeForCurrentWorkspace() );
 		var mappingInfo;
 		if(freeParams.length > 0){
 			document.getElementById('mapping_show_names_section').style.display = 'block';
@@ -778,6 +787,46 @@
 	    document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
 	}
 
+	function onSaveSceneClicked(){
+		var jsonToSave = getSceneAsJSON();
+		saveJSONScenToLocalStorage(jsonToSave);
+		doDownload(jsonToSave,document.getElementById('saveSceneFileName').value+'.wbk','text');
+	}
+
+	function doDownload(data, filename, type) {
+	    var file = new Blob([data], {type: type});
+	    if (window.navigator.msSaveOrOpenBlob) // IE10+
+	        window.navigator.msSaveOrOpenBlob(file, filename);
+	    else { // Others
+	        var a = document.createElement("a"),url = URL.createObjectURL(file);
+	        a.href = url;
+	        a.download = filename;
+	        document.body.appendChild(a);
+	        a.click();
+	        setTimeout(function() {
+	            document.body.removeChild(a);
+	            window.URL.revokeObjectURL(url);  
+	        }, 0); 
+	    }
+	}
+
+	const wbkInput = document.getElementById('input-wbk-file');
+	wbkInput.onchange = async () => {
+		const file = Array.from(wbkInput.files)[0];
+	    var reader = new FileReader();
+      	reader.onload = (function(theFile) {
+	    	saveJSONScenToLocalStorage(theFile.target.result);
+	    	TryLoadSavedSCene();
+      	});
+      	reader.readAsText(file);
+	    //confirm this will overwrite your current
+
+
+	    //const files = Array.from(input.files);
+	    //const imageFiles = files.filter(isImageFile);
+	    //wkImages = imageFiles.map(buildImage);
+	    //document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
+	}
 
 
 
@@ -785,18 +834,9 @@
 		var defaultXml = '  <block deletable="false" type="action_start_wk">';
 			defaultXml +='		<next>';
 			defaultXml +='			<block deletable="false" type="objetc_create_wk" >';
-			defaultXml +='				<value name="objName">';
-			defaultXml +='					<block editable="false" type="text">';
-			defaultXml +='						<field name="TEXT">'+proposedName+'</field>';
-			defaultXml +='					</block>';
-			defaultXml +='				</value>';
+			defaultXml +='				<field name="name">'+proposedName+'</field>';
 			defaultXml +='				<statement name="properties">';
 			defaultXml +='					<block type="objetc_property_wk">';
-			defaultXml +='						<value name="name">';
-			defaultXml +='							<block type="text">';
-			defaultXml +='								<field name="TEXT">aPropertyName</field>';
-			defaultXml +='							</block>';
-			defaultXml +='						</value>';
 			defaultXml +='						<value name="value">';
 			defaultXml +='							<block type="text">';
 			defaultXml +='								<field name="TEXT">aPropertyValue</field>';
@@ -871,18 +911,23 @@
 	function getMainToolboxXmlString(){
 		var xmlStr = '';
 		xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">';
+
 		xmlStr += '		      <block type="logic_boolean" >';
 		xmlStr += '		        <field name="BOOL">TRUE</field>';
 		xmlStr += '		      </block>';
+
 		xmlStr += '		      <block type="math_number" >';
 		xmlStr += '		        <field name="NUM">123</field>';
 		xmlStr += '		      </block>';
+
 		xmlStr += '		      <block type="text" >';
 		xmlStr += '		        <field name="TEXT"></field>';
 		xmlStr += '		      </block>';
+
 		xmlStr += '		      <block type="lists_create_with" >';
 		xmlStr += '		        <mutation items="0"></mutation>';
 		xmlStr += '		      </block>';
+
 		xmlStr += '		      <block type="lists_create_with">';
 		xmlStr += '		        <mutation items="1"></mutation>';
 		xmlStr += '		        <value name="ADD0">';
@@ -891,6 +936,8 @@
 		xmlStr += '		          </block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		      </block>';
+
+
 		xmlStr += '		    </category>';
 		/*
 		xmlStr += '		    <category name="CREACION">';
@@ -1037,6 +1084,7 @@
 		xmlStr += '		        </value>';
 		xmlStr += '		      </block>';
 
+
 		xmlStr += '		    </category>';
 
 		xmlStr += '		    <category name="WK EJECUCION">';
@@ -1077,6 +1125,14 @@
 		xmlStr += '		        </value>';
 		xmlStr += '		      </block>';
 
+		xmlStr += '		      <block type="keyboard_event_wk">';
+		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="tick_event_wk">';
+		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="collission_wk">';
+		xmlStr += '		      </block>';
 
 		xmlStr += '		    </category>';
 
