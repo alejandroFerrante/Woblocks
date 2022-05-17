@@ -816,6 +816,7 @@
 	    var reader = new FileReader();
       	reader.onload = (function(theFile) {
 	    	saveJSONScenToLocalStorage(theFile.target.result);
+	    	window.localStorage.setItem("woblocksSavePeformed",true);
 	    	TryLoadSavedSCene();
       	});
       	reader.readAsText(file);
