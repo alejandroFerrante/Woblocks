@@ -10,7 +10,7 @@ var currentTab;
 var currentIndex;
 var definedObjectsMappingInfo;
 var definedBehavioursMappingInfo;
-
+var positionsMapping;
 
 var sceneErrorLog;
 var sceneErrorsFound;
@@ -699,13 +699,7 @@ function saveCurrentXMLScene(){
 			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j];
 		}
 	}
-	var positionsMap = {};
-	var mainObjs = getAllParentlessObjects();
-	var positions;
-	for(var i = 0; i < mainObjs.length; i++){
-		positions = mainObjs[i].getSvgRoot().getAttribute('transform').replace('translate(','').replace(')','').split(',').map(function(a){return parseInt(a)})
-		positionsMap[ mainObjs[i].id ] = {x:positions[0],y:positions[1]}; 
-	}
+	var positionsMap = getPositionsMap();
 
 	window.localStorage.setItem("sceneXmlContent", JSON.stringify(sceneXmlContent));
 	window.localStorage.setItem("definedObjectNames", JSON.stringify(definedObjectNames));
@@ -715,6 +709,25 @@ function saveCurrentXMLScene(){
 	window.localStorage.setItem("definedHeight", document.getElementById('gameHeightComp').value);
 	window.localStorage.setItem("positions",  JSON.stringify(positionsMap) );
 	window.localStorage.setItem("woblocksSavePeformed", true);
+}
+
+
+function getPositionsMap(){//must be in scene tab!!!
+	var positionsMap = {};
+	var mainObjs = getAllParentlessObjects();
+	var positions;
+	for(var i = 0; i < mainObjs.length; i++){
+		positions = mainObjs[i].getSvgRoot().getAttribute('transform').replace('translate(','').replace(')','').split(',').map(function(a){return parseInt(a)})
+		positionsMap[ mainObjs[i].id ] = {x:positions[0],y:positions[1]}; 
+	}
+	return positionsMap;
+}
+
+function positionScenObjectsWith(aPositionsMap){//must be in scene tab!!!
+	var mainObjs = getAllParentlessObjects();
+	for(var i = 0; i < mainObjs.length; i++){
+		mainObjs[i].moveTo(aPositionsMap[mainObjs[i].id]);
+	}
 }
 
 function getSceneAsJSON(){
@@ -810,11 +823,7 @@ function TryLoadSavedSCene(){
 			injectXmlToWorkspace(newContent);
 		}
 
-		var positionsMap = JSON.parse(window.localStorage.getItem("positions"));
-		var mainObjs = getAllParentlessObjects();
-		for(var i = 0; i < mainObjs.length; i++){
-			mainObjs[i].moveTo(positionsMap[mainObjs[i].id]);
-		}
+		positionScenObjectsWith(JSON.parse(window.localStorage.getItem("positions")));
 
 		redrawTabs();
 	}

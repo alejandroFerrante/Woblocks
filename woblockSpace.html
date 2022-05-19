@@ -85,8 +85,14 @@
 <!-- TABS -->
 	<table>
 		<tr>
-			<td><button class="tabButton customFont" onclick="onSaveSceneClicked()" >Guardar Escena Como</button><input id="saveSceneFileName" type="text" value="nombre de archivo"/></td>
-			<td><button class="tabButton customFont" >Cargar Escena<input id="input-wbk-file" type="file" ></button></td>
+			<td style="padding-left:50px;padding-right:550px"><h1 style="font-size: 120px;" class="customFont">WOBLOCKS</h1></td>
+
+			<td id="saveSection" style="display:block;padding-top:50px;padding-bottom:50px;">
+				<button class="tabButton customFont" onclick="onSaveSceneClicked()" >Guardar Escena Como</button><input id="saveSceneFileName" type="text" value="nombre de archivo"/>
+			</td>
+			<td id="loadSection" style="display:block;">
+				<button style="padding-right:10px;padding-left:10px;" class="tabButton customFont" >Cargar Escena<input id="input-wbk-file" type="file" ></button>
+			</td>
 		</tr>
 	</table>
 
@@ -414,6 +420,8 @@
 				newContent = sceneXmlContent;
 				document.getElementById('mappingSection').style.display = 'none';
 				document.getElementById('sceneDiv').style.display = 'block';
+				document.getElementById('loadSection').style.display = 'block';
+				document.getElementById('saveSection').style.display = 'block';
 			}
 			if(newTab == 'FreeArea' && freeAreaXmlContent != undefined && freeAreaXmlContent != null){
 				newContent = freeAreaXmlContent;
@@ -423,13 +431,15 @@
 			if(newTab == 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				newContent = definedObjectXmlContent[newIndex];
 				document.getElementById('mapping_color_back').value = definedObjectsMappingInfo[newIndex].color;
+				document.getElementById('loadSection').style.display = 'none';
+				document.getElementById('saveSection').style.display = 'none';
 			}
 			if(newTab == 'Behaviour' && newIndex >= 0 && newIndex < definedBehaviourXmlContent.length){
 				newContent = definedBehaviourXmlContent[newIndex];
 				document.getElementById('mapping_color_back').value = definedBehavioursMappingInfo[newIndex].color; 
 			}
 			if(newContent != null && newContent != undefined && newContent.length > 0){
-				injectXmlToWorkspace(newContent);
+				injectXmlToWorkspace(newContent);				
 			}
 
 			redrawTabs();
@@ -445,6 +455,10 @@
 			if(newTab == 'Behaviour' && newIndex >= 0 && newIndex < definedBehaviourXmlContent.length){
 				fillObjectOrBehaviourMappingSection();
 				document.getElementById('mappingSection').style.display = 'block';
+			}
+
+			if(newTab == 'Scene' && sceneXmlContent != undefined && sceneXmlContent != null){
+				positionScenObjectsWith(positionsMapping);
 			}
 
 			fillCodeSection();
@@ -636,11 +650,12 @@
 			if(xmlContentList != undefined && xmlContentList != null){
 				var xmlSerializer = new XMLSerializer();
 				var contentList = getWorkspaceXmlContentAsList();
-				if(currentTab == 'Scene' || currentTab == 'FreeArea'){
+				if(currentTab == 'Scene'){
 					xmlContentList.splice(0,xmlContentList.length);
 					for(var i = 0; i < contentList.length; i++){
 						xmlContentList.push(xmlSerializer.serializeToString(contentList[i]));
 					}
+					positionsMapping = getPositionsMap();
 				}else{
 					xmlContentList[currentIndex] = [];
 					for(var i = 0; i < contentList.length; i++){
@@ -686,6 +701,8 @@
 			}
 		}
 	}
+
+
 
 	function onIconSelected(){
 		document.getElementById('selectedIcon').src = 'icons/representations/'+document.getElementById('icons').value;
@@ -788,9 +805,11 @@
 	}
 
 	function onSaveSceneClicked(){
-		var jsonToSave = getSceneAsJSON();
-		saveJSONScenToLocalStorage(jsonToSave);
-		doDownload(jsonToSave,document.getElementById('saveSceneFileName').value+'.wbk','text');
+		if(window.confirm('Esta seguro que quiere guardar el archivo como "'+(document.getElementById('saveSceneFileName').value+'.wbk')+'"?')){
+			var jsonToSave = getSceneAsJSON();
+			saveJSONScenToLocalStorage(jsonToSave);
+			doDownload(jsonToSave,document.getElementById('saveSceneFileName').value+'.wbk','text');
+		}
 	}
 
 	function doDownload(data, filename, type) {
@@ -815,9 +834,12 @@
 		const file = Array.from(wbkInput.files)[0];
 	    var reader = new FileReader();
       	reader.onload = (function(theFile) {
-	    	saveJSONScenToLocalStorage(theFile.target.result);
-	    	window.localStorage.setItem("woblocksSavePeformed",true);
-	    	TryLoadSavedSCene();
+	    	if(window.confirm("Cargar un archivo nuevo borrará el contenido actual")){
+		    	saveJSONScenToLocalStorage(theFile.target.result);
+		    	window.localStorage.setItem("woblocksSavePeformed",true);
+		    	TryLoadSavedSCene();
+		    }
+		    wbkInput.value = ''; 
       	});
       	reader.readAsText(file);
 	    //confirm this will overwrite your current
@@ -936,6 +958,9 @@
 		xmlStr += '		            <field name="TEXT"></field>';
 		xmlStr += '		          </block>';
 		xmlStr += '		        </value>';
+		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="condition_wk" >';
 		xmlStr += '		      </block>';
 
 
@@ -1104,7 +1129,20 @@
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
 		xmlStr += '		      	</value></block></statement>';
 		xmlStr += '		      </block>';
-		
+
+		xmlStr += '		      <block type="execution_res_wk" >';		
+		xmlStr += '		      	<value name="executor">';
+		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		      	<value name="method">';
+		xmlStr += '		        	<block type="text"><field name="TEXT">aMethod</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
+		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
+		xmlStr += '		      	</value></block></statement>';
+		xmlStr += '		      </block>';		
+
+
 		xmlStr += '			  <block type="executor_param_wk"><value name="param">';
 		xmlStr += '		      	<block type="text"><field name="TEXT">aParam</field></block>';
 		xmlStr += '			  </value></block">';

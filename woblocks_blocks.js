@@ -657,7 +657,7 @@ Blockly.Wollok['method_create_wk'] = function(block) {
     
 };
 
-//INSTRUCTION
+//INSTRUCTION 
 //a simple block that describes an instruction.can be used in an object or in a program
 Blockly.Blocks['instruction_wk'] = {
   init: function() {
@@ -688,6 +688,8 @@ Blockly.Blocks['instruction_wk'] = {
     return code;
   };
 
+//MESSAGE SENDING
+//used for sending a message with params to an object
 Blockly.Blocks['executor_wk'] = {
   init: function() {
     this.appendValueInput("executor")
@@ -699,7 +701,7 @@ Blockly.Blocks['executor_wk'] = {
         .setCheck(null)
         .appendField("");
     this.appendStatementInput('params')
-    .appendField('').setCheck('executor_param_wk');    
+    .appendField('')/*.setCheck('executor_param_wk')*/;    
     this.setTooltip('');
     this.setColour('#ab2ba7');
     this.setPreviousStatement(true, ['instruction_wk','method_instructions_wk','action_start_wk','execution_wk']);
@@ -758,11 +760,11 @@ Blockly.Blocks['executor_wk'] = {
           //inexisting method
           if(sceneAlertErrors){alert('El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'');}
           sceneErrorLog = 'El ejecutor \''+value_executor+'\' no sabe responder el mensaje \''+value_method+'\'';
-          return false;
+          //return false; //PUT BACK WHEN FIX ERROR MESSAGES MUTATOR? //////////////////////////////////////////////////////////////////////////// 
         }
       }
 
-      return value_executor+'.'+value_method+'('+value_params+')';
+      return value_executor+'.'+value_method+'('+value_params+')  ';
     }
 };
 
@@ -770,7 +772,49 @@ Blockly.Wollok['executor_wk'] = function(block) {
   var value_executor = Blockly.Wollok.valueToCode(block, 'executor', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
   var value_method = Blockly.Wollok.valueToCode(block, 'method', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
   var value_params = Blockly.Wollok.statementToCode(block, 'params');
-  return Blockly.Blocks['executor_wk'].doActionWK(block,{'executor':value_executor,'method':value_method,'params':value_params});
+  var value_statementParams = collectStatements(block,['executor_param_wk','executor_wk']);
+  var paramsMap = {'executor':value_executor,'method':value_method};
+  if(value_statementParams.length > 0){
+    paramsMap['params'] = value_statementParams[0].join(' , ');
+  }else{
+    paramsMap['params'] = '';
+  }
+
+  return Blockly.Blocks['executor_wk'].doActionWK(block,paramsMap);
+}
+
+
+Blockly.Blocks['execution_res_wk'] = {
+  init: function() {
+    this.appendValueInput("executor")
+        .setCheck(null)
+        .appendField("");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/mSend.png", 35, 35, ""));
+    this.appendValueInput("method")
+        .setCheck(null)
+        .appendField("");
+    this.appendStatementInput('params')
+    .appendField('')/*.setCheck('executor_param_wk')*/;    
+    this.setTooltip('');
+    this.setColour('#ab2ba7');
+    this.setOutput(true);
+  }
+};
+
+Blockly.Wollok['execution_res_wk'] = function(block) {
+  var value_executor = Blockly.Wollok.valueToCode(block, 'executor', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
+  var value_method = Blockly.Wollok.valueToCode(block, 'method', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
+  var value_params = Blockly.Wollok.statementToCode(block, 'params');
+  var value_statementParams = collectStatements(block,['executor_param_wk']);
+  var paramsMap = {'executor':value_executor,'method':value_method};
+  if(value_statementParams.length > 0){
+    paramsMap['params'] = value_statementParams[0].join(' , ');
+  }else{
+    paramsMap['params'] = '';
+  }
+
+  return Blockly.Blocks['executor_wk'].doActionWK(block,paramsMap);
 }
 
 
@@ -779,8 +823,8 @@ Blockly.Blocks['executor_param_wk'] = {
     this.appendValueInput("param")
         .setCheck("String");
     this.setInputsInline(true);
-    this.setNextStatement(true, 'executor_param_wk');
-    this.setPreviousStatement(true, 'executor_param_wk');
+    this.setNextStatement(true/*, 'executor_param_wk'*/);
+    this.setPreviousStatement(true/*, 'executor_param_wk'*/);
     this.setTooltip('');
     this.setColour('#cf9c11');
     
@@ -937,6 +981,45 @@ Blockly.Wollok['collission_wk'] = function(aBlock) {
 };
 
 
+//CONDITION STATEMEN
+//used for defining ticker events.
+Blockly.Blocks['condition_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/question_black.png", 35, 35, ""));
+    this.appendValueInput("condition");
+    this.setInputsInline(true);
+    this.appendStatementInput("instructionsPositive").setCheck('execution_wk').appendField(new Blockly.FieldImage("icons/conditionOK.png", 20, 20, ""));
+    this.appendStatementInput("instructionsNegative").setCheck('execution_wk').appendField(new Blockly.FieldImage("icons/conditionNOK.png", 20, 20, ""));
+    this.setPreviousStatement(true,'execution_wk');
+    this.setNextStatement(true,'execution_wk');
+    //this.setOutput(true);
+    this.setColour('#ebdb34');
+  },doActionWK:function(self, paramsMap){
+    if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
+
+    var value_condition = paramsMap['condition'];
+    var value_positive_case = paramsMap['positive'];
+    var value_negative_case = paramsMap['negative'];
+    var result = `if(`+value_condition+`){
+      `+value_positive_case+`
+    }`;
+    if(value_negative_case != undefined && value_negative_case != null && value_negative_case != ''){
+      result += `else{
+        `+value_negative_case+`
+      }`;
+    }
+    return result;
+  }
+};
+
+Blockly.Wollok['condition_wk'] = function(aBlock) {
+  var condition = Blockly.Wollok.valueToCode(aBlock, 'condition', Blockly.Wollok.ORDER_ATOMIC).replaceAll('\'','');
+  var instructionsPositive = Blockly.Wollok.statementToCode(aBlock, 'instructionsPositive');
+  var instructionsNegative = Blockly.Wollok.statementToCode(aBlock, 'instructionsNegative');
+  return Blockly.Blocks['condition_wk'].doActionWK(aBlock,{'condition':condition,'positive':instructionsPositive, 'negative':instructionsNegative});
+};
+
 //=============================================================================================================================================
 //=============================================================================================================================================
 //=============================================================================================================================================
@@ -1003,7 +1086,36 @@ function getKeyboardPicklist(){
 }
 
 
+function collectStatements(aBlock,acceptedBlockTypesList){
+  var nextBlock = aBlock.getNextBlock();
+  var childrenBlocks = aBlock.getChildren().filter(function(elem){
+    var typeMatches = acceptedBlockTypesList.includes(elem.type); 
+    return typeMatches && ( nextBlock == undefined || nextBlock == null || (elem.id != nextBlock.id)  );
+  });
+  var current;
+  var lst;
+  var res = [];
+  for(var i = 0; i < childrenBlocks.length; i++){
+    
+    current = childrenBlocks[i];
+    lst = [current];
+    while(current != null){
+      current = current.getNextBlock();
+      if(current != null && acceptedBlockTypesList.includes(current.type) ){
+        lst.push(current);
+      }  
+    }
+    res.push(lst);
+  
+  }
 
+  var result = [];
+  for(var i = 0; i < res.length; i++){
+    result.push(res[i].map(function(elem){return Blockly.Wollok[elem.type](elem); } ) );
+  }
+
+  return result;
+}
 
 
 function hasAncestorWithId(aBlock, anId){
