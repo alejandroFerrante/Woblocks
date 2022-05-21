@@ -93,17 +93,16 @@ function spaceInit(){
 
 	workspace.addChangeListener( onWorkspaceChange );
 	
-	//clickEventFunction = Blockly.Events.Click;
-	//Blockly.registry.unregister("event", "click"); 
-	//Blockly.registry.register("event", "click",
-    //function(a,b,c){ 
-    //	var funk = clickEventFunction.bind(this); 
-    //	funk(a,b,c); 
-    //	if(c == 'block' && (a.type == 'objetc_create' || definedObjectNames.includes(a.type) ) ){
-    //		updateMessagesFor(a);
-    //	}
-    //});
-
+	clickEventFunction = Blockly.Events.Click;
+	Blockly.registry.unregister("event", "click"); 
+	Blockly.registry.register("event", "click",
+    function(a,b,c){ 
+    	var funk = clickEventFunction.bind(this); 
+    	funk(a,b,c); 
+    	if(c == 'block' && (a.type == 'objetc_create_wk' || definedObjectNames.includes(a.type) ) ){
+    		updateMessagesFor(a);
+    	}
+    });
 
 	TryLoadSavedSCene();
 
@@ -111,43 +110,22 @@ function spaceInit(){
 }
 
 function updateMessagesFor(aBlock){
-	var objs = getAllParentlessObjects();
-	var iterateAll = true;
-	var existingMethods = [];
-	
-	//find object index
-	var found = false;
-	var index = 0;
-	while(index < objs.length){
-		if(objs[index].type == 'action_start' && objs[index].getNextBlock() != null && objs[index].getNextBlock().type == 'objetc_create'){
-			if( objs[index].getNextBlock().id == aBlock.id){
-				found = true;
-				break;
-			}
-		}else if( objs[index].id == aBlock.id ){
-			found = true;
-			break;
-		}
-		index++;
-	}
 
-	if(found){
-		for(var j = 0; ( (iterateAll && j < objs.length ) || (j < index)); j++){
-			if(j != index){
-				if(objs[j].type == 'action_start' && objs[j].getNextBlock() != null && objs[j].getNextBlock().type == 'method_create'){
-					existingMethods.push( Blockly.JavaScript.valueToCode(objs[j].getNextBlock(), 'name', Blockly.JavaScript.ORDER_ATOMIC).replaceAll('\'','') );
-				}else if(definedBehaviourNames.includes(objs[j].type)){
-					existingMethods.push(objs[j].type);
-				}
-			}
-		}
+	var x = null;
+	if(aBlock.type == 'objetc_create_wk'){
+		x = aBlock;
+	}else if( definedObjectNames.includes(aBlock.type) ){
+		x = aBlock.getDecompose(Blockly.mainWorkspace).getNextBlock();
+	}
+	if(x != null){
+
 		var msgs = [];
-		if(aBlock.type == 'objetc_create'){
-			msgs = Blockly.Blocks['objetc_create'].getMessagesOf(aBlock,existingMethods);
-		}else if(definedObjectNames.includes(aBlock.type)){
-			var decomposed = aBlock.getDecompose(Blockly.getMainWorkspace());
-			msgs = Blockly.Blocks['objetc_create'].getMessagesOf(decomposed.getNextBlock(),existingMethods);
-			decomposed.dispose();
+		var current = getBlockOfInputNamed(x,'properties');
+		while(current != null && current != undefined){
+			if(current.type == 'method_create_wk' ){
+				msgs.push(current.getFieldValue('name'));
+			}
+			current = current.getNextBlock();
 		}
 
 		var msgsStr = "MENSAJES:";
@@ -155,6 +133,10 @@ function updateMessagesFor(aBlock){
 			msgsStr += "\n"+msgs[i];
 		}
 		aBlock.setWarningText(msgsStr);
+
+		if( definedObjectNames.includes(aBlock.type) ){
+			x.dispose();
+		}
 	}
 }
 
@@ -481,7 +463,7 @@ function getSceneExecution(alertErrors){
 					var current = objs[i].getNextBlock();
 					while(current != undefined && current != null && current.type == 'executor'){
 
-						res = Blockly.JavaScript['executor'](current,partialMetaInfo);
+						res = Blockly.Wollok['executor'](current,partialMetaInfo);
 						//DETECT ERROR
 						if(typeof res === 'string'){
 							//console.log(res);
@@ -496,7 +478,7 @@ function getSceneExecution(alertErrors){
 					}
 
 			}else{
-				res = Blockly.JavaScript[ objs[i].type ](objs[i]);
+				res = Blockly.Wollok[ objs[i].type ](objs[i]);
 				if(typeof res === 'string'){
 					//console.log(res);
 					strsToEval.push(res);
