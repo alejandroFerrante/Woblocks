@@ -1,15 +1,12 @@
 var toolbox;
 var workspace
 var definedObjectNames;
-var definedBehaviourNames;
 var definedObjectXmlContent;
-var definedBehaviourXmlContent;
 var sceneXmlContent;
 var freeAreaXmlContent;
 var currentTab;
 var currentIndex;
 var definedObjectsMappingInfo;
-var definedBehavioursMappingInfo;
 var positionsMapping;
 
 var sceneErrorLog;
@@ -49,15 +46,12 @@ function buildSources(definitions,executions) {
 function spaceInit(){
 	sceneAlertErrors = false;//////////////////////////////
 	definedObjectNames = [];
-	definedBehaviourNames = [];
 	definedObjectXmlContent = [];
-	definedBehaviourXmlContent = [];
 	sceneXmlContent = [];
 	freeAreaXmlContent = [];
 	currentTab = 'Scene';
 	currentIndex = -1;
 	definedObjectsMappingInfo = [];
-	definedBehavioursMappingInfo = [];
 	wkImages = [];
 
 	var toolbox = document.getElementById("toolbox");
@@ -140,26 +134,13 @@ function updateMessagesFor(aBlock){
 	}
 }
 
-function getJSCodeForCurrentWorkspace(){
-	var generator = Blockly.JavaScript;
-	var content = document.getElementById('blocklyDiv');
-	//content.textContent = '';
-	var code = '';
-	if (checkAllGeneratorFunctionsDefined(generator)) {
-	    code = generator.workspaceToCode(workspace);
-	    //content.textContent = code;
-	}
-	return code;
-}
-
 function getWKCodeForCurrentWorkspace(){
 	var generator = Blockly.Wollok;
 	var content = document.getElementById('blocklyDiv');
-	//content.textContent = '';
+
 	var code = '';
 	if (checkAllGeneratorFunctionsDefined(generator)) {
 	    code = generator.workspaceToCode(workspace);
-	    //content.textContent = code;
 	}
 	return code;
 }
@@ -215,53 +196,20 @@ function mappinInfoComplete(aMappingInfo){
 }
 
 function ObjectsAndBehavioursAsBlocks(){
-	//var defaultIcon = 'icons/Circle.png';	
 	var paramsMappings;
-	//var valueMappings;
 	var params;
 
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
 		//if mapping complete
 		if(mappinInfoComplete(definedObjectsMappingInfo[i])){
 			paramsMappings = [];
-			//valueMappings = [];
 			params = [];
 			for (var key in definedObjectsMappingInfo[i].replacements) { 
-				/*
-				if(definedObjectsMappingInfo[i].replacements[key].type == 'value' || definedObjectsMappingInfo[i].replacements[key].type == 'param'){
-					params.push(''+key);
-					if(definedObjectsMappingInfo[i].replacements[key].type == 'value'){valueMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });}
-					if(definedObjectsMappingInfo[i].replacements[key].type == 'param'){paramsMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });}
-
-				}
-				*/
 				params.push(''+key);
 				paramsMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });
 			}
 			createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color,params,paramsMappings/*,valueMappings*/, definedObjectXmlContent[i].join(' </br> '),document.getElementById('mapping_show_names').checked, 'obj' );
-		}//else{ alert('La informacion provista es incompleta. Este objeto no se creará');}
-	}
-
-	for(var i = 0; i < definedBehaviourXmlContent.length; i++ ){
-		//if mapping complete
-		if(mappinInfoComplete(definedBehavioursMappingInfo[i])){
-			paramsMappings = [];
-			//valueMappings = [];
-			params = [];
-			for (var key in definedBehavioursMappingInfo[i].replacements) { 
-				/*
-				if(definedBehavioursMappingInfo[i].replacements[key].type == 'value' || definedBehavioursMappingInfo[i].replacements[key].type == 'param'){
-					params.push(''+key);
-					if(definedBehavioursMappingInfo[i].replacements[key].type == 'value'){valueMappings.push({k:''+key , v:definedBehavioursMappingInfo[i].replacements[key].val });}
-					if(definedBehavioursMappingInfo[i].replacements[key].type == 'param'){paramsMappings.push({k:''+key , v:definedBehavioursMappingInfo[i].replacements[key].val });}
-
-				}
-				*/
-				params.push(''+key);
-				paramsMappings.push({k:''+key , v:definedBehavioursMappingInfo[i].replacements[key].val });
-			}
-			createAliasXML(definedBehaviourNames[i],definedBehavioursMappingInfo[i].icon,document.getElementById('mapping_color_back').value,params,paramsMappings,/*valueMappings,*/ definedBehaviourXmlContent[i].join(' '),document.getElementById('mapping_show_names').checked,'bh' );
-		}else{ alert('La informacion provista es incompleta. Este comportamiento no se creará');}
+		}
 	}
 
 }
@@ -293,54 +241,19 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
 	}  	
   }
 
-
-  //for(var i = 0; i < paramsList.length; i++){
-  //  functionString += '  this.appendValueInput("'+paramsList[i]+'").setCheck(null);\n';
-  //}
-  
-
   if(type == 'obj'){functionString += '	this.setWarningText(\'MENSAJES:\');';}
   
 
   functionString += '   this.setTooltip(\'\' );\n';
-  //functionString += '   this.setMutator(new Blockly.Mutator(""));\n';
   functionString += '   this.setColour(\''+backColor+'\');';
   functionString += ' },\n';
   
-  //functionString += ' mutationToDom : function (workspace) {\n';
-  //functionString += '   var container = document.createElement(\'mutation\');\n';
-  //functionString += '   return container;\n';
-  //functionString += ' },\n';
-
-  
-  //functionString += ' domToMutation : function (xmlElement) {\n';
-  //functionString += '   this.updateShape_();\n';
-  //functionString += ' },\n';
-
   functionString += ' getDecompose : function (workspace) {\n';
   functionString += '   var innerXml = \'<xml> '+innerBlockXML+' </xml>\';\n';
   functionString += '   var newBlockId = Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(innerXml), workspace)[0];\n';
   functionString += '   workspace.getBlockById(newBlockId).initSvg();';
   functionString += '   return workspace.getBlockById(newBlockId);';
   functionString += ' },\n';
-
-  //functionString += ' decompose : function (workspace) {\n';
-  
-  //functionString += '   var containerBlock = workspace.newBlock(\'printer\');\n';////////////////////////////////////////////
-  //functionString += '   containerBlock.initSvg();';
-  //functionString += '   return containerBlock';
-  
-  //functionString += '   var innerXml = \'<xml> '+innerBlockXML+' </xml>\';\n';
-  //functionString += '   var newBlockId = Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(innerXml), workspace)[0];\n';
-  //functionString += '   workspace.getBlockById(newBlockId).initSvg();';
-  //functionString += '   return workspace.getBlockById(newBlockId);';
-  
-
-  //functionString += ' },\n';
-
-  //functionString += ' compose : function(containerBlock) {\n';
-  //functionString += '   this.updateShape_();\n';
-  //functionString += ' },\n';
 
   functionString += ' saveConnections : function(containerBlock) {},\n';
 
@@ -358,17 +271,14 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   functionString += '};';
 
   eval(functionString);
-  //DEFINE JS BEHAVIOUR
+  
+
+  //DEFINE WK BEHAVIOUR
   functionString = '';
 
   functionString += 'Blockly.JavaScript[\''+aliasBlockName+'\'] = function(block) {\n';
-  //functionString += '  var decomposed = block.decompose(Blockly.getMainWorkspace());\n';
   functionString += '  var decomposed = block.getDecompose(Blockly.getMainWorkspace());\n';
   functionString += '  var replacements = [';
-  //for(var i = 0; i < constantReplacements.length; i++){
-  //  if(i > 0){functionString += ',';}
-  //  functionString += '{ k:\''+constantReplacements[i].k+'\' , v: '+constantReplacements[i].v+'}';
-  //}
   functionString +='];\n';
   for(var i = 0; i < paramsReplacements.length; i++){
     functionString += '   replacements.push({k:\''+paramsReplacements[i].k+'\' , v: Blockly.JavaScript.valueToCode(block, \''+paramsReplacements[i].v+'\', Blockly.JavaScript.ORDER_ATOMIC) });\n';
@@ -400,7 +310,7 @@ function getAllParentlessObjects(){
 			result.push(blocks[i]);
 		}
 	}
-	//TODO ORDER BY block.getRelativeToSurfaceXY().y
+	
 	result = result.sort(function(a,b){
 		return a.getRelativeToSurfaceXY().y - b.getRelativeToSurfaceXY().y
 	});
@@ -451,11 +361,6 @@ function getSceneExecution(alertErrors){
 									partialMetaInfo.objects.push(metaInfo.obj);
 								}
 
-							}else if(definedBehaviourNames.includes(objs[j].type)){
-								metaInfo = Blockly.Blocks[objs[j].type].getMetaInfo(objs[j]);
-								if(metaInfo.method.name != null && metaInfo.method.paramsAmount != null){
-									partialMetaInfo.methods[metaInfo.method.name] = metaInfo.method.paramsAmount;
-								}
 							}
 						}
 					}
@@ -466,7 +371,6 @@ function getSceneExecution(alertErrors){
 						res = Blockly.Wollok['executor'](current,partialMetaInfo);
 						//DETECT ERROR
 						if(typeof res === 'string'){
-							//console.log(res);
 							strsToEval.push(res);
 						}else{
 							break;
@@ -480,7 +384,6 @@ function getSceneExecution(alertErrors){
 			}else{
 				res = Blockly.Wollok[ objs[i].type ](objs[i]);
 				if(typeof res === 'string'){
-					//console.log(res);
 					strsToEval.push(res);
 				}
 			}
@@ -516,7 +419,7 @@ function doPlaySceneWK(alertErrors){
 
 	var sceneText = getSceneCodeAsWKString('\n');
 	if(sceneErrorsFound){
-		///
+		
 	}else{
 		document.getElementById('playScenebutton').style.display = 'none';
 		document.getElementById('resetScenebutton').style.display = 'block';
@@ -574,11 +477,6 @@ function getSceneCodeAsString(){
 								partialMetaInfo.objects.push(metaInfo.obj);
 							}
 
-						}else if(definedBehaviourNames.includes(objs[j].type)){
-							metaInfo = Blockly.Blocks[objs[j].type].getMetaInfo(objs[j]);
-							if(metaInfo.method.name != null && metaInfo.method.paramsAmount != null){
-								partialMetaInfo.methods[metaInfo.method.name] = metaInfo.method.paramsAmount;
-							}
 						}
 					}
 
@@ -623,7 +521,7 @@ function getSceneCodeAsWKString(newlineSeparator){
 	sceneErrorsFound = false;
 	sceneErrorLog = '';
 	sceneSteps = [];
-	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk','keyboard_event_wk','tick_event_wk','collission_wk'];
+	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk','keyboard_event_wk','tick_event_wk','collission_wk','condition_wk'];
 
 	for(var i = 0; i < objs.length && !sceneErrorsFound; i++){
 		if(Blockly.Wollok[ objs[i].type ] != undefined){
@@ -672,12 +570,10 @@ function getSceneCodeAsWKString(newlineSeparator){
 function saveCurrentXMLScene(){
 	saveCurrentContent();	
 	for(var i = 0; i < sceneXmlContent.length; i++ ){
-		//sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
 		sceneXmlContent[i] = sceneXmlContent[i];
 	}
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
 		for(var j = 0; j < definedObjectXmlContent[i].length; j++ ){
-			//definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
 			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j];
 		}
 	}
@@ -715,12 +611,10 @@ function positionScenObjectsWith(aPositionsMap){//must be in scene tab!!!
 function getSceneAsJSON(){
 	saveCurrentContent();	
 	for(var i = 0; i < sceneXmlContent.length; i++ ){
-		//sceneXmlContent[i] = sceneXmlContent[i].replace(/ id="[^"]*"/g, "");
 		sceneXmlContent[i] = sceneXmlContent[i];
 	}
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
 		for(var j = 0; j < definedObjectXmlContent[i].length; j++ ){
-			//definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j].replace(/ id="[^"]*"/g, "");
 			definedObjectXmlContent[i][j] = definedObjectXmlContent[i][j];
 		}
 	}

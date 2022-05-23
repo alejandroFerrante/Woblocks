@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
   <meta name="google" value="notranslate">
   <title>Blockly Demo:</title>
   
@@ -14,6 +13,8 @@
   
   <script>var process = {};</script>
   <script src="node_modules/wollok-game-web/dist/index.js"></script>
+
+  <script src="pallettes.js"></script>
 
   <script src="representations.js"></script>
   <script src="woblockSpace.js"></script>
@@ -82,7 +83,7 @@
 
 <body>
 
-<!-- TABS -->
+<!-- TITLE -->
 	<table>
 		<tr>
 			<td style="padding-left:50px;padding-right:550px"><h1 style="font-size: 120px;" class="customFont">WOBLOCKS</h1></td>
@@ -96,13 +97,14 @@
 		</tr>
 	</table>
 
+<!-- TABS -->
 	<table id="tabsTable">
 		<tr>
 			<td><button id="sceneTab" class="tabButton customFont" onclick="ontabClick('Scene',-1)" ><b>Escena</b></button></td>
-			<td><button id="freeAreaTab" class="tabButton customFont" onclick="ontabClick('FreeArea',-1)" style="display:none">Area Libre</button></td>
 		</tr>
-		<tr><td><button onclick="showNewTabObjectModal()" class="customFont">+</button></td><td class="customFont" >Objetos</td></tr>
-		<!-- <tr><td><button onclick="showNewTabBehaviourModal()" class="customFont">+</button></td><td class="customFont" >Comportamientos</td></tr> -->
+		<tr>
+			<td><button onclick="showNewTabObjectModal()" class="customFont">+</button></td><td class="customFont" >Objetos</td>
+		</tr>
 	</table>
 
 <!-- MAIN CONTAINER -->
@@ -187,7 +189,7 @@
 	    	<tr>
 			    <td><button onclick="closeModal()" class="customFont" style="background-color:#b08a7f">cerrar</button></td>
 				<td id="createNewTabObjectButton"><button onclick="createNewTabObject()" style="background-color:#5bba86" class="customFont">crear</button></td>
-				<td id="createNewTabBehaviourButton"><button onclick="createNewTabBehaviour()" class="customFont" style="background-color:#5bba86">crear</button></td>
+				></td>
 	 		</tr>
 	 	</table>
 	 </div>
@@ -198,115 +200,9 @@
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
 
     <category name="ATOMICS" toolboxitemid="atomics">
-
-      <block type="logic_boolean" >
-        <field name="BOOL">TRUE</field>
-      </block>
-      
-      <block type="math_number" >
-        <field name="NUM">123</field>
-      </block>
-      
-      <block type="text" >
-        <field name="TEXT"></field>
-      </block>
-      
-      <block type="lists_create_with" >
-        <mutation items="0"></mutation>
-      </block>
-
-      <block type="lists_create_with">
-        <mutation items="1"></mutation>
-        <value name="ADD0">
-          <block type="text">
-            <field name="TEXT"></field>
-          </block>
-        </value>
-      </block>
-
     </category>
 
     <category name="CREATION">
-          
-	  <block type="action_start" >
-	  </block>
-
-	  <block type="action_start">
-	    <next>
-	      <block type="objetc_create">
-	        <value name="objName">
-	          <block type="text">
-	            <field name="TEXT">anObjectName</field>
-	          </block>
-	        </value>
-	        <statement name="properties">
-	          <block type="objetc_property">
-	            <value name="name">
-	              <block type="text">
-	                <field name="TEXT">aPropertyName</field>
-	              </block>
-	            </value>
-	            <value name="value">
-	              <block type="text">
-	                <field name="TEXT">aPropertyValue</field>
-	              </block>
-	            </value>
-	          </block>
-	        </statement>
-	      </block>
-	    </next>
-	  </block>
-
-      <block type="objetc_property">
-        <value name="name">
-          <block type="text">
-            <field name="TEXT">aPropertyName</field>
-          </block>
-        </value>
-        <value name="value">
-          <block type="text">
-            <field name="TEXT">aPropertyValue</field>
-          </block>
-        </value>
-      </block>
- 
-	 <block type="action_start">
-	    <next>
-	      <block type="method_create">
-	        <value name="name">
-	          <block type="text">
-	            <field name="TEXT">aMethodName</field>
-	          </block>	
-	        </value>
-	        <value name="params">
-	          <block type="lists_create_with">
-	            <mutation items="0"></mutation>
-	          </block>
-	        </value>
-	        <statement name="instructions">
-	          <block type="method_instruction">
-	            <value name="instruction">
-	              <block type="text">
-	                <field name="TEXT">anInstruction</field>
-	              </block>
-	            </value>
-	          </block>
-	        </statement>
-	      </block>
-	    </next>
-	  </block>
-
-      <block type="method_instruction">
-        <value name="instruction">
-          <block type="text">
-            <field name="TEXT">anInstruction</field>
-          </block>
-        </value>
-      </block>
-
-      </category>
-
-    <category name="CUSTOM" toolboxitemid="custom" >
     </category>
 
   </xml>
@@ -320,6 +216,7 @@
   		spaceInit();
 	};
 
+	//Show Code button logic
 	$( "#code_generate" ).click(function() {
 
 		if(document.getElementById('code_container').style.display == 'none'){
@@ -338,58 +235,20 @@
 	function fillCodeSection(){
 		var strCode = getSceneCodeAsWKString('<br/>');
 		if(currentTab == 'Scene'){
-			//$('#code_container')[0].innerHTML = buildSources(strCode.definitions,strCode.executions)[0].content.replaceAll('\n','<br/>');
 			var sceneCode = getSceneCodeAsWKString('\n');
 			var unformatedSceneText = buildSources(sceneCode.definitions,sceneCode.executions)[0].content;
 			document.getElementById('code_container').innerHTML = doFormat(unformatedSceneText,'\n');
 		}
 
 		if(currentTab == 'Object'){
-			//$('#code_container')[0].innerHTML = strCode.executions.join('<br/>').replaceAll('\n','<br/>')+'<br/>'+strCode.definitions.join('<br/>').replaceAll('\n','<br/>');
 			var sceneCode = getSceneCodeAsWKString('\n').definitions[0];
 			document.getElementById('code_container').innerHTML = doFormat(sceneCode,'\n');
 		}
 	}
 
 	function onWorkspaceChange( event){
-		//console.log(event.type);
-		
 
-		if( localSwitch && currentTab == 'Scene'  && event.type == Blockly.Events.BUBBLE_OPEN){
-			var objs = getAllParentlessObjects();
-			for(var i = 0; i < objs.length; i++){
-				
-				/*
-				if(objs[i].type == 'action_start' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock().type == 'objetc_create' ){
-					objs[i].getNextBlock().setWarningText( 'MENSAJES\n'+(getAllMessagesOf(objs[i].getNextBlock()) ).join('\n')  );
-				}else if( definedObjectNames.includes(objs[i].type)){
-					localSwitch = false;
-					var decomposed = objs[i].getDecompose(workspace); 
-					decomposed.moveTo(objs[i].getRelativeToSurfaceXY());
-					if(decomposed.type == 'action_start' && decomposed.getNextBlock() != undefined && decomposed.getNextBlock().type == 'objetc_create'){
-						objs[i].setWarningText( 'MENSAJES\n'+(getAllMessagesOf(decomposed.getNextBlock()) ).join('\n')  );
-					}
-					decomposed.dispose();
-					localSwitch = true;
-				}
-				*/
-				if(objs[i].type == 'action_start_wk' && objs[i].getNextBlock() != undefined && objs[i].getNextBlock().type == 'objetc_create_wk' ){
-					objs[i].getNextBlock().setWarningText( 'MENSAJES\n'+( Blockly.Blocks['objetc_create_wk'].messagesOf(objs[i].getNextBlock()) ).join('\n')  );
-				}else if( definedObjectNames.includes(objs[i].type)){
-					localSwitch = false;
-					var decomposed = objs[i].getDecompose(workspace); 
-					decomposed.moveTo(objs[i].getRelativeToSurfaceXY());
-					if(decomposed.type == 'action_start_wk' && decomposed.getNextBlock() != undefined && decomposed.getNextBlock().type == 'objetc_create_wk'){
-						objs[i].setWarningText( 'MENSAJES\n'+( Blockly.Blocks['objetc_create_wk'].messagesOf(decomposed.getNextBlock()) ).join('\n')  );
-					}
-					decomposed.dispose();
-					localSwitch = true;
-				}
-
-			}	
-		}
-		
-		if((currentTab == 'Object' || currentTab == 'Behaviour') && (event.type == Blockly.Events.BLOCK_CHANGE  || event.type == Blockly.Events.BLOCK_CREATE || event.type == Blockly.Events.BLOCK_DRAG/*|| event.type == Blockly.Events.BLOCK_MOVE*/)){
+		if(currentTab == 'Object' && (event.type == Blockly.Events.BLOCK_CHANGE  || event.type == Blockly.Events.BLOCK_CREATE || event.type == Blockly.Events.BLOCK_DRAG)){
 				fillObjectOrBehaviourMappingSection();	
 		}
 
@@ -397,7 +256,7 @@
 	
 	function ontabClick(newTab,newIndex){
 		
-		if(newTab == 'Scene' || newTab == 'FreeArea' || ( (newTab == 'Object' || newTab == 'Behaviour') && ( newIndex != currentIndex || newTab != currentTab) ) ){
+		if(newTab == 'Scene' || ( newTab == 'Object'  && ( newIndex != currentIndex || newTab != currentTab) ) ){
 			
 			//close toolbox
 			workspace.getToolbox().autoHide();
@@ -409,7 +268,6 @@
 			var newToolboxXml = '<category></category>';
 			if(newTab == 'Scene' || newTab == 'FreeArea'){ObjectsAndBehavioursAsBlocks();newToolboxXml = getMainToolboxXmlString();}
 			if(newTab == 'Object'){newToolboxXml = getObjectToolboxXmlString();}
-			if(newTab == 'Behaviour'){newToolboxXml = getBehaviourToolboxXmlString();}
 			loadWorkspaceConent(newToolboxXml);
 
 			//load new content
@@ -423,21 +281,14 @@
 				document.getElementById('loadSection').style.display = 'block';
 				document.getElementById('saveSection').style.display = 'block';
 			}
-			if(newTab == 'FreeArea' && freeAreaXmlContent != undefined && freeAreaXmlContent != null){
-				newContent = freeAreaXmlContent;
-				document.getElementById('mappingSection').style.display = 'none';
-				document.getElementById('sceneDiv').style.display = 'block';
-			}
 			if(newTab == 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				newContent = definedObjectXmlContent[newIndex];
 				document.getElementById('mapping_color_back').value = definedObjectsMappingInfo[newIndex].color;
 				document.getElementById('loadSection').style.display = 'none';
 				document.getElementById('saveSection').style.display = 'none';
 			}
-			if(newTab == 'Behaviour' && newIndex >= 0 && newIndex < definedBehaviourXmlContent.length){
-				newContent = definedBehaviourXmlContent[newIndex];
-				document.getElementById('mapping_color_back').value = definedBehavioursMappingInfo[newIndex].color; 
-			}
+
+			//inject content
 			if(newContent != null && newContent != undefined && newContent.length > 0){
 				injectXmlToWorkspace(newContent);				
 			}
@@ -449,10 +300,6 @@
 			currentIndex = newIndex;
 			selectCurrentTab();
 			if(newTab == 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
-				fillObjectOrBehaviourMappingSection();
-				document.getElementById('mappingSection').style.display = 'block';
-			}
-			if(newTab == 'Behaviour' && newIndex >= 0 && newIndex < definedBehaviourXmlContent.length){
 				fillObjectOrBehaviourMappingSection();
 				document.getElementById('mappingSection').style.display = 'block';
 			}
@@ -468,17 +315,14 @@
 
 	function selectCurrentTab(){
 		if(currentTab == 'Scene'){document.getElementById('sceneTab').innerHTML = '<b>Escena</b>';}
-		if(currentTab == 'FreeArea'){document.getElementById('freeAreaTab').innerHTML = '<b>Area Libre</b>';}
 		if(currentTab == 'Object'){document.getElementById('objectButton_'+currentIndex).innerHTML = '<b>'+definedObjectNames[currentIndex]+'</b>';}
-		if(currentTab == 'Behaviour'){document.getElementById('behaviourButton_'+currentIndex).innerHTML = '<b>'+definedBehaviourNames[currentIndex]+'</b>';}
 	}
 
 	function redrawTabs(){
 		var innerHtml = '';
 		innerHtml += '<tr>';
-		innerHtml += '<tr><td><button id="sceneTab" class="tabButton customFont" onclick="ontabClick(\'Scene\',-1)" >Escena</button></td><td><button id="freeAreaTab" class="tabButton customFont" onclick="ontabClick(\'FreeArea\',-1)" style="display:none" >Area Libre</button></td></tr>';
+		innerHtml += '<tr><td><button id="sceneTab" class="tabButton customFont" onclick="ontabClick(\'Scene\',-1)" >Escena</button></td></tr>';
 		innerHtml += '</tr>';
-
 
 		innerHtml += '<tr>';
 		innerHtml += '<td><button onclick="showNewTabObjectModal()">+</button></td><td class="customFont customFont">Objetos</td>';
@@ -487,14 +331,6 @@
 		}
 		innerHtml += '</tr>';
 
-/*
-		innerHtml += '<tr>';
-		innerHtml += '<tr><td><button onclick="showNewTabBehaviourModal()">+</button></td><td class="customFont">Comportamientos</td>';
-		for(var i = 0;i < definedBehaviourNames.length; i++){
-			innerHtml += '<td><button id="behaviourButton_'+i+'" class="customFont" onclick="ontabClick(\'Behaviour\','+i+')">'+definedBehaviourNames[i]+'</button><button onclick="removeBehaviourWithIndex('+i+')" >x</button></td>';
-		}
-		innerHtml += '</tr>';
-*/
 		$('#tabsTable')[0].innerHTML = innerHtml;
 	}
 
@@ -515,21 +351,6 @@
 		}
 	}
 
-	function removeBehaviourWithIndex(anIndex){
-		definedBehaviourXmlContent.splice(anIndex, 1);
-		definedBehaviourNames.splice(anIndex, 1);
-		definedBehavioursMappingInfo.splice(anIndex, 1);
-		if(definedBehaviourXmlContent.length > 0){
-			if(anIndex == 0){
-				ontabClick('Behaviour',0);
-			}else{
-				ontabClick('Behaviour',anIndex-1);
-			}
-		}else{
-			ontabClick('FreeArea',-1);
-		}
-	}
-
 	function closeModal(){
 		document.getElementById("box").style.display = "none";
 	}
@@ -539,15 +360,6 @@
 		document.getElementById("modalTitle").innerHTML = "Nuevo Objeto";
 		document.getElementById("box").style.display = "block";	
 		document.getElementById("createNewTabObjectButton").style.display = "block";
-		document.getElementById("createNewTabBehaviourButton").style.display = "none";
-	}
-
-	function showNewTabBehaviourModal(){
-		workspace.getToolbox().autoHide();
-		document.getElementById("modalTitle").innerHTML = "Nuevo Comportamiento";
-		document.getElementById("box").style.display = "block";	
-		document.getElementById("createNewTabObjectButton").style.display = "none";
-		document.getElementById("createNewTabBehaviourButton").style.display = "block";
 	}
 
 	function createNewTabObject(SAVE_MODE){
@@ -555,7 +367,7 @@
 		proposedName = removeInitialNumbers(proposedName);
 
 		if(proposedName != undefined && proposedName != null && proposedName != ''){
-			if(definedObjectNames.includes(proposedName) ||  definedBehaviourNames.includes(proposedName)){
+			if(definedObjectNames.includes(proposedName) ){
 				alert('Este nombre ya esta siendo utilizado');
 			}else{
 				saveCurrentContent();
@@ -570,7 +382,6 @@
 				}			
 				definedObjectNames.push(proposedName);
 				definedObjectXmlContent.push(content_tmp);
-				//definedObjectsMappingInfo.push({valuesMapping:[],paramsMapping:[],params:[]});
 				definedObjectsMappingInfo.push({icon:null,replacements:{}});
 
 				workspace.clear();
@@ -596,57 +407,12 @@
 		}
 	}
 
-	function createNewTabBehaviour(SAVE_MODE){
-		var proposedName = $('#newGlobalName').val().replaceAll(/[^A-Za-z0-9]/g, '');
-		proposedName = removeInitialNumbers(proposedName);
-		if(proposedName != undefined && proposedName != null && proposedName != ''){
-			if(definedObjectNames.includes(proposedName) ||  definedBehaviourNames.includes(proposedName)){
-				alert('Este nombre ya esta siendo utilizado');
-			}else{
-				saveCurrentContent();
-
-				var content_tmp = [];
-				if(SAVE_MODE == 'SAVE_WORKSPACE'){//SAVE CURRENT WORKSPACE AS TAB
-					var xmlSerializer = new XMLSerializer();
-					var contentList = getWorkspaceXmlContentAsList();
-					for(var i = 0; i < contentList.length; i++){
-						content_tmp.push(xmlSerializer.serializeToString(contentList[i]));
-					}
-				}			
-				definedBehaviourNames.push(proposedName);
-				definedBehaviourXmlContent.push(content_tmp);
-				//definedBehavioursMappingInfo.push({valuesMapping:[],paramsMapping:[],params:[]});
-				definedBehavioursMappingInfo.push({icon:null,replacements:{}});
-
-				workspace.clear();
-				if(SAVE_MODE != 'SAVE_WORKSPACE'){
-					
-					Blockly.Xml.appendDomToWorkspace(jQuery.parseXML(getDefaultMethodXmlNamed(proposedName)),workspace);
-				}
-				redrawTabs();
-
-				currentTab = 'Behaviour';
-				currentIndex = definedBehaviourXmlContent.length - 1;
-				document.getElementById('mapping_color_back').value = '#ffffffff';
-				selectCurrentTab();
-				loadWorkspaceConent(getBehaviourToolboxXmlString());
-			}
-			$('#newGlobalName').val('');
-			document.getElementById("box").style.display = "none";
-			fillObjectOrBehaviourMappingSection();
-			document.getElementById('mappingSection').style.display = 'block';
-			document.getElementById('sceneDiv').style.display = 'none';
-			workspace.getToolbox().clearSelection();
-		}
-	}
-
 	function saveCurrentContent(){
-		if( currentTab == 'Scene' || currentTab == 'FreeArea' ||( (currentTab == 'Object' || currentTab == 'Behaviour') && currentIndex != -1 ) ){ 
+		if( currentTab == 'Scene' ||( currentTab == 'Object' && currentIndex != -1 ) ){ 
 			var xmlContentList = null;
 			if(currentTab == 'Object'){xmlContentList = definedObjectXmlContent;}
-			if(currentTab == 'Behaviour'){xmlContentList = definedBehaviourXmlContent;}
 			if(currentTab == 'Scene'){xmlContentList = sceneXmlContent;}
-			if(currentTab == 'FreeArea'){xmlContentList = freeAreaXmlContent;}
+			
 			if(xmlContentList != undefined && xmlContentList != null){
 				var xmlSerializer = new XMLSerializer();
 				var contentList = getWorkspaceXmlContentAsList();
@@ -681,22 +447,6 @@
 							replacementParam = document.getElementById('replacementName__'+i);
 						}
 					}
-					if(currentTab == 'Behaviour'){
-						definedBehavioursMappingInfo[currentIndex] = {};
-						definedBehavioursMappingInfo[currentIndex].icon = 'icons/representations/'+document.getElementById('icons').value;
-						definedBehavioursMappingInfo[currentIndex].replacements = {};
-						definedBehavioursMappingInfo[currentIndex].color = document.getElementById('mapping_color_back').value;
-						
-						replacementValue = document.getElementById('mappingInput_'+i);
-						replacementParam = document.getElementById('replacementName__'+i);
-						while(maxIterations > 0 && replacementValue != undefined){
-							definedBehavioursMappingInfo[currentIndex].replacements[replacementParam.innerHTML] = {val:replacementValue.value};
-							maxIterations--;
-							i++;
-							replacementValue = document.getElementById('mappingInput_'+i);
-							replacementParam = document.getElementById('replacementName__'+i);
-						}
-					}
 				}
 			}
 		}
@@ -725,13 +475,6 @@
 			picklistValue = picklistValue[picklistValue.length - 1];
 			$('#icons').val(picklistValue);
 		}
-		if(currentTab == 'Behaviour' && definedBehavioursMappingInfo[currentIndex].icon != undefined && definedBehavioursMappingInfo[currentIndex].icon != null){
-			document.getElementById('selectedIcon').src = definedBehavioursMappingInfo[currentIndex].icon;
-			var picklistValue = definedBehavioursMappingInfo[currentIndex].icon;
-			picklistValue = picklistValue.split('/');
-			picklistValue = picklistValue[picklistValue.length - 1];
-			$('#icons').val(picklistValue);
-		}
 
 		//FREE PARAMS
 		var freeParams = getAllUnasignedValuesFrom(getWKCodeForCurrentWorkspace() );
@@ -740,9 +483,6 @@
 			document.getElementById('mapping_show_names_section').style.display = 'block';
 			if(currentTab == 'Object'){
 				mappingInfo = definedObjectsMappingInfo[currentIndex];
-			}
-			if(currentTab == 'Behaviour'){
-				mappingInfo = definedBehavioursMappingInfo[currentIndex];
 			}
 			//remove mapping info that no longer exist
 			for (var key in mappingInfo.replacements) {
@@ -758,19 +498,11 @@
 				if(mappingInfo.replacements[freeParams[i]] != undefined){
 					strHtml += '<div>';
 					strHtml += '		<label id="replacementName__'+i+'">'+freeParams[i]+'</label>';
-					//strHtml += '		<select id="mappingInputType_'+i+'" value="'+mappingInfo.replacements[freeParams[i]].type+'" >';
-					//strHtml += '			<option value="value">valor</option>';
-					//strHtml += '			<option value="param">parametro</option>';
-					//strHtml += '		</select>';
 					strHtml += '		<input id="mappingInput_'+i+'" value="'+mappingInfo.replacements[freeParams[i]].val+'" >';
 					strHtml += '</div>';
 				}else{
 					strHtml += '<div>';
 					strHtml += '		<label id="replacementName__'+i+'">'+freeParams[i]+'</label>';
-					//strHtml += '		<select id="mappingInputType_'+i+'" value="value" >';
-					//strHtml += '			<option value="value">valor</option>';
-					//strHtml += '			<option value="param">parametro</option>';
-					//strHtml += '		</select>';
 					strHtml += '		<input id="mappingInput_'+i+'" value="" >';
 					strHtml += '</div>';
 				}
@@ -782,9 +514,6 @@
 			//clear mappin info
 			if(currentTab == 'Object'){
 				definedObjectsMappingInfo[currentIndex].replacements = {};
-			}
-			if(currentTab == 'Behaviour'){
-				definedBehavioursMappingInfo[currentIndex].replacements = {};
 			}
 			document.getElementById('mappingInfoSection').innerHTML = '';
 		}
@@ -873,64 +602,6 @@
 		return defaultXml;
 	}
 
-	function getDefaultObjectXmlNamed(proposedName){
-		var defaultXml = '  <block deletable="false" type="action_start">';
-			defaultXml +='		<next>';
-			defaultXml +='			<block deletable="false" type="objetc_create" >';
-			defaultXml +='				<value name="objName">';
-			defaultXml +='					<block editable="false" type="text">';
-			defaultXml +='						<field name="TEXT">'+proposedName+'</field>';
-			defaultXml +='					</block>';
-			defaultXml +='				</value>';
-			defaultXml +='				<statement name="properties">';
-			defaultXml +='					<block type="objetc_property">';
-			defaultXml +='						<value name="name">';
-			defaultXml +='							<block type="text">';
-			defaultXml +='								<field name="TEXT">aPropertyName</field>';
-			defaultXml +='							</block>';
-			defaultXml +='						</value>';
-			defaultXml +='						<value name="value">';
-			defaultXml +='							<block type="text">';
-			defaultXml +='								<field name="TEXT">aPropertyValue</field>';
-			defaultXml +='							</block>';
-			defaultXml +='						</value>';
-			defaultXml +='					</block>';
-			defaultXml +='				</statement>';
-			defaultXml +='			</block>';
-			defaultXml +='		</next>';
-			defaultXml +='	</block>';
-		return defaultXml;
-	}
-
-	function getDefaultMethodXmlNamed(proposedName){
-		var defaultXml ='<block type="action_start">';
-		  defaultXml += '  <next>';
-		  defaultXml += '    <block type="method_create">';
-		  defaultXml += '      <value name="name">';
-		  defaultXml += '        <block editable="false" type="text">';
-		  defaultXml += '          <field name="TEXT">'+proposedName+'</field>';
-		  defaultXml += '        </block>';
-		  defaultXml += '      </value>';
-		  defaultXml += '      <value name="params">';
-		  defaultXml += '        <block type="lists_create_with">';
-		  defaultXml += '          <mutation items="0"></mutation>';
-		  defaultXml += '        </block>';
-		  defaultXml += '      </value>';
-		  defaultXml += '      <statement name="instructions">';
-		  defaultXml += '        <block type="method_instruction">';
-		  defaultXml += '          <value name="instruction">';
-		  defaultXml += '            <block type="text">';
-		  defaultXml += '              <field name="TEXT">anInstruction</field>';
-		  defaultXml += '            </block>';
-		  defaultXml += '          </value>';
-		  defaultXml += '        </block>';
-		  defaultXml += '      </statement>';
-		  defaultXml += '    </block>';
-		  defaultXml += '  </next>';
-		  defaultXml += '</block>';
-		  return defaultXml;
-	}
-
 	function getMainToolboxXmlString(){
 		var xmlStr = '';
 		xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">';
@@ -965,104 +636,7 @@
 
 
 		xmlStr += '		    </category>';
-		/*
-		xmlStr += '		    <category name="CREACION">';
-		xmlStr += '			  <block type="action_start" >';
-		xmlStr += '			  </block>';
-		xmlStr += '			  <block type="action_start">';
-		xmlStr += '			    <next>';
-		xmlStr += '			      <block type="objetc_create">';
-		xmlStr += '			        <value name="objName">';
-		xmlStr += '			          <block type="text">';
-		xmlStr += '			            <field name="TEXT">anObjectName</field>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </value>';
-		xmlStr += '			        <statement name="properties">';
-		xmlStr += '			          <block type="objetc_property">';
-		xmlStr += '			            <value name="name">';
-		xmlStr += '			              <block type="text">';
-		xmlStr += '			                <field name="TEXT">aPropertyName</field>';
-		xmlStr += '			              </block>';
-		xmlStr += '			            </value>';
-		xmlStr += '			            <value name="value">';
-		xmlStr += '			              <block type="text">';
-		xmlStr += '			                <field name="TEXT">aPropertyValue</field>';
-		xmlStr += '			              </block>';
-		xmlStr += '			            </value>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </statement>';
-		xmlStr += '			      </block>';
-		xmlStr += '			    </next>';
-		xmlStr += '			  </block>';
-		xmlStr += '		      <block type="objetc_property">';
-		xmlStr += '		        <value name="name">';
-		xmlStr += '		          <block type="text">';
-		xmlStr += '		            <field name="TEXT">aPropertyName</field>';
-		xmlStr += '		          </block>';
-		xmlStr += '		        </value>';
-		xmlStr += '		        <value name="value">';
-		xmlStr += '		          <block type="text">';
-		xmlStr += '		            <field name="TEXT">aPropertyValue</field>';
-		xmlStr += '		          </block>';
-		xmlStr += '		        </value>';
-		xmlStr += '		      </block>';
-		xmlStr += '			 <block type="action_start">';
-		xmlStr += '			    <next>';
-		xmlStr += '			      <block type="method_create">';
-		xmlStr += '			        <value name="name">';
-		xmlStr += '			          <block type="text">';
-		xmlStr += '			            <field name="TEXT">aMethodName</field>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </value>';
-		xmlStr += '			        <value name="params">';
-		xmlStr += '			          <block type="lists_create_with">';
-		xmlStr += '			            <mutation items="0"></mutation>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </value>';
-		xmlStr += '			        <statement name="instructions">';
-		xmlStr += '			          <block type="method_instruction">';
-		xmlStr += '			            <value name="instruction">';
-		xmlStr += '			              <block type="text">';
-		xmlStr += '			                <field name="TEXT">anInstruction</field>';
-		xmlStr += '			              </block>';
-		xmlStr += '			            </value>';
-		xmlStr += '			          </block>';
-		xmlStr += '			        </statement>';
-		xmlStr += '			      </block>';
-		xmlStr += '			    </next>';
-		xmlStr += '			  </block>';
-		xmlStr += '		      <block type="method_instruction">';
-		xmlStr += '		        <value name="instruction">';
-		xmlStr += '		          <block type="text">';
-		xmlStr += '		            <field name="TEXT">anInstruction</field>';
-		xmlStr += '		          </block>';
-		xmlStr += '		        </value>';
-		xmlStr += '		      </block>';
-		xmlStr += '		      </category>';
-		xmlStr += '		    <category name="EJECUCION">';
-		xmlStr += '			  <block type="action_start">';
-		xmlStr += '		      </block>';
-		xmlStr += '  		  <block deletable="false" type="action_start">';
-		xmlStr += '			  	<next>';
-		xmlStr += '		      		<block type="executor" >';		
-		xmlStr += '		      			<value name="executor">';
-		xmlStr += '		        			<block type="text"><field name="TEXT">anObj</field></block>';
-		xmlStr += '		        		</value>';
-		xmlStr += '		      			<value name="method">';
-		xmlStr += '		        			<block type="text"><field name="TEXT">aMethod</field></block>';
-		xmlStr += '		        		</value>';
-		xmlStr += '		        	<statement name="params"><block type="executor_param"><value name="param">';
-		xmlStr += ' 					<block type="text"><field name="TEXT">aParam</field></block>';
-		xmlStr += '		      			</value></block></statement>';
-		xmlStr += '		      			</block>';
-		xmlStr += '			  	</next>';
-		xmlStr += '		      </block>';
-		xmlStr += '			  <block type="executor_param"><value name="param">';
-		xmlStr += '		      	<block type="text"><field name="TEXT">aParam</field></block>';
-		xmlStr += '			  </value></block">'
-		xmlStr += '		      </category>';
 
-		*/
 		//////////////////// W O L L O K ///////////////////////////////////////////
 		xmlStr += '		    <category name="WK DEFINICIONES">';
 
@@ -1173,7 +747,7 @@
 		xmlStr += '		      <block type="collission_wk">';
 		xmlStr += '		      </block>';
 
-		xmlStr += '		      <block type="foeach_wk">';
+		xmlStr += '		      <block type="foreach_wk">';
 		xmlStr += '		      </block>';
 
 		xmlStr += '		    </category>';
@@ -1182,14 +756,6 @@
 			xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
 			for(var i = 0; i < definedObjectNames.length; i++ ){
 				xmlStr +='			<block type="'+definedObjectNames[i]+'"></block>';
-			}
-			xmlStr +='		    </category>\n';
-		}
-
-		if(definedBehaviourNames.length > 0){
-			xmlStr +='		    <category name="COMPORTAMIENTOS" toolboxitemid="custom" >\n';
-			for(var i = 0; i < definedBehaviourNames.length; i++ ){
-				xmlStr +='			<block type="'+definedBehaviourNames[i]+'"></block>';
 			}
 			xmlStr +='		    </category>\n';
 		}
@@ -1220,57 +786,6 @@
 		xmlStr += '		        </value>\n';
 		xmlStr += '		      </block>\n';
 		xmlStr += '		    </category>\n';
-		/*
-		xmlStr += '		    <category name="CREACION">\n';
-		xmlStr += '			  <block type="action_start" >\n';
-		xmlStr += '			  </block>\n';
-		xmlStr += '		      <block type="objetc_property">\n';
-		xmlStr += '		        <value name="name">\n';
-		xmlStr += '		          <block type="text">\n';
-		xmlStr += '		            <field name="TEXT">aPropertyName</field>\n';
-		xmlStr += '		          </block>\n';
-		xmlStr += '		        </value>\n';
-		xmlStr += '		        <value name="value">\n';
-		xmlStr += '		          <block type="text">\n';
-		xmlStr += '		            <field name="TEXT">aPropertyValue</field>\n';
-		xmlStr += '		          </block>\n';
-		xmlStr += '		        </value>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '			 <block type="action_start">\n';
-		xmlStr += '			    <next>\n';
-		xmlStr += '			      <block type="method_create">\n';
-		xmlStr += '			        <value name="name">\n';
-		xmlStr += '			          <block type="text">\n';
-		xmlStr += '			            <field name="TEXT">aMethodName</field>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </value>\n';
-		xmlStr += '			        <value name="params">\n';
-		xmlStr += '			          <block type="lists_create_with">\n';
-		xmlStr += '			            <mutation items="0"></mutation>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </value>\n';
-		xmlStr += '			        <statement name="instructions">\n';
-		xmlStr += '			          <block type="method_instruction">\n';
-		xmlStr += '			            <value name="instruction">\n';
-		xmlStr += '			              <block type="text">\n';
-		xmlStr += '			                <field name="TEXT">anInstruction</field>\n';
-		xmlStr += '			              </block>\n';
-		xmlStr += '			            </value>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </statement>\n';
-		xmlStr += '			      </block>\n';
-		xmlStr += '			    </next>\n';
-		xmlStr += '			  </block>\n';
-		xmlStr += '		      <block type="method_instruction">\n';
-		xmlStr += '		        <value name="instruction">\n';
-		xmlStr += '		          <block type="text">\n';
-		xmlStr += '		            <field name="TEXT">anInstruction</field>\n';
-		xmlStr += '		          </block>\n';
-		xmlStr += '		        </value>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      </category>\n';
-		*/
-
 
 		xmlStr += '		    <category name="WK">\n';
 		xmlStr += '		      <block type="objetc_property_wk">\n';
@@ -1317,81 +832,9 @@
 		xmlStr += '		      </block>\n';
 		xmlStr += '		      </category>\n';
 
-		if(definedBehaviourNames.length > 0){
-			xmlStr +='		    <category name="COMPORTAMIENTOS" toolboxitemid="custom" >\n';
-			//FETCH BEHAVIOUR
-			xmlStr +='		    </category>\n';
-		}
 		return xmlStr;
 	}
 
-	function getBehaviourToolboxXmlString(){
-		var xmlStr = '';
-		xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">\n';
-		xmlStr += '		      <block type="logic_boolean" >\n';
-		xmlStr += '		        <field name="BOOL">TRUE</field>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      <block type="math_number" >\n';
-		xmlStr += '		        <field name="NUM">123</field>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      <block type="text" >\n';
-		xmlStr += '		        <field name="TEXT"></field>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      <block type="lists_create_with" >\n';
-		xmlStr += '		        <mutation items="0"></mutation>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      <block type="lists_create_with">\n';
-		xmlStr += '		        <mutation items="1"></mutation>\n';
-		xmlStr += '		        <value name="ADD0">\n';
-		xmlStr += '		          <block type="text">\n';
-		xmlStr += '		            <field name="TEXT"></field>\n';
-		xmlStr += '		          </block>\n';
-		xmlStr += '		        </value>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		    </category>\n';
-		xmlStr += '		    <category name="CREACION">\n';
-		xmlStr += '			  <block type="action_start" >\n';
-		xmlStr += '			  </block>\n';
-		xmlStr += '			 <block type="action_start">\n';
-		xmlStr += '			    <next>\n';
-		xmlStr += '			      <block type="method_create">\n';
-		xmlStr += '			        <value name="name">\n';
-		xmlStr += '			          <block type="text">\n';
-		xmlStr += '			            <field name="TEXT">aMethodName</field>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </value>\n';
-		xmlStr += '			        <value name="params">\n';
-		xmlStr += '			          <block type="lists_create_with">\n';
-		xmlStr += '			            <mutation items="0"></mutation>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </value>\n';
-		xmlStr += '			        <statement name="instructions">\n';
-		xmlStr += '			          <block type="method_instruction">\n';
-		xmlStr += '			            <value name="instruction">\n';
-		xmlStr += '			              <block type="text">\n';
-		xmlStr += '			                <field name="TEXT">anInstruction</field>\n';
-		xmlStr += '			              </block>\n';
-		xmlStr += '			            </value>\n';
-		xmlStr += '			          </block>\n';
-		xmlStr += '			        </statement>\n';
-		xmlStr += '			      </block>\n';
-		xmlStr += '			    </next>\n';
-		xmlStr += '			  </block>\n';
-		xmlStr += '		      <block type="method_instruction">\n';
-		xmlStr += '		        <value name="instruction">\n';
-		xmlStr += '		          <block type="text">\n';
-		xmlStr += '		            <field name="TEXT">anInstruction</field>\n';
-		xmlStr += '		          </block>\n';
-		xmlStr += '		        </value>\n';
-		xmlStr += '		      </block>\n';
-		xmlStr += '		      </category>\n';
-		if(definedBehaviourNames.length > 0){
-			xmlStr +='		    <category name="COMPORTAMIENTOS" toolboxitemid="custom" >\n';
-			//FETCH BEHAVIOUR
-			xmlStr +='		    </category>\n';
-		}
-		return xmlStr;
-	}
 
 </script>
 
