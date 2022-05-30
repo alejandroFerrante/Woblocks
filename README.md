@@ -72,25 +72,25 @@ Once you have completed the installation phase, you will be able to start buildi
 You wil see the main screen as follows:
 <ol>
     <li>
-1- Blocks Workspace
+	Blocks Workspace
     </li>
     <li>
-2- Blocks Toolbox
+	Blocks Toolbox
     </li>
     <li>
-3- Created Objects Tabs
+	Created Objects Tabs
     </li>
     <li>
-4- Generated Code
+	Generated Code
     </li>
     <li>
-5- Scene
+	Scene
     </li>
     <li>
-6- Game Config
+	Game Config
     </li>
     <li>
-7- Import/Export
+	Import/Export
     </li>
 </ol>
 
