@@ -2,14 +2,20 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">What is Woblocks</a>
+	What is Woblocks
     </li>
     <li>
-      <a href="#getting-started">HOW TO INSTALL</a>
+	How toInstall
     </li>
-    <li><a href="#usage">HOW TO USE</a></li>
-    <li><a href="#roadmap">HOW TO EXPORT YOUR CODE</a></li>
-    <li><a href="#contributing">COLLABORATORS & LINKS</a></li>
+    <li>
+	How to Use
+    </li>
+    <li>
+	How to Export your Code
+    </li>
+    <li>
+	Collaborators & Links
+    </li>
   </ol>
 </details>
 
