@@ -77,7 +77,7 @@ And finally open a browser and check http://127.0.0.1:8081/
 Once you have completed the installation phase, you will be able to start building with Woblocks!
 You wil see the main screen as follows:
 
-![Woblocks Main Screen](https://github.com/alejandroFerrante/Woblocks/readme_SplashScreenReference.png)
+![Woblocks Main Screen](https://github.com/alejandroFerrante/Woblocks/blob/main/readme_SplashScreenReference.png)
 
 <ol>
     <li>
@@ -106,7 +106,7 @@ You wil see the main screen as follows:
 To define an object, simply go to the Toolbox section and drag the object block to the Workspace.
 Next you will be able to attach properties and method blocks by dragging it from the Toolbox section.
 
-![Drag Object BLock](https://github.com/alejandroFerrante/Woblocks/readme_DragObjectBlock.png)
+![Drag Object BLock](https://github.com/alejandroFerrante/Woblocks/blob/main/readme_DragObjectBlock.png)
 
 The main execution thread will be formed from the stacking of blocks from the Workspace section and will be displayed on the Scene section.
 
