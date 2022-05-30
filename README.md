@@ -28,28 +28,38 @@ Our hope is to make this project grow in a collaborative way, adding more featur
 
 In order to get Woblocks running you will need some prequisites.In any Unix system, you can intstall them via the terminal console.
 
-*create containing folder
-    mkdir <folder name>
+<ol>
+    <li>
+	create containing folder
+    	mkdir <folder name>
+    </li>
+    <li>	    
+	install nvm
+	wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+    </li>
+    <li>
+	install npm
+	nvm install node
+   </li>
+    <li>
+	install http server
+	sudo npm install -g http-server
+    </li>
+    <li>
+	install git
+	sudo apt-get install git
+    </li>
+    <li>
+	download Woblocks
+	git clone https://github.com/alejandroFerrante/Woblocks.git
+    </li>
+    <li>
+	download Wollok & Wollok Game
+	cd Woblocks
+	npm install
+    </li>
+</ol>
 
-*install nvm
-		wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-
-*install npm
-		nvm install node
-
-*install http server
-		sudo npm install -g http-server
-	
-*install git
-		sudo apt-get install git
-	
-*download Woblocks
-		git clone https://github.com/alejandroFerrante/Woblocks.git
-	
-*download Wollok & Wollok Game
-		cd Woblocks
-		npm install
-	
 Congratulations!Now you can run Woblocks via
   npm start
 
@@ -60,14 +70,29 @@ And finally open a browser and check http://127.0.0.1:8081/
 
 Once you have completed the installation phase, you will be able to start building with Woblocks!
 You wil see the main screen as follows:
-
-*1- Blocks Workspace
-*2- Blocks Toolbox
-*3- Created Objects Tabs
-*4- Generated Code
-*5- Scene
-*6- Game Config
-*7- Import/Export
+<ol>
+    <li>
+1- Blocks Workspace
+    </li>
+    <li>
+2- Blocks Toolbox
+    </li>
+    <li>
+3- Created Objects Tabs
+    </li>
+    <li>
+4- Generated Code
+    </li>
+    <li>
+5- Scene
+    </li>
+    <li>
+6- Game Config
+    </li>
+    <li>
+7- Import/Export
+    </li>
+</ol>
 
 To define an object, simply go to the Toolbox section and drag the object block to the Workspace.
 Next you will be able to attach properties and method blocks by dragging it from the Toolbox section.
