@@ -529,8 +529,14 @@
 	input.onchange = async () => {
 	    const files = Array.from(input.files);
 	    const imageFiles = files.filter(isImageFile);
-	    wkImages = imageFiles.map(buildImage);
-	    document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
+	    if(wkImages == undefined && wkImages == null ){wkImages = [];}
+	    var newImages = [];
+	    imageFiles.map(function(anElem){var newImage = buildImage(anElem);newImage.path = anElem.webkitRelativePath;newImages.push(newImage);  });
+	    wkImages = wkImages.concat(newImages);
+	    //wkImages.concat( imageFiles.map(buildImage) );
+
+	    //document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
+		document.getElementById('loadedImages').innerHTML = wkImages.map(function(anElem){{return '<img src="'+anElem.path+'" style="width:30px;height:30px;">'+anElem.possiblePaths[0];}}).join('<br/>');
 	}
 
 	function onSaveSceneClicked(){
@@ -579,8 +585,6 @@
 	    //wkImages = imageFiles.map(buildImage);
 	    //document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
 	}
-
-
 
 	function getDefaultWKObjectXmlNamed(proposedName){
 		var defaultXml = '  <block deletable="false" type="action_start_wk">';

@@ -11,3 +11,13 @@ names.push('cross.png');
 names.push('thumbdown.png');
 return names;
 }
+
+function getDefaultImages(){
+var result = [];
+result.push('fireRing.png');
+result.push('fireWall.png');
+result.push('clown_0.png');
+result.push('clown_1.png');
+result.push('background.png');
+return result;
+}

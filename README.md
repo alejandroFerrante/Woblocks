@@ -5,10 +5,13 @@
 	What is Woblocks
     </li>
     <li>
-	How toInstall
+	How to Install & Run
     </li>
     <li>
 	How to Use
+    </li>
+    <li>
+    Default Images and Icons
     </li>
     <li>
 	How to Export your Code
@@ -30,7 +33,7 @@ Blocks have proven to be a fantastic way to approach the teaching of programming
 
 Our hope is to make this project grow in a collaborative way, adding more features and refining its functioning in order to make it easy to use and understand, and yet a powerful tool for building and learning the fundamentals of OOP. 
 
-## How to Install
+## How to Install & Run
 
 In order to get Woblocks running you will need some prequisites.In any Unix system, you can intstall them via the terminal console.
 
@@ -65,6 +68,9 @@ In order to get Woblocks running you will need some prequisites.In any Unix syst
 	npm install
     </li>
 </ol>
+
+Next you will have to run a python script to configure default images and object icons. This script is called "generateDefaultImagesAndIcons.py", so if you open a terminal on the Woblocks directory run the command 'python generateDefaultImagesAndIcons.py'.
+
 
 Congratulations!Now you can run Woblocks via
   npm start
@@ -111,6 +117,12 @@ Next you will be able to attach properties and method blocks by dragging it from
 The main execution thread will be formed from the stacking of blocks from the Workspace section and will be displayed on the Scene section.
 
 You can get a more detailed example here.
+
+## Default Images and Icons
+
+Woblocks uses a default set of images and icons that will be enabled by default for you to use. This are stored in /imgs and /icons/representations respectively.
+You can add images to this directories and then run the generateDefaultImagesAndIcons script.
+
   
 ## How to Export Code
 

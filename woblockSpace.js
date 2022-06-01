@@ -100,6 +100,9 @@ function spaceInit(){
 
 	TryLoadSavedSCene();
 
+	LoadDefaultImages();
+
+
 	$('#code_generate').click();
 }
 
@@ -390,21 +393,6 @@ function getSceneExecution(alertErrors){
 		}
 	}
 	sceneSteps = strsToEval;
-}
-
-function doPlayScene(alertErrors){
-	getSceneExecution(alertErrors);
-	if(sceneErrorsFound){
-		///
-	}else{
-		for(var i = 0; i < sceneSteps.length; i++){
-			try{
-				eval(sceneSteps[i]);
-			}catch(e){
-				alert(e);
-			}
-		}
-	} 
 }
 
 function doPlaySceneWK(alertErrors){
@@ -738,4 +726,18 @@ function timesStr(aStr, aFiller, anAmount){
 
 function appearencesOf(aSubsting, aString){
 	return aString.split(aSubsting).length - 1;
+}
+
+async function LoadDefaultImages(){
+	var imgsToLoad = getDefaultImages();
+	var basePath = 'imgs/';
+	wkImages = [];
+	for(var i = 0; i < imgsToLoad.length; i++){
+	  const response = await fetch(basePath+imgsToLoad[i])
+	  const imageBlob = await response.blob()
+	  imageBlob.name = imgsToLoad[i];
+	  wkImages.push(buildImage(imageBlob));
+	  wkImages[wkImages.length - 1].path = basePath+imgsToLoad[i]; 
+      document.getElementById('loadedImages').innerHTML = wkImages.map(function(anElem){{return '<img src="'+anElem.path+'" style="width:30px;height:30px;">'+anElem.possiblePaths[0];}}).join('<br/>');
+	}
 }
