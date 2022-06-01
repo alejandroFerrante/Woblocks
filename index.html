@@ -219,7 +219,7 @@
 	//Show Code button logic
 	$( "#code_generate" ).click(function() {
 
-		if(document.getElementById('code_container').style.display == 'none'){
+		if(document.getElementById('code_container').style.display === 'none'){
 
 			fillCodeSection();
 
@@ -234,13 +234,13 @@
 
 	function fillCodeSection(){
 		var strCode = getSceneCodeAsWKString('<br/>');
-		if(currentTab == 'Scene'){
+		if(currentTab === 'Scene'){
 			var sceneCode = getSceneCodeAsWKString('\n');
 			var unformatedSceneText = buildSources(sceneCode.definitions,sceneCode.executions)[0].content;
 			document.getElementById('code_container').innerHTML = doFormat(unformatedSceneText,'\n');
 		}
 
-		if(currentTab == 'Object'){
+		if(currentTab === 'Object'){
 			var sceneCode = getSceneCodeAsWKString('\n').definitions[0];
 			document.getElementById('code_container').innerHTML = doFormat(sceneCode,'\n');
 		}
@@ -248,7 +248,7 @@
 
 	function onWorkspaceChange( event){
 
-		if(currentTab == 'Object' && (event.type == Blockly.Events.BLOCK_CHANGE  || event.type == Blockly.Events.BLOCK_CREATE || event.type == Blockly.Events.BLOCK_DRAG)){
+		if(currentTab === 'Object' && (event.type === Blockly.Events.BLOCK_CHANGE  || event.type === Blockly.Events.BLOCK_CREATE || event.type === Blockly.Events.BLOCK_DRAG)){
 				fillObjectOrBehaviourMappingSection();	
 		}
 
@@ -256,7 +256,7 @@
 	
 	function ontabClick(newTab,newIndex){
 		
-		if(newTab == 'Scene' || ( newTab == 'Object'  && ( newIndex != currentIndex || newTab != currentTab) ) ){
+		if(newTab === 'Scene' || ( newTab === 'Object'  && ( newIndex !== currentIndex || newTab !== currentTab) ) ){
 			
 			//close toolbox
 			workspace.getToolbox().autoHide();
@@ -266,22 +266,22 @@
 
 			//load current toolbox
 			var newToolboxXml = '<category></category>';
-			if(newTab == 'Scene' || newTab == 'FreeArea'){ObjectsAndBehavioursAsBlocks();newToolboxXml = getMainToolboxXmlString();}
-			if(newTab == 'Object'){newToolboxXml = getObjectToolboxXmlString();}
+			if(newTab === 'Scene' || newTab === 'FreeArea'){ObjectsAndBehavioursAsBlocks();newToolboxXml = getMainToolboxXmlString();}
+			if(newTab === 'Object'){newToolboxXml = getObjectToolboxXmlString();}
 			loadWorkspaceConent(newToolboxXml);
 
 			//load new content
 			workspace.clear();
 			var newContent = null;
 			document.getElementById('sceneDiv').style.display = 'none';
-			if(newTab == 'Scene' && sceneXmlContent != undefined && sceneXmlContent != null){
+			if(newTab === 'Scene' && sceneXmlContent !== undefined && sceneXmlContent !== null){
 				newContent = sceneXmlContent;
 				document.getElementById('mappingSection').style.display = 'none';
 				document.getElementById('sceneDiv').style.display = 'block';
 				document.getElementById('loadSection').style.display = 'block';
 				document.getElementById('saveSection').style.display = 'block';
 			}
-			if(newTab == 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
+			if(newTab === 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				newContent = definedObjectXmlContent[newIndex];
 				document.getElementById('mapping_color_back').value = definedObjectsMappingInfo[newIndex].color;
 				document.getElementById('loadSection').style.display = 'none';
@@ -289,7 +289,7 @@
 			}
 
 			//inject content
-			if(newContent != null && newContent != undefined && newContent.length > 0){
+			if(newContent !== null && newContent !== undefined && newContent.length > 0){
 				injectXmlToWorkspace(newContent);				
 			}
 
@@ -299,12 +299,12 @@
 			currentTab = newTab;
 			currentIndex = newIndex;
 			selectCurrentTab();
-			if(newTab == 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
+			if(newTab === 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				fillObjectOrBehaviourMappingSection();
 				document.getElementById('mappingSection').style.display = 'block';
 			}
 
-			if(newTab == 'Scene' && sceneXmlContent != undefined && sceneXmlContent != null){
+			if(newTab === 'Scene' && sceneXmlContent !== undefined && sceneXmlContent !== null){
 				positionScenObjectsWith(positionsMapping);
 			}
 
@@ -314,8 +314,8 @@
 	}
 
 	function selectCurrentTab(){
-		if(currentTab == 'Scene'){document.getElementById('sceneTab').innerHTML = '<b>Escena</b>';}
-		if(currentTab == 'Object'){document.getElementById('objectButton_'+currentIndex).innerHTML = '<b>'+definedObjectNames[currentIndex]+'</b>';}
+		if(currentTab === 'Scene'){document.getElementById('sceneTab').innerHTML = '<b>Escena</b>';}
+		if(currentTab === 'Object'){document.getElementById('objectButton_'+currentIndex).innerHTML = '<b>'+definedObjectNames[currentIndex]+'</b>';}
 	}
 
 	function redrawTabs(){
@@ -341,7 +341,7 @@
 		definedObjectsMappingInfo.splice(anIndex, 1);
 
 		if(definedObjectXmlContent.length > 0){
-			if(anIndex == 0){
+			if(anIndex === 0){
 				ontabClick('Object',0);
 			}else{
 				ontabClick('Object',anIndex-1);
@@ -366,14 +366,14 @@
 		var proposedName = $('#newGlobalName').val().replaceAll(/[^A-Za-z0-9]/g, '');
 		proposedName = removeInitialNumbers(proposedName);
 
-		if(proposedName != undefined && proposedName != null && proposedName != ''){
+		if(proposedName !== undefined && proposedName !== null && proposedName !== ''){
 			if(definedObjectNames.includes(proposedName) ){
 				alert('Este nombre ya esta siendo utilizado');
 			}else{
 				saveCurrentContent();
 
 				var content_tmp = [];
-				if(SAVE_MODE == 'SAVE_WORKSPACE'){//SAVE CURRENT WORKSPACE AS TAB
+				if(SAVE_MODE === 'SAVE_WORKSPACE'){//SAVE CURRENT WORKSPACE AS TAB
 					var xmlSerializer = new XMLSerializer();
 					var contentList = getWorkspaceXmlContentAsList();
 					for(var i = 0; i < contentList.length; i++){
@@ -385,7 +385,7 @@
 				definedObjectsMappingInfo.push({icon:null,replacements:{}});
 
 				workspace.clear();
-				if(SAVE_MODE != 'SAVE_WORKSPACE'){
+				if(SAVE_MODE !== 'SAVE_WORKSPACE'){
 					Blockly.Xml.appendDomToWorkspace(jQuery.parseXML(getDefaultWKObjectXmlNamed(proposedName)),workspace);
 				}
 				redrawTabs();
@@ -408,15 +408,15 @@
 	}
 
 	function saveCurrentContent(){
-		if( currentTab == 'Scene' ||( currentTab == 'Object' && currentIndex != -1 ) ){ 
+		if( currentTab === 'Scene' ||( currentTab === 'Object' && currentIndex !== -1 ) ){ 
 			var xmlContentList = null;
-			if(currentTab == 'Object'){xmlContentList = definedObjectXmlContent;}
-			if(currentTab == 'Scene'){xmlContentList = sceneXmlContent;}
+			if(currentTab === 'Object'){xmlContentList = definedObjectXmlContent;}
+			if(currentTab === 'Scene'){xmlContentList = sceneXmlContent;}
 			
-			if(xmlContentList != undefined && xmlContentList != null){
+			if(xmlContentList !== undefined && xmlContentList !== null){
 				var xmlSerializer = new XMLSerializer();
 				var contentList = getWorkspaceXmlContentAsList();
-				if(currentTab == 'Scene'){
+				if(currentTab === 'Scene'){
 					xmlContentList.splice(0,xmlContentList.length);
 					for(var i = 0; i < contentList.length; i++){
 						xmlContentList.push(xmlSerializer.serializeToString(contentList[i]));
@@ -431,7 +431,7 @@
 					var replacementValue;
 					var replacementParam;
 					var i = 0;
-					if(currentTab == 'Object'){
+					if(currentTab === 'Object'){
 						definedObjectsMappingInfo[currentIndex] = {};
 						definedObjectsMappingInfo[currentIndex].icon = 'icons/representations/'+document.getElementById('icons').value; 
 						definedObjectsMappingInfo[currentIndex].replacements = {};
@@ -439,7 +439,7 @@
 
 						replacementValue = document.getElementById('mappingInput_'+i);
 						replacementParam = document.getElementById('replacementName__'+i);
-						while(maxIterations > 0 && replacementValue != undefined){
+						while(maxIterations > 0 && replacementValue !== undefined){
 							definedObjectsMappingInfo[currentIndex].replacements[replacementParam.innerHTML] = {val:replacementValue.value};
 							maxIterations--;
 							i++;
@@ -468,7 +468,7 @@
 		} 
 		document.getElementById('icons').innerHTML = strHtml;
 		document.getElementById('selectedIcon').src = 'icons/representations/'+iconNames[0];
-		if(currentTab == 'Object' && definedObjectsMappingInfo[currentIndex].icon != undefined && definedObjectsMappingInfo[currentIndex].icon != null){
+		if(currentTab === 'Object' && definedObjectsMappingInfo[currentIndex].icon !== undefined && definedObjectsMappingInfo[currentIndex].icon !== null){
 			document.getElementById('selectedIcon').src = definedObjectsMappingInfo[currentIndex].icon; 
 			var picklistValue = definedObjectsMappingInfo[currentIndex].icon;
 			picklistValue = picklistValue.split('/');
@@ -481,7 +481,7 @@
 		var mappingInfo;
 		if(freeParams.length > 0){
 			document.getElementById('mapping_show_names_section').style.display = 'block';
-			if(currentTab == 'Object'){
+			if(currentTab === 'Object'){
 				mappingInfo = definedObjectsMappingInfo[currentIndex];
 			}
 			//remove mapping info that no longer exist
@@ -495,7 +495,7 @@
 			var strHtml = '';
 			
 			for(var i = 0; i < freeParams.length; i++){
-				if(mappingInfo.replacements[freeParams[i]] != undefined){
+				if(mappingInfo.replacements[freeParams[i]] !== undefined){
 					strHtml += '<div>';
 					strHtml += '		<label id="replacementName__'+i+'">'+freeParams[i]+'</label>';
 					strHtml += '		<input id="mappingInput_'+i+'" value="'+mappingInfo.replacements[freeParams[i]].val+'" >';
@@ -512,7 +512,7 @@
 		}else{
 			document.getElementById('mapping_show_names_section').style.display = 'none';
 			//clear mappin info
-			if(currentTab == 'Object'){
+			if(currentTab === 'Object'){
 				definedObjectsMappingInfo[currentIndex].replacements = {};
 			}
 			document.getElementById('mappingInfoSection').innerHTML = '';
@@ -529,7 +529,7 @@
 	input.onchange = async () => {
 	    const files = Array.from(input.files);
 	    const imageFiles = files.filter(isImageFile);
-	    if(wkImages == undefined && wkImages == null ){wkImages = [];}
+	    if(wkImages === undefined && wkImages === null ){wkImages = [];}
 	    var newImages = [];
 	    imageFiles.map(function(anElem){var newImage = buildImage(anElem);newImage.path = anElem.webkitRelativePath;newImages.push(newImage);  });
 	    wkImages = wkImages.concat(newImages);

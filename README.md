@@ -121,7 +121,7 @@ You can get a more detailed example here.
 ## Default Images and Icons
 
 Woblocks uses a default set of images and icons that will be enabled by default for you to use. This are stored in /imgs and /icons/representations respectively.
-You can add images to this directories and then run the generateDefaultImagesAndIcons script.
+You can add images to this directories and then you must run the generateDefaultImagesAndIcons script in order to incorporate them.
 
   
 ## How to Export Code
