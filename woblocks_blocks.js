@@ -292,7 +292,7 @@ Blockly.Blocks['executor_wk'] = {
         .appendField(new Blockly.FieldImage("icons/mSend.png", 35, 35, ""));
     
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aMetodName"), "method");
+        .appendField(new Blockly.FieldTextInput("aMethodName"), "method");
     
     /*
     this.appendValueInput("method")
@@ -419,7 +419,7 @@ Blockly.Blocks['execution_res_wk'] = {
         .appendField("");
     */
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aMetodName"), "method");
+        .appendField(new Blockly.FieldTextInput("aMethodName"), "method");
     this.appendStatementInput('params')
     .appendField('');    
     this.setInputsInline(true);//
@@ -732,6 +732,22 @@ Blockly.Wollok['foreach_wk'] = function(aBlock) {
   var param_name = aBlock.getFieldValue('closure_param_name');
   var instructions = Blockly.Wollok.statementToCode(aBlock, 'instructions');
   return Blockly.Blocks['foeach_wk'].doActionWK(aBlock,{'target':target_collection,'param':param_name, 'instructions':instructions});
+};
+
+//GAME
+//repreentes the object game (Wollok Game native)
+Blockly.Blocks['game_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldImage("icons/controller.png", 25, 25, ""));
+    this.setOutput(true);
+    this.setTooltip("Game");
+    this.setColour(colorPallette['game_wk']);
+  }
+};
+
+Blockly.Wollok['game_wk'] = function(aBlock) {
+  return 'game';
 };
 
 //=============================================================================================================================================

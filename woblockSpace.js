@@ -85,7 +85,7 @@ function spaceInit(){
 
 	loadWorkspaceConent(getMainToolboxXmlString());
 
-	workspace.addChangeListener( onWorkspaceChange );
+	//workspace.addChangeListener( onWorkspaceChange );
 	
 	clickEventFunction = Blockly.Events.Click;
 	Blockly.registry.unregister("event", "click"); 
@@ -132,7 +132,7 @@ function updateMessagesFor(aBlock){
 		aBlock.setWarningText(msgsStr);
 
 		if( definedObjectNames.includes(aBlock.type) ){
-			x.dispose();
+			x.getParent().dispose();
 		}
 	}
 }
@@ -203,16 +203,7 @@ function ObjectsAndBehavioursAsBlocks(){
 	var params;
 
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
-		//if mapping complete
-		if(mappinInfoComplete(definedObjectsMappingInfo[i])){
-			paramsMappings = [];
-			params = [];
-			for (var key in definedObjectsMappingInfo[i].replacements) { 
-				params.push(''+key);
-				paramsMappings.push({k:''+key , v:definedObjectsMappingInfo[i].replacements[key].val });
-			}
-			createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color,params,paramsMappings/*,valueMappings*/, definedObjectXmlContent[i].join(' </br> '),document.getElementById('mapping_show_names').checked, 'obj' );
-		}
+		createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color, definedObjectXmlContent[i].join(' </br> '));
 	}
 
 }
@@ -227,27 +218,21 @@ function getAllUnasignedValuesFrom(aString){
 	}
 }
 
-function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList, paramsReplacements, innerBlockXML, showFieldNames, type){
+function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, innerBlockXML){
   
   //REGISTER BLOCK
   var functionString = ''; 
   functionString += 'Blockly.Blocks[\''+aliasBlockName+'\'] = {\n';
   functionString += ' init: function() {\n';
-  functionString += '  this.appendDummyInput().appendField("'+aliasBlockName+'");';
-  functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 50, 50, "*"));\n';
-  
-  for(var i = 0; i < paramsReplacements.length; i++){
-	if(showFieldNames){
-  		functionString += '  this.appendValueInput("'+paramsReplacements[i].v+'").setCheck(null).appendField("'+paramsReplacements[i].v+'");\n';
-	}else{
-  		functionString += '  this.appendValueInput("'+paramsReplacements[i].v+'").setCheck(null);\n';
-	}  	
-  }
+  //functionString += '  this.appendDummyInput().appendField("'+aliasBlockName+'");';
+  //functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 25, 25, "*"));\n';
+  functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 25, 25, "*"));\n';
+  functionString += '  this.setTooltip("'+aliasBlockName+'");';
 
-  if(type === 'obj'){functionString += '	this.setWarningText(\'MENSAJES:\');';}
-  
+  functionString += '  this.setOutput(true);\n';
 
-  functionString += '   this.setTooltip(\'\' );\n';
+  functionString += '	this.setWarningText(\'MENSAJES:\');';
+  
   functionString += '   this.setColour(\''+backColor+'\');';
   functionString += ' },\n';
   
@@ -263,13 +248,7 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   functionString += ' updateShape_ : function() {},\n';
 
   functionString += ' getMetaInfo:function(self){\n';
-  if(type === 'obj'){
-  	functionString += '	return {obj:\''+aliasBlockName+'\', method:null};	';
-  }else if(type === 'bh'){
-	functionString += '	return {method:{name:\''+aliasBlockName+'\' , paramsAmount: '+paramsList.length+'}, obj:null};	';
-  }else{
-  	functionString += '	return {method:null, obj:null};	';
-  }
+  functionString += '	return {obj:\''+aliasBlockName+'\', method:null};	';
   functionString += ' }\n';
   functionString += '};';
 
@@ -280,18 +259,19 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, paramsList
   functionString = '';
 
   functionString += 'Blockly.JavaScript[\''+aliasBlockName+'\'] = function(block) {\n';
-  functionString += '  var decomposed = block.getDecompose(Blockly.getMainWorkspace());\n';
-  functionString += '  var replacements = [';
-  functionString +='];\n';
-  for(var i = 0; i < paramsReplacements.length; i++){
-    functionString += '   replacements.push({k:\''+paramsReplacements[i].k+'\' , v: Blockly.JavaScript.valueToCode(block, \''+paramsReplacements[i].v+'\', Blockly.JavaScript.ORDER_ATOMIC) });\n';
-  }
-  functionString += '  var code = Blockly.JavaScript[decomposed.type](decomposed);\n';
-  functionString += '  decomposed.dispose();\n';
-  functionString += '  for(var i = 0; i < replacements.length; i++){\n';
-  functionString += '    code = code.replace(replacements[i].k , replacements[i].v);\n';
-  functionString += '  }\n';
-  functionString += '  return code;\n';
+  functionString += '  return \''+aliasBlockName+'\';';/////////////////
+  //functionString += '  var decomposed = block.getDecompose(Blockly.getMainWorkspace());\n';
+  //functionString += '  var replacements = [';
+  //functionString +='];\n';
+  //for(var i = 0; i < paramsReplacements.length; i++){
+  //  functionString += '   replacements.push({k:\''+paramsReplacements[i].k+'\' , v: Blockly.JavaScript.valueToCode(block, \''+paramsReplacements[i].v+'\', Blockly.JavaScript.ORDER_ATOMIC) });\n';
+  //}
+  //functionString += '  var code = Blockly.JavaScript[decomposed.type](decomposed);\n';
+  //functionString += '  decomposed.dispose();\n';
+  //functionString += '  for(var i = 0; i < replacements.length; i++){\n';
+  //functionString += '    code = code.replace(replacements[i].k , replacements[i].v);\n';
+  //functionString += '  }\n';
+  //functionString += '  return code;\n';
   functionString += '};\n';
 
   eval(functionString);
@@ -541,7 +521,7 @@ function getSceneCodeAsWKString(newlineSeparator){
 				}else{
 					sceneErrorsFound = true;
 				}
-			}else if(definedObjectNames.includes(objs[i].type)){
+			}/*else if(definedObjectNames.includes(objs[i].type)){
 				res = Blockly.Wollok[ objs[i].type ](objs[i]);
 				if(typeof res === 'string'){
 					//console.log(res);
@@ -549,9 +529,22 @@ function getSceneCodeAsWKString(newlineSeparator){
 				}else{
 					sceneErrorsFound = true;
 				}
-			}
+			}*/
 		}
 	}
+
+	if(currentTab === 'Scene'){
+		var tempBlock;
+		for(var i = 0; i < definedObjectNames.length; i++){
+			tempBlock = Blockly.Blocks[definedObjectNames[i]].getDecompose(Blockly.getMainWorkspace());
+			res = Blockly.Wollok['action_start_wk'](tempBlock);
+			if(typeof res === 'string'){
+				result.definitions.push(res.replaceAll('\n',newlineSeparator));
+			}
+			tempBlock.dispose();
+		}
+	}
+
 	return result;
 }
 
@@ -680,7 +673,7 @@ function TryLoadSavedSCene(){
 		workspace.clear();
 		document.getElementById('sceneDiv').style.display = 'none';
 		var newContent = sceneXmlContent;
-		document.getElementById('mappingSection').style.display = 'none';
+		//document.getElementById('mappingSection').style.display = 'none';
 		document.getElementById('sceneDiv').style.display = 'block';
 		
 		if(newContent !== null && newContent !== undefined && newContent.length > 0){

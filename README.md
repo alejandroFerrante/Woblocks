@@ -17,6 +17,9 @@
 	How to Export your Code
     </li>
     <li>
+    Color Palettes
+    </li>
+    <li>
 	Collaborators & Links
     </li>
   </ol>
@@ -127,6 +130,10 @@ You can add images to this directories and then you must run the generateDefault
 ## How to Export Code
 
 Once you are satisfied with the work you've done, you can export it as a .wbk file. You do so by going to the Import/Export section and clicking the export button.
+
+## Color Palettes
+
+Aren't the Woblocks block colors great? We are sure you agree, but if for any reason you want to personalize them with your own choice of palette, you can do so by editing the file called "pallettes.js".
   
 ## Collaborators & Links
 

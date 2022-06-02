@@ -439,7 +439,7 @@
 
 						replacementValue = document.getElementById('mappingInput_'+i);
 						replacementParam = document.getElementById('replacementName__'+i);
-						while(maxIterations > 0 && replacementValue !== undefined){
+						while(maxIterations > 0 && replacementValue !== undefined && replacementValue !== null){
 							definedObjectsMappingInfo[currentIndex].replacements[replacementParam.innerHTML] = {val:replacementValue.value};
 							maxIterations--;
 							i++;
@@ -700,9 +700,6 @@
 		xmlStr += '		      	<value name="executor">';
 		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
 		xmlStr += '		        </value>';
-		xmlStr += '		      	<value name="method">';
-		xmlStr += '		        	<block type="text"><field name="TEXT">aMethod</field></block>';
-		xmlStr += '		        </value>';
 		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
 		xmlStr += '		      	</value></block></statement>';
@@ -711,9 +708,6 @@
 		xmlStr += '		      <block type="execution_res_wk" >';		
 		xmlStr += '		      	<value name="executor">';
 		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
-		xmlStr += '		        </value>';
-		xmlStr += '		      	<value name="method">';
-		xmlStr += '		        	<block type="text"><field name="TEXT">aMethod</field></block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
@@ -756,13 +750,14 @@
 
 		xmlStr += '		    </category>';
 
+		xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
+		xmlStr +='				<block type="game_wk"></block>';
 		if(definedObjectNames.length > 0){
-			xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
 			for(var i = 0; i < definedObjectNames.length; i++ ){
 				xmlStr +='			<block type="'+definedObjectNames[i]+'"></block>';
 			}
-			xmlStr +='		    </category>\n';
 		}
+		xmlStr +='		    </category>\n';
 		return xmlStr;
 	}
 
@@ -834,6 +829,16 @@
 		xmlStr += '		          </block>\n';
 		xmlStr += '		        </value>\n';
 		xmlStr += '		      </block>\n';
+
+		xmlStr += '		      <block type="execution_res_wk" >';		
+		xmlStr += '		      	<value name="executor">';
+		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
+		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
+		xmlStr += '		      	</value></block></statement>';
+		xmlStr += '		      </block>';		
+
 		xmlStr += '		      </category>\n';
 
 		return xmlStr;
