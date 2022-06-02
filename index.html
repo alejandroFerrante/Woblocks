@@ -266,8 +266,8 @@
 
 			//load current toolbox
 			var newToolboxXml = '<category></category>';
-			if(newTab === 'Scene' || newTab === 'FreeArea'){ObjectsAndBehavioursAsBlocks();newToolboxXml = getMainToolboxXmlString();}
-			if(newTab === 'Object'){newToolboxXml = getObjectToolboxXmlString();}
+			if(newTab === 'Scene'){ObjectsAndBehavioursAsBlocks();newToolboxXml = getMainToolboxXmlString();}
+			if(newTab === 'Object'){newToolboxXml = getObjectToolboxXmlString(definedObjectNames[newIndex]);}
 			loadWorkspaceConent(newToolboxXml);
 
 			//load new content
@@ -302,6 +302,7 @@
 			if(newTab === 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				fillObjectOrBehaviourMappingSection();
 				document.getElementById('mappingSection').style.display = 'block';
+				removedObjectsCleanup();
 			}
 
 			if(newTab === 'Scene' && sceneXmlContent !== undefined && sceneXmlContent !== null){
@@ -336,19 +337,28 @@
 
 
 	function removeObjectWithIndex(anIndex){
+		
+		var objToRemove = definedObjectNames[anIndex];
+
 		definedObjectXmlContent.splice(anIndex, 1);
 		definedObjectNames.splice(anIndex, 1);
 		definedObjectsMappingInfo.splice(anIndex, 1);
 
-		if(definedObjectXmlContent.length > 0){
-			if(anIndex === 0){
-				ontabClick('Object',0);
-			}else{
-				ontabClick('Object',anIndex-1);
-			}
-		}else{
-			ontabClick('FreeArea',-1);
+		ontabClick('Scene',-1);
+		
+		var blocksToRemove = workspace.getAllBlocks().filter(function(anElem){return anElem.type == objToRemove});
+		for(var i = 0; i < blocksToRemove.length; i++){
+			blocksToRemove[i].dispose();
 		}
+
+	}
+
+	function removedObjectsCleanup(){
+		var validTypes = ['logic_boolean', 'math_number', 'text', 'condition_wk', 'lists_create_with', 'action_start_wk', 'objetc_property_wk', 'objetc_create_wk', 'method_create_wk', 'executor_wk', 'instruction_wk', 'execution_res_wk', 'executor_param_wk', 'var_objetc_wk', 'keyboard_event_wk', 'tick_event_wk', 'collission_wk', 'foreach_wk', 'lists_create_with','game_wk'].concat(definedObjectNames);
+		var blocksToRemove = workspace.getAllBlocks().filter(function(anElem){return ! validTypes.includes(anElem.type)});
+		for(var i = 0; i < blocksToRemove.length; i++){
+			blocksToRemove[i].dispose();
+		}		
 	}
 
 	function closeModal(){
@@ -394,7 +404,7 @@
 				currentIndex = definedObjectNames.length - 1;
 				document.getElementById('mapping_color_back').value = '#ffffffff';
 				selectCurrentTab();
-				loadWorkspaceConent(getObjectToolboxXmlString());
+				loadWorkspaceConent(getObjectToolboxXmlString(definedObjectNames[currentIndex]));
 
 				fillCodeSection();
 			}
@@ -586,6 +596,21 @@
 	    //document.getElementById('loadedImages').innerHTML = Array.from(input.files).map(function(aFile){{return '<img src="'+aFile.webkitRelativePath+'" style="width:30px;height:30px;">'+aFile.name;}}).join('<br/>');
 	}
 
+	function modifyColorsOfStackedExecutorBlocks(){
+		 var stackedExecutorBlocks = workspace.getAllBlocks().filter(function(anElem){return anElem.type == 'executor_wk' && anElem.getParent() != null && anElem.getParent().type != 'executor_wk'});
+		 for(var i = 0; i < stackedExecutorBlocks.length; i++){
+		 	var isEven = true;
+		 	var current = stackedExecutorBlocks[i];
+		 	while(current !== null && current.type == 'executor_wk' ){
+		 		if(!isEven){
+		 			current.setColour(colorPallette['executor_wk_alt']);
+		 		}
+		 		isEven = !isEven;
+		 		current = current.getNextBlock();
+		 	}
+		 }
+	}
+
 	function getDefaultWKObjectXmlNamed(proposedName){
 		var defaultXml = '  <block deletable="false" type="action_start_wk">';
 			defaultXml +='		<next>';
@@ -698,7 +723,7 @@
 
 		xmlStr += '		      <block type="executor_wk" >';		
 		xmlStr += '		      	<value name="executor">';
-		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
@@ -707,7 +732,7 @@
 
 		xmlStr += '		      <block type="execution_res_wk" >';		
 		xmlStr += '		      	<value name="executor">';
-		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
@@ -761,9 +786,10 @@
 		return xmlStr;
 	}
 
-	function getObjectToolboxXmlString(){
+	function getObjectToolboxXmlString(currentObject){
 		var xmlStr = '';
 		xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">\n';
+
 		xmlStr += '		      <block type="logic_boolean" >\n';
 		xmlStr += '		        <field name="BOOL">TRUE</field>\n';
 		xmlStr += '		      </block>\n';
@@ -784,6 +810,10 @@
 		xmlStr += '		          </block>\n';
 		xmlStr += '		        </value>\n';
 		xmlStr += '		      </block>\n';
+
+		xmlStr += '		      <block type="condition_wk" >';
+		xmlStr += '		      </block>';
+
 		xmlStr += '		    </category>\n';
 
 		xmlStr += '		    <category name="WK">\n';
@@ -830,9 +860,18 @@
 		xmlStr += '		        </value>\n';
 		xmlStr += '		      </block>\n';
 
-		xmlStr += '		      <block type="execution_res_wk" >';		
+		xmlStr += '		      <block type="executor_wk" >';		
 		xmlStr += '		      	<value name="executor">';
 		xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
+		xmlStr += '		        </value>';
+		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
+		//xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
+		xmlStr += '		      	</value></block></statement>';
+		xmlStr += '		      </block>';
+
+		xmlStr += '		      <block type="execution_res_wk" >';		
+		xmlStr += '		      	<value name="executor">';
+		//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
 		xmlStr += '		        </value>';
 		xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
 		xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
@@ -840,6 +879,17 @@
 		xmlStr += '		      </block>';		
 
 		xmlStr += '		      </category>\n';
+
+		xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
+		xmlStr +='				<block type="game_wk"></block>';
+		if(definedObjectNames.length > 0){
+			for(var i = 0; i < definedObjectNames.length; i++ ){
+				if(currentObject != definedObjectNames[i]){
+					xmlStr +='			<block type="'+definedObjectNames[i]+'"></block>';
+				}
+			}
+		}
+		xmlStr +='		    </category>\n';
 
 		return xmlStr;
 	}
