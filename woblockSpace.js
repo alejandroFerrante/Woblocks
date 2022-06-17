@@ -43,6 +43,7 @@ function buildSources(definitions,executions) {
     return [{ name, content }]
 }
 
+//<<<<
 function spaceInit(){
 	sceneAlertErrors = false;//////////////////////////////
 	definedObjectNames = [];
@@ -54,7 +55,7 @@ function spaceInit(){
 	definedObjectsMappingInfo = [];
 	wkImages = [];
 
-	var toolbox = document.getElementById("toolbox");
+	var toolbox = document.getElementById("toolbox");//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	 
 	var options = { 
 		toolbox : toolbox, 
@@ -77,15 +78,10 @@ function spaceInit(){
 	workspace = Blockly.inject('blocklyDiv', options);
 	 
 	// Load blocks to workspace
-	workspaceBlocks = document.getElementById('workspaceBlocks'); 
+	workspaceBlocks = document.getElementById('workspaceBlocks');//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 	Blockly.Xml.domToWorkspace(workspaceBlocks, workspace);
 
-	document.getElementById('gameWidthComp').value = 15;
-	document.getElementById('gameHeightComp').value = 15;
-
-	loadWorkspaceConent(getMainToolboxXmlString());
-
-	//workspace.addChangeListener( onWorkspaceChange );
+	loadWorkspaceConent(getMainToolboxXmlString());//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	
 	clickEventFunction = Blockly.Events.Click;
 	Blockly.registry.unregister("event", "click"); 
@@ -98,9 +94,9 @@ function spaceInit(){
     	}
     });
 
-	TryLoadSavedSCene();
+	TryLoadSavedSCene();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-	LoadDefaultImages();
+	LoadDefaultImages();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 	$('#code_generate').click();
@@ -137,6 +133,7 @@ function updateMessagesFor(aBlock){
 	}
 }
 
+//<<<<
 function getWKCodeForCurrentWorkspace(){
 	var generator = Blockly.Wollok;
 	var content = document.getElementById('blocklyDiv');
@@ -184,6 +181,7 @@ function injectXmlToWorkspace(xmlContentList){
 	}
 }
 
+//<<<<
 function loadWorkspaceConent(stringXmlContent){
 	document.getElementById('toolbox').innerHTML = stringXmlContent;
 	workspace.updateToolbox(document.getElementById('toolbox'));
@@ -195,7 +193,7 @@ function mappinInfoComplete(aMappingInfo){
  			return false;
  		}
 	}
-	return (aMappingInfo.icon !== undefined && aMappingInfo.icon !== null && aMappingInfo.icon !== '') && (aMappingInfo.color !== undefined && aMappingInfo.color !== null && aMappingInfo.color !== '');
+	return (aMappingInfo.icon !== undefined && aMappingInfo.icon !== null && aMappingInfo.icon !== '');
 }
 
 function ObjectsAndBehavioursAsBlocks(){
@@ -203,7 +201,7 @@ function ObjectsAndBehavioursAsBlocks(){
 	var params;
 
 	for(var i = 0; i < definedObjectXmlContent.length; i++ ){
-		createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectsMappingInfo[i].color, definedObjectXmlContent[i].join(' </br> '));
+		createAliasXML(definedObjectNames[i],definedObjectsMappingInfo[i].icon,definedObjectXmlContent[i].join(' </br> '));
 	}
 
 }
@@ -218,14 +216,12 @@ function getAllUnasignedValuesFrom(aString){
 	}
 }
 
-function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, innerBlockXML){
-  
+function createAliasXML(aliasBlockName, aliasBlockIconURL, innerBlockXML){
+
   //REGISTER BLOCK
   var functionString = ''; 
   functionString += 'Blockly.Blocks[\''+aliasBlockName+'\'] = {\n';
   functionString += ' init: function() {\n';
-  //functionString += '  this.appendDummyInput().appendField("'+aliasBlockName+'");';
-  //functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 25, 25, "*"));\n';
   functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 25, 25, "*"));\n';
   functionString += '  this.setTooltip("'+aliasBlockName+'");';
 
@@ -233,7 +229,7 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, innerBlock
 
   functionString += '	this.setWarningText(\'MENSAJES:\');';
   
-  functionString += '   this.setColour(\''+backColor+'\');';
+  functionString += '   this.setColour(\''+colorPallette['created_objects_wk']+'\');';
   functionString += ' },\n';
   
   functionString += ' getDecompose : function (workspace) {\n';
@@ -259,19 +255,7 @@ function createAliasXML(aliasBlockName, aliasBlockIconURL, backColor, innerBlock
   functionString = '';
 
   functionString += 'Blockly.JavaScript[\''+aliasBlockName+'\'] = function(block) {\n';
-  functionString += '  return \''+aliasBlockName+'\';';/////////////////
-  //functionString += '  var decomposed = block.getDecompose(Blockly.getMainWorkspace());\n';
-  //functionString += '  var replacements = [';
-  //functionString +='];\n';
-  //for(var i = 0; i < paramsReplacements.length; i++){
-  //  functionString += '   replacements.push({k:\''+paramsReplacements[i].k+'\' , v: Blockly.JavaScript.valueToCode(block, \''+paramsReplacements[i].v+'\', Blockly.JavaScript.ORDER_ATOMIC) });\n';
-  //}
-  //functionString += '  var code = Blockly.JavaScript[decomposed.type](decomposed);\n';
-  //functionString += '  decomposed.dispose();\n';
-  //functionString += '  for(var i = 0; i < replacements.length; i++){\n';
-  //functionString += '    code = code.replace(replacements[i].k , replacements[i].v);\n';
-  //functionString += '  }\n';
-  //functionString += '  return code;\n';
+  functionString += '  return \''+aliasBlockName+'\';';
   functionString += '};\n';
 
   eval(functionString);
@@ -375,6 +359,7 @@ function getSceneExecution(alertErrors){
 	sceneSteps = strsToEval;
 }
 
+//<<<<
 function doPlaySceneWK(alertErrors){
 	if(wkImages === undefined || wkImages === null){wkImages = [];}
 	if( wkImages.length === 0){
@@ -630,6 +615,7 @@ function saveJSONScenToLocalStorage(aJSON){
 	window.localStorage.setItem("positions",  obj.positions);
 }
 
+//<<<<
 function loadXMLScene(removeData){
 	if(window.localStorage.getItem("woblocksSavePeformed") === 'true'){
 		sceneXmlContent = JSON.parse(window.localStorage.getItem("sceneXmlContent"));
@@ -663,6 +649,7 @@ function Reset(){
 	window.location.reload();
 }
 
+//<<<<
 function TryLoadSavedSCene(){
 
 	var loadSuccesful = loadXMLScene(false);
@@ -721,6 +708,7 @@ function appearencesOf(aSubsting, aString){
 	return aString.split(aSubsting).length - 1;
 }
 
+//<<<<
 async function LoadDefaultImages(){
 	var imgsToLoad = getDefaultImages();
 	var basePath = 'imgs/';
@@ -733,4 +721,90 @@ async function LoadDefaultImages(){
 	  wkImages[wkImages.length - 1].path = basePath+imgsToLoad[i]; 
       document.getElementById('loadedImages').innerHTML = wkImages.map(function(anElem){{return '<img src="'+anElem.path+'" style="width:30px;height:30px;">'+anElem.possiblePaths[0];}}).join('<br/>');
 	}
+}
+
+//////////////
+function getImageMethodFromWorkspace(){
+	var result = workspace.getBlocksByType('method_create_wk').filter(function(elem){return elem.getFieldValue('name') == 'image'});
+	if(result.length > 0){
+		return result[0];
+	}else{
+		return null;
+	}
+}
+
+function removeImageMethodFromWorkspace(){
+	var imgMethodBlock = getImageMethodFromWorkspace();
+	if(imgMethodBlock !== null){
+
+		var methodBlockParent = imgMethodBlock.getParent();
+		var methodBlockNextBlock = imgMethodBlock.getNextBlock();
+		imgMethodBlock.unplug();
+		//if there is an block plugged to imgMethodBlock, connect it to imgMethodBlock's parent
+		if(methodBlockNextBlock !== undefined && methodBlockNextBlock !== null){
+			var parentConnection;
+			if(methodBlockParent.type === 'objetc_create_wk'){
+				parentConnection = methodBlockParent.getFirstStatementConnection();
+			}else{
+				parentConnection = methodBlockParent.nextConnection;
+			}
+
+			methodBlockNextBlock.unplug();
+			parentConnection.connect(methodBlockNextBlock.previousConnection);
+		}
+		imgMethodBlock.dispose();		 
+
+	}
+}
+
+function addImageMethodToWorkspace(anImageUrl){
+	
+	//locate block to connect to
+		var objBlocks = workspace.getAllBlocks().filter(function(anElem){return anElem.type === 'objetc_create_wk'});
+		if(objBlocks.length !== 1){return;}
+		var blockToConnectTo = objBlocks[0]; 
+
+	//create xml
+		var xmlStr = '';
+		xmlStr += '	<block type="method_create_wk">';
+		xmlStr += '		<field name="name">image</field>';
+		xmlStr += '		<value name="params">';
+		xmlStr += '			<block type="lists_create_with">';
+		xmlStr += '				<mutation items="0"></mutation>';
+		xmlStr += '			</block>';
+		xmlStr += '		</value>';
+		xmlStr += '		<statement name="instructions">';
+		xmlStr += '			<block type="instruction_wk">';
+		xmlStr += '				<value name="instruction">';
+		xmlStr += '			    	<block type="text">';
+		xmlStr += '			        	<field name="TEXT">return "'+anImageUrl+'"</field>';
+		xmlStr += '			        </block>';
+		xmlStr += '			    </value>';
+		xmlStr += '			</block>';
+		xmlStr += '		</statement>';
+		xmlStr += '	</block>';
+		
+	//create new block
+		var createdBlock = Blockly.Xml.appendDomToWorkspace(jQuery.parseXML(xmlStr),workspace);
+		createdBlock = workspace.getBlockById(createdBlock[0]);
+	//attach block
+		if(blockToConnectTo.getFirstStatementConnection().targetBlock() === null){
+			//object block has no statements blocks: attach new block to object block
+			blockToConnectTo.getFirstStatementConnection().connect(createdBlock.previousConnection);
+		}else{
+			//object block has statements blocks: go to last one and attach new block
+			var lastStatementBlock = blockToConnectTo.getFirstStatementConnection().targetBlock();
+			var maxIterations = 500;
+			while(maxIterations > 0 ){
+				maxIterations--;
+				if(lastStatementBlock.getNextBlock() !== null){
+					lastStatementBlock = lastStatementBlock.getNextBlock();
+				}else{
+					break;
+				}
+			}
+			lastStatementBlock.nextConnection.connect(createdBlock.previousConnection);
+
+		}
+
 }

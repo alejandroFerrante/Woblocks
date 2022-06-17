@@ -15,3 +15,4 @@ colorPallette['collission_wk'] ='#6a040f';
 colorPallette['condition_wk'] ='#faa307';
 colorPallette['foreach_wk'] ='#98c1d9';
 colorPallette['game_wk'] = '#32a852';
+colorPallette['created_objects_wk'] = '#87f542';

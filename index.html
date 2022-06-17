@@ -135,7 +135,15 @@
   						<td>Icono<br/><select id="icons" onchange="onIconSelected()">
 						</select></td>
 						<td><img id="selectedIcon" style="width:25px;height:25px;" ></td>
-						<td style="padding-left:50px;" >Color de Fondo<br/><input id="mapping_color_back" type="color"/></td>
+						<td>
+							<label class="switch">
+						  	<input type="checkbox" id="isVisibleSwitch">
+						  	<span class="slider round"></span>
+						</label>
+						</td>
+						<td>
+							<input type="text" id="imageURL">
+						</td>
   					</tr>
   					</table>
   					<table class="customFont">
@@ -213,6 +221,8 @@
 	var localSwitch = true;
 
 	window.onload = function() {
+  		document.getElementById('gameWidthComp').value = 15;
+		document.getElementById('gameHeightComp').value = 15;
   		spaceInit();
 	};
 
@@ -283,7 +293,6 @@
 			}
 			if(newTab === 'Object' && newIndex >= 0 && newIndex < definedObjectXmlContent.length){
 				newContent = definedObjectXmlContent[newIndex];
-				document.getElementById('mapping_color_back').value = definedObjectsMappingInfo[newIndex].color;
 				document.getElementById('loadSection').style.display = 'none';
 				document.getElementById('saveSection').style.display = 'none';
 			}
@@ -402,7 +411,6 @@
 
 				currentTab = 'Object';
 				currentIndex = definedObjectNames.length - 1;
-				document.getElementById('mapping_color_back').value = '#ffffffff';
 				selectCurrentTab();
 				loadWorkspaceConent(getObjectToolboxXmlString(definedObjectNames[currentIndex]));
 
@@ -445,7 +453,12 @@
 						definedObjectsMappingInfo[currentIndex] = {};
 						definedObjectsMappingInfo[currentIndex].icon = 'icons/representations/'+document.getElementById('icons').value; 
 						definedObjectsMappingInfo[currentIndex].replacements = {};
-						definedObjectsMappingInfo[currentIndex].color = document.getElementById('mapping_color_back').value;
+						definedObjectsMappingInfo[currentIndex].isVisible = $('#isVisibleSwitch')[0].checked;
+						if(definedObjectsMappingInfo[currentIndex].isVisible){
+							definedObjectsMappingInfo[currentIndex].img = $('#imageURL')[0].value;
+						}else{
+							definedObjectsMappingInfo[currentIndex].img = null;
+						}
 
 						replacementValue = document.getElementById('mappingInput_'+i);
 						replacementParam = document.getElementById('replacementName__'+i);
@@ -484,6 +497,10 @@
 			picklistValue = picklistValue.split('/');
 			picklistValue = picklistValue[picklistValue.length - 1];
 			$('#icons').val(picklistValue);
+			$('#isVisibleSwitch')[0].checked = definedObjectsMappingInfo[currentIndex].isVisible;
+			if(definedObjectsMappingInfo[currentIndex].img != null){
+				$('#imageURL')[0].value = definedObjectsMappingInfo[currentIndex].img;
+			}
 		}
 
 		//FREE PARAMS
