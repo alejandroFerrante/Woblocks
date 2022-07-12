@@ -31,7 +31,7 @@ woblocksControl.init = function(){
 	this.wkGame = null;	
 }
 
-woblocksControl.configureBlockly = function(aToolbox){
+woblocksControl.configureBlockly = function(aWorkspaceId, aToolbox){
 	
 	this.toolbox = aToolbox;
 
@@ -53,7 +53,8 @@ woblocksControl.configureBlockly = function(aToolbox){
 	};
 	 
 	// Inject workspace 
-	this.workspace = Blockly.inject('blocklyDiv', options);
+	//this.workspace = Blockly.inject('blocklyDiv', options);
+	this.workspace = Blockly.inject(aWorkspaceId, options);
 
 	var clickEventFunction = Blockly.Events.Click;
 	Blockly.registry.unregister("event", "click"); 

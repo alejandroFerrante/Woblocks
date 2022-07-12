@@ -1,6 +1,6 @@
 
 function DoInit(){
-	woblocksControl.init();woblocksControl.configureBlockly(document.getElementById("toolbox"));woblocksControl.loadSceneToolbox();
+	woblocksControl.init();woblocksControl.configureBlockly('blocklyDiv',document.getElementById("toolbox"));woblocksControl.loadSceneToolbox();
 }
 
 function SaveScene(){
