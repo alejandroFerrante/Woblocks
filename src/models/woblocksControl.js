@@ -1,3 +1,5 @@
+import Blockly from 'blockly';
+import './woblocks_blocks'
 
 var woblocksControl = {};
 woblocksControl.private = {};
@@ -438,157 +440,153 @@ woblocksControl.loadToolboxConent = function(stringXmlContent){
 }
 
 woblocksControl.getMainToolboxXmlString =	function(){
-	var xmlStr = '';
-	xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">';
+	var xmlStr = `<xml>
 
-	xmlStr += '		      <block type="logic_boolean" >';
-	xmlStr += '		        <field name="BOOL">TRUE</field>';
-	xmlStr += '		      </block>';
+<category name="ATOMICOS" toolboxitemid="atomics">
+    <block type="logic_boolean" >
+        <field name="BOOL">TRUE</field>
+    </block>
 
-	xmlStr += '		      <block type="math_number" >';
-	xmlStr += '		        <field name="NUM">123</field>';
-	xmlStr += '		      </block>';
+    <block type="math_number" >
+        <field name="NUM">123</field>
+    </block>
 
-	xmlStr += '		      <block type="text" >';
-	xmlStr += '		        <field name="TEXT"></field>';
-	xmlStr += '		      </block>';
+    <block type="text" >
+        <field name="TEXT"></field>
+    </block>
 
-	xmlStr += '		      <block type="lists_create_with" >';
-	xmlStr += '		        <mutation items="0"></mutation>';
-	xmlStr += '		      </block>';
+    <block type="lists_create_with" >
+        <mutation items="0"></mutation>
+    </block>
 
-	xmlStr += '		      <block type="lists_create_with">';
-	xmlStr += '		        <mutation items="1"></mutation>';
-	xmlStr += '		        <value name="ADD0">';
-	xmlStr += '		          <block type="text">';
-	xmlStr += '		            <field name="TEXT"></field>';
-	xmlStr += '		          </block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		      </block>';
+    <block type="lists_create_with">
+        <mutation items="1"></mutation>
+        <value name="ADD0">
+            <block type="text">
+            <field name="TEXT"></field>
+            </block>
+        </value>
+    </block>
 
-	xmlStr += '		      <block type="condition_wk" >';
-	xmlStr += '		      </block>';
+    <block type="condition_wk" >
+    </block>
+</category>
 
+<category name="WK DEFINICIONES">
+    <block type="action_start_wk" >
+    </block>
 
-	xmlStr += '		    </category>';
+    <block type="action_start_wk">
+        <next>
+            <block type="objetc_create_wk">
+            </block>
+        </next>
+    </block>
 
-	//////////////////// W O L L O K ///////////////////////////////////////////
-	xmlStr += '		    <category name="WK DEFINICIONES">';
+    <block type="objetc_property_wk">
+        <value name="value">
+            <block type="text">
+            <field name="TEXT">aPropertyValue</field>
+            </block>
+        </value>
+    </block>
 
-	xmlStr += '			  <block type="action_start_wk" >';
-	xmlStr += '			  </block>';
-
-	xmlStr += '			  <block type="action_start_wk">';
-	xmlStr += '			    <next>';
-	xmlStr += '			      <block type="objetc_create_wk">';
-	xmlStr += '			      </block>';
-	xmlStr += '			    </next>';
-	xmlStr += '			  </block>';
-
-	xmlStr += '		      <block type="objetc_property_wk">';
-	xmlStr += '		        <value name="value">';
-	xmlStr += '		          <block type="text">';
-	xmlStr += '		            <field name="TEXT">aPropertyValue</field>';
-	xmlStr += '		          </block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		      </block>';
-
-	xmlStr += '			      <block type="method_create_wk">';
-	xmlStr += '			        <value name="params">';
-	xmlStr += '			          <block type="lists_create_with">';
-	xmlStr += '			            <mutation items="0"></mutation>';
-	xmlStr += '			          </block>';
-	xmlStr += '			        </value>';
-	xmlStr += '			        <statement name="instructions">';
-	xmlStr += '			          <block type="instruction_wk">';
-	xmlStr += '			            <value name="instruction">';
-	xmlStr += '			              <block type="text">';
-	xmlStr += '			                <field name="TEXT">anInstruction</field>';
-	xmlStr += '			              </block>';
-	xmlStr += '			            </value>';
-	xmlStr += '			          </block>';
-	xmlStr += '			        </statement>';
-	xmlStr += '			      </block>';
-	
-
-	xmlStr += '		      <block type="instruction_wk">';
-	xmlStr += '		        <value name="instruction">';
-	xmlStr += '		          <block type="text">';
-	xmlStr += '		            <field name="TEXT">anInstruction</field>';
-	xmlStr += '		          </block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		      </block>';
+    <block type="method_create_wk">
+        <value name="params">
+            <block type="lists_create_with">
+            <mutation items="0"></mutation>
+            </block>
+        </value>
+        <statement name="instructions">
+            <block type="instruction_wk">
+            <value name="instruction">
+                <block type="text">
+                <field name="TEXT">anInstruction</field>
+                </block>
+            </value>
+            </block>
+        </statement>
+    </block>
 
 
-	xmlStr += '		    </category>';
+    <block type="instruction_wk">
+        <value name="instruction">
+            <block type="text">
+            <field name="TEXT">anInstruction</field>
+            </block>
+        </value>
+    </block>
+</category>
 
-	xmlStr += '		    <category name="WK EJECUCION">';
+<category name="WK EJECUCION">
+    <block deletable="false" type="action_start_wk">
+    </block>
 
-	xmlStr += '  		  <block deletable="false" type="action_start_wk">';
-	xmlStr += '		      </block>';
+    <block type="executor_wk" >		
+        <value name="executor">
+        </value>
+        <statement name="params"><block type="executor_param_wk"><value name="param">
+        <block type="text"><field name="TEXT">aParam</field></block>
+        </value></block></statement>
+    </block>
 
-	xmlStr += '		      <block type="executor_wk" >';		
-	xmlStr += '		      	<value name="executor">';
-	//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
-	xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
-	xmlStr += '		      	</value></block></statement>';
-	xmlStr += '		      </block>';
+    <block type="execution_res_wk" >		
+        <value name="executor">
+        </value>
+        <statement name="params">
+            <block type="executor_param_wk">
+                <value name="param">
+                    <block type="text"><field name="TEXT">aParam</field></block>
+                </value>
+            </block>
+        </statement>
+    </block>		
 
-	xmlStr += '		      <block type="execution_res_wk" >';		
-	xmlStr += '		      	<value name="executor">';
-	//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
-	xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
-	xmlStr += '		      	</value></block></statement>';
-	xmlStr += '		      </block>';		
+    <block type="executor_param_wk">
+        <value name="param">
+            <block type="text"><field name="TEXT">aParam</field></block>
+        </value>
+    </block>
 
+    <block type="var_objetc_wk">
+        <value name="value">
+            <block type="text">
+            <field name="TEXT">aVariableValue</field>
+            </block>
+        </value>
+    </block>
 
-	xmlStr += '			  <block type="executor_param_wk"><value name="param">';
-	xmlStr += '		      	<block type="text"><field name="TEXT">aParam</field></block>';
-	xmlStr += '			  </value></block">';
-	xmlStr += '		      </block>';
+    <block type="instruction_wk">
+        <value name="instruction">
+            <block type="text">
+            <field name="TEXT">anInstruction</field>
+            </block>
+        </value>
+    </block>
 
-	xmlStr += '		      <block type="var_objetc_wk">';
-	xmlStr += '		        <value name="value">';
-	xmlStr += '		          <block type="text">';
-	xmlStr += '		            <field name="TEXT">aVariableValue</field>';
-	xmlStr += '		          </block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		      </block>';
+    <block type="keyboard_event_wk">
+    </block>
 
-	xmlStr += '		      <block type="instruction_wk">';
-	xmlStr += '		        <value name="instruction">';
-	xmlStr += '		          <block type="text">';
-	xmlStr += '		            <field name="TEXT">anInstruction</field>';
-	xmlStr += '		          </block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		      </block>';
+    <block type="tick_event_wk">
+    </block>
 
-	xmlStr += '		      <block type="keyboard_event_wk">';
-	xmlStr += '		      </block>';
+    <block type="collission_wk">
+    </block>
 
-	xmlStr += '		      <block type="tick_event_wk">';
-	xmlStr += '		      </block>';
+    <block type="foreach_wk">
+    </block>
+</category>
 
-	xmlStr += '		      <block type="collission_wk">';
-	xmlStr += '		      </block>';
+<category name="OBJETOS" toolboxitemid="custom" >
+    <block type="game_wk"></block>
+`
 
-	xmlStr += '		      <block type="foreach_wk">';
-	xmlStr += '		      </block>';
-
-	xmlStr += '		    </category>';
-
-	xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
-	xmlStr +='				<block type="game_wk"></block>';
 	if(this.definedObjectsInfo.objectNames.length > 0){
 		for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
 			xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
 		}
 	}
-	xmlStr +='		    </category>\n';
+	xmlStr +='		    </category>\n</xml>';
 	return xmlStr;
 }
 
@@ -727,3 +725,7 @@ woblocksControl.getImagePathOfRepresentation = function(aRepresentationName){
 woblocksControl.getIconPathOfRepresentation = function(aRepresentationName){
 	
 }
+
+woblocksControl.init()
+
+export default woblocksControl;

@@ -1,11 +1,28 @@
+import Blockly from 'blockly'
 //=============================================================================================================================================
+const colorPallette = {}; 
+colorPallette['action_start_wk'] ='#03071e';
+colorPallette['objetc_create_wk'] ='#03071e';
+colorPallette['objetc_property_wk'] ='#03071e';
+colorPallette['method_create_wk'] ='#03071e';
+colorPallette['instruction_wk'] ='#03071e';
+colorPallette['executor_wk'] ='#f0a329';
+colorPallette['executor_wk_alt'] ='#d46922';
+colorPallette['execution_res_wk'] ='#f0a329';
+colorPallette['executor_param_wk'] ='#ffba08';
+colorPallette['var_objetc_wk'] ='#90a955';
+colorPallette['keyboard_event_wk'] ='#dc2f02';
+colorPallette['tick_event_wk'] ='#9d0208';
+colorPallette['collission_wk'] ='#6a040f';
+colorPallette['condition_wk'] ='#faa307';
+colorPallette['foreach_wk'] ='#98c1d9';
+colorPallette['game_wk'] = '#32a852';
+colorPallette['created_objects_wk'] = '#87f542';
 //=============================================================================================================================================
-//=============================================================================================================================================
-//=============================================================================================================================================
+
 
 //Inherit base from Javascript, everything needed will be overiden
 Blockly.Wollok = Blockly.JavaScript
-
 //ACTION START
 //This Block serves as the starting point of an object or method definition. All other blocks are designed to not generate code if this block 
 //is not on top of the top of the block heriarchy. 
@@ -1015,3 +1032,5 @@ function removeInitialNumbers(aString){
 	}
 	return aString.substring(firstNonNumericIndex);
 }
+
+export default Blockly

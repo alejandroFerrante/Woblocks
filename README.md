@@ -5,7 +5,10 @@
 	What is Woblocks
     </li>
     <li>
-	How to Install & Run
+	Prerequisites
+    </li>
+    <li>
+	Running
     </li>
     <li>
 	How to Use
@@ -36,49 +39,64 @@ Blocks have proven to be a fantastic way to approach the teaching of programming
 
 Our hope is to make this project grow in a collaborative way, adding more features and refining its functioning in order to make it easy to use and understand, and yet a powerful tool for building and learning the fundamentals of OOP. 
 
-## How to Install & Run
+## Prerequisites
 
-In order to get Woblocks running you will need some prequisites.In any Unix system, you can intstall them via the terminal console.
-
-<ol>
-    <li>
-	create containing folder
-    	mkdir <folder name>
-    </li>
-    <li>	    
-	install nvm
-	wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-    </li>
-    <li>
-	install npm
-	nvm install node
-   </li>
-    <li>
-	install http server
-	sudo npm install -g http-server
-    </li>
-    <li>
-	install git
+In order to get Woblocks running you will need some prequisites. In any Unix system, you can intstall them via the terminal console.
+ 
+#### Install git and clone the project
+```bash
 	sudo apt-get install git
-    </li>
-    <li>
-	download Woblocks
 	git clone https://github.com/alejandroFerrante/Woblocks.git
-    </li>
-    <li>
-	download Wollok & Wollok Game
-	cd Woblocks
-	npm install
-    </li>
-</ol>
+	cd Woblocks # important, to get into the project folder
+```
 
-Next you will have to run a python script to configure default images and object icons. This script is called "generateDefaultImagesAndIcons.py", so if you open a terminal on the Woblocks directory run the command 'python generateDefaultImagesAndIcons.py'.
+#### Install nvm and npm
+```bash
+    # installing nvm
+    wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash 
+    # installing npm via nvm
+    nvm install node
+```
 
+#### Install dependencies
+```bash
+    npm install
+```
 
-Congratulations!Now you can run Woblocks via
-  npm start
+#### Update default images and default icons
 
-And finally open a browser and check http://127.0.0.1:8081/
+Next you will have to run a python script to configure default images and object icons. This script is called "generateDefaultImagesAndIcons.py", so if you open a terminal on the Woblocks directory run the command
+
+```bash
+python generateDefaultImagesAndIcons.py
+```
+
+## Running
+
+Congratulations! Now you can run Woblocks. In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 
 ## How to Use
@@ -88,29 +106,13 @@ You wil see the main screen as follows:
 
 ![Woblocks Main Screen](https://github.com/alejandroFerrante/Woblocks/blob/main/readme_SplashScreenReference.png)
 
-<ol>
-    <li>
-	Blocks Workspace
-    </li>
-    <li>
-	Blocks Toolbox
-    </li>
-    <li>
-	Created Objects Tabs
-    </li>
-    <li>
-	Generated Code
-    </li>
-    <li>
-	Scene
-    </li>
-    <li>
-	Game Config
-    </li>
-    <li>
-	Import/Export
-    </li>
-</ol>
+- Blocks Workspace
+- Blocks Toolbox
+- Created Objects Tabs
+- Generated Code
+- Scene
+- Game Config
+- Import/Export
 
 To define an object, simply go to the Toolbox section and drag the object block to the Workspace.
 Next you will be able to attach properties and method blocks by dragging it from the Toolbox section.
