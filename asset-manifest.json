@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "/Woblocks/static/css/main.e9143da6.css",
+    "main.js": "/Woblocks/static/js/main.952a5ecb.js",
+    "static/js/27.37dfb335.chunk.js": "/Woblocks/static/js/27.37dfb335.chunk.js",
+    "index.html": "/Woblocks/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.e9143da6.css",
+    "static/js/main.952a5ecb.js"
+  ]
+}
