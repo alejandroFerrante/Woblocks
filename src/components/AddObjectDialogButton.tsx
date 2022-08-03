@@ -1,32 +1,18 @@
-import { IconButton } from '@material-ui/core'
-import { Add as AddIcon, Edit as EditIcon, Done as DoneIcon } from '@material-ui/icons'
-import { useState } from 'react'
-import { WollokObject } from '../models/WollokObject'
+import { Add as AddIcon } from '@material-ui/icons'
 import DialogButton from './DialogButton'
 
-type AddObjectDialogButtonProps = {
-    wollokObject?: WollokObject
-    onEditObject?: (o?: WollokObject)=>void // If filled, means that dialog is editing existing object. 
-    onNewObject?: (o: WollokObject)=>void // If filled, means that dialog is creating new object.
-}
-
-export default function AddObjectDialogButton( {wollokObject, onNewObject, onEditObject}: AddObjectDialogButtonProps){
-    const [wObject, setWObject] = useState(wollokObject)
-
+export default function AddObjectDialogButton(){
     const handleAccept = () => {
-        onNewObject ? onNewObject(wObject!) : onEditObject!(wObject)
+        // TODO: produce global effect: create object
     }
 
     return <DialogButton 
-        title={(onNewObject ? "Añadir" : "Editar") + " objeto"}
-        tooltip={(onNewObject ? "Añadir" : "Editar") + " objeto"}
-        Icon={onNewObject ? AddIcon : EditIcon}
-        moreHeaders={
-            <IconButton edge="end" color="inherit" onClick={handleAccept} aria-label="Cerrar">
-                <DoneIcon />
-            </IconButton>
-        }
+        title={"Añadir objeto"}
+        tooltip={"Añadir  objeto"}
+        Icon={AddIcon}
+        onAccept={handleAccept}
     >
         Añadir/Editar objeto
+        Aquí hay que poner un componente que permita editar las propiedades del objeto
     </DialogButton>
 }
