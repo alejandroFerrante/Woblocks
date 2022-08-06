@@ -1,3 +1,4 @@
+import { createTheme, ThemeProvider } from '@material-ui/core';
 import React from 'react';
 import './App.css';
 import BlocklyWoblocks from './components/BlocklyWoblocks';
@@ -18,10 +19,24 @@ function App() {
   // initial global state
   const appState: AppState = new AppState()
 
+  const theme = createTheme({
+    
+    palette: {
+      primary: {
+        main: "#A6204C"
+      },
+      secondary: {
+        main: "#DA2028"
+      }
+    }
+  })
+
   return (
     <AppContext.Provider value={appState}>
+      <ThemeProvider theme={theme}>
         <HeaderContent />
         <BlocklyWoblocks />
+      </ThemeProvider>
     </AppContext.Provider>
   );
 }
