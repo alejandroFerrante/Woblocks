@@ -31,7 +31,9 @@
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.6",
     "blockly": "^7.20211209.4",
+    "fbemitter": "^3.0.0",
     "gh-pages": "^4.0.0",
+    "rc-slider": "^10.0.1",
     "react": "^18.2.0",
     "react-blockly": "^7.0.1",
     "react-dom": "^18.2.0",
@@ -63,5 +65,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/fbemitter": "^2.0.32"
   }
 }

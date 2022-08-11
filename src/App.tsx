@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
 import BlocklyWoblocks from './components/BlocklyWoblocks';
-import { HeaderContent } from './components/HeaderContent';
 import { WollokObject } from './models/WollokObject';
+import WoblocksController from './components/WoblocksController';
 
 class AppState {
   wollokObjects: WollokObject[] = []
@@ -20,8 +20,7 @@ function App() {
 
   return (
     <AppContext.Provider value={appState}>
-        <HeaderContent />
-        <BlocklyWoblocks />
+      <WoblocksController />
     </AppContext.Provider>
   );
 }

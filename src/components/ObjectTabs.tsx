@@ -2,17 +2,39 @@ import { Tab, Tabs } from "@material-ui/core"
 import WollokIcon from "./WollokIcon"
 import AddObjectDialogButton from "./AddObjectDialogButton"
 import { WollokObject } from "../models/WollokObject"
-import { useState } from "react"
+import { useState , useReducer} from "react"
 import { Whatshot } from "@material-ui/icons"
 
-export default function ObjectTabs () {
+import EventEmitter from './eventEmitter'
+
+export default function ObjectTabs (props:any) {
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
     const mainTab = new WollokObject("stub", WollokIcon)
-    const wollokObjs = [mainTab, new WollokObject("fueguito", Whatshot)] // TODO: this is an example, should be taken from global state
+    //new WollokObject("fueguito", Whatshot)
+    //const wollokObjs = [mainTab] // TODO: this is an example, should be taken from global state
+    
+    const [wollokObjs,setWollokObjs] = useState([mainTab]);
     const [currentTabId, setCurrentTabId] = useState(mainTab.id()) // TODO: probably this should be global state
+    
 
     const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
-        setCurrentTabId(tabId)
+        console.log('onTabSelected');
+        if(tabId != currentTabId){
+            EventEmitter.emit('TabSwitch', { previous:wollokObjs.map(function(elem){return elem.name} ).indexOf(currentTabId) , new:wollokObjs.map(function(elem){return elem.name} ).indexOf(tabId) , currentObjectName:tabId} );
+            setCurrentTabId(tabId)
+        }
     }
+
+    const AddTab = (chosenName:string) => {
+        //if(!wollokObjs.map(function(elem){return elem.name }).includes(chosenName) ){
+            setWollokObjs(wollokObjs.concat([new WollokObject(chosenName, Whatshot)]));
+            setCurrentTabId(chosenName);
+            forceUpdate();
+    }
+
+
+    const listener = EventEmitter.once('CreateTab',AddTab);
 
     return <>
         <Tabs 
@@ -28,6 +50,6 @@ export default function ObjectTabs () {
                 />
             )}
         </Tabs>
-        <AddObjectDialogButton />
+        <AddObjectDialogButton openCreateObjectModal={props.openCreateObjectModal} />
     </>  
 }

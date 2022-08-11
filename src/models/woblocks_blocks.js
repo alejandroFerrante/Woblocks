@@ -29,7 +29,7 @@ Blockly.Wollok = Blockly.JavaScript
 Blockly.Blocks['action_start_wk'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldImage("icons/play.png", 20, 20, "|>"));
+        .appendField(new Blockly.FieldImage("icons/play.png", 20, 20, "|>"));      
     this.setInputsInline(false);
     this.setNextStatement(true, ['objetc_definition_wk','execution_wk','action_start_wk']);
     this.setTooltip('');

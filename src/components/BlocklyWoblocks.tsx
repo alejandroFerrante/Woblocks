@@ -5,6 +5,8 @@ import Blockly from 'blockly'
 
 export default function BlocklyWoblocks() {
   const [xml, setXml] = useState("");
+
+
   const toolbox = Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString())
 
   return (
