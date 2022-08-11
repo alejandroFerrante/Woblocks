@@ -19,7 +19,8 @@ export default function ModalWindow(props:any){
 	const handleAccept = () => {
 		//{chosenName, chosenRepresentation}
 		const rep = props.representations.filter(function(elem:any){return (!visualMode) || (elem.isVisual == true)})[sliderIndex];
-		EventEmitter.emit('ObjectCreateConfigAccept',{chosenName:chosenName, chosenRepresentation:rep});
+		props.onObjCreateConfigAccept({chosenName:chosenName, chosenRepresentation:rep});
+		console.log('ModalWindow handleAccept');
 		props.closeModal();
 	}
 

@@ -5,10 +5,11 @@ import { WollokObject } from "../models/WollokObject"
 import { useState , useReducer} from "react"
 import { Whatshot } from "@material-ui/icons"
 
-import EventEmitter from './eventEmitter'
-
 export default function ObjectTabs (props:any) {
+
     const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+/*
+
 
     const mainTab = new WollokObject("stub", WollokIcon)
     //new WollokObject("fueguito", Whatshot)
@@ -21,7 +22,7 @@ export default function ObjectTabs (props:any) {
     const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
         console.log('onTabSelected');
         if(tabId != currentTabId){
-            EventEmitter.emit('TabSwitch', { previous:wollokObjs.map(function(elem){return elem.name} ).indexOf(currentTabId) , new:wollokObjs.map(function(elem){return elem.name} ).indexOf(tabId) , currentObjectName:tabId} );
+            //EventEmitter.emit('TabSwitch', { previous:wollokObjs.map(function(elem){return elem.name} ).indexOf(currentTabId) , new:wollokObjs.map(function(elem){return elem.name} ).indexOf(tabId) , currentObjectName:tabId} );
             setCurrentTabId(tabId)
         }
     }
@@ -32,17 +33,20 @@ export default function ObjectTabs (props:any) {
             setCurrentTabId(chosenName);
             forceUpdate();
     }
+*/
+    const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
+        props.onTabSwitch(tabId);
+        forceUpdate();
+    }
 
-
-    const listener = EventEmitter.once('CreateTab',AddTab);
 
     return <>
         <Tabs 
-            value={currentTabId}
+            value={props.currentTab}
             onChange={onTabSelected}
             variant="scrollable"
         >
-            {wollokObjs.map( wollokObject => 
+            { ([new WollokObject("scene", WollokIcon)].concat(props.definedObjects.map(function(elem:any){return new WollokObject(elem.name, Whatshot) } ) )).map( wollokObject => 
                 <Tab 
                     value={wollokObject.id()}
                     icon={<wollokObject.Icon/>} 

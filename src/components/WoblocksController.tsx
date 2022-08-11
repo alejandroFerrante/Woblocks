@@ -6,17 +6,9 @@ import woblocksControl from '../models/woblocksControl'
 import Blockly from 'blockly'
 import ContentManager from './ContentManager';
 
-import EventEmitter from './eventEmitter'
-
 export default class WoblocksController extends Component{
 
-	state = {
-		//this info is stores to be able to dynamically define the toolbox
-		isOnScene:true,
-		currentObjName:'',
-		currentIndex:0
-		//
-	}
+
 
 	onObjCreateConfigAccept = (objCreateData:any) => {
 		console.log('onObjCreateConfigAccept');
@@ -36,36 +28,41 @@ export default class WoblocksController extends Component{
 
 			woblocksControl.addObjectNamed(objCreateData.chosenName, objCreateData.chosenRepresentation.name,objCreateData.chosenRepresentation.isVisual);
 			woblocksControl.addDefaultObjectXmlToWorkspaceNamed(objCreateData.chosenName);//this clears the workspace
+			this.state.definedObjects.push({name:objCreateData.chosenName , icon:objCreateData.chosenRepresentation.icon });
+			this.state.currentIndex = this.state.definedObjects.length;
 
-			EventEmitter.emit('CreateTab',objCreateData.chosenName);
+			console.log( 'isOnScene: '+this.state.isOnScene+' currentObjName:'+this.state.currentObjName+' currentIndex:'+this.state.currentIndex+' definedObjects.length:'+this.state.definedObjects.length);
+
 		}
 		
 	}
 
 	onTabSwitch = ( eventData:any ) => {
-		console.log('onTabSwitch previous:'+eventData.previous+' new:'+eventData.new);
-
+		console.log('onTabSwitch new:'+eventData+' isOnScene:'+this.state.isOnScene+' currentIndex:'+this.state.currentIndex);
 
 		//SAVE CURRENT
-		if(eventData.previous == 0){
+		if(this.state.isOnScene){
 			woblocksControl.saveSceneXmlContent();
 		}else{
 			//create obj
-			woblocksControl.saveObjectTabXmlContentWithIndex(eventData.previous - 1);
+			woblocksControl.saveObjectTabXmlContentWithIndex(this.state.currentIndex - 1);
 		}
 		//woblocksControl.definedObjectsAsBlocklyBlocks();
 
 		//LOAD NEW
-		if(eventData.new == 0){
+		if(eventData == 'scene'){
 			this.state.isOnScene = true;
-			this.state.currentObjName = '';
+			this.state.currentObjName = 'scene';
+			this.state.currentIndex = 0;
 			woblocksControl.loadSceneXmlContent();
 		}else{
-			this.state.currentObjName = eventData.tabName; 
+			this.state.currentObjName = eventData; 
 			this.state.isOnScene = false;
-			woblocksControl.loadDefinedObjectXmlContent(eventData.new - 1);
+			this.state.currentIndex = 1 + this.state.definedObjects.indexOf(eventData);
+			woblocksControl.loadDefinedObjectXmlContent(this.state.currentIndex);
 		}
-		this.state.currentIndex = eventData.new;
+
+		console.log( 'isOnScene: '+this.state.isOnScene+' currentObjName:'+this.state.currentObjName+' currentIndex:'+this.state.currentIndex+' definedObjects.length:'+this.state.definedObjects.length);
 
 	}
 
@@ -79,18 +76,24 @@ export default class WoblocksController extends Component{
 
 	onProjectLoad  = (eventData:any) => {}
 
+	state = {
+		//this info is stores to be able to dynamically define the toolbox
+		isOnScene:true,
+		currentObjName:'scene',
+		currentIndex:0,
+		//
+		definedObjects:[{}].splice(1)
+	}
+
 	
     render(){ 
     
     	var toolbox = Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString());
     	if(!this.state.isOnScene){toolbox = Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlString(this.state.currentObjName));}
 
-    	const tabSwitchListener = EventEmitter.addListener('TabSwitch',this.onTabSwitch);
-    	const objCreateAcceptListener = EventEmitter.addListener('ObjectCreateConfigAccept',this.onObjCreateConfigAccept);
-
 		  return (
 		    <>
-		    	<ContentManager />
+		    	<ContentManager onObjCreateConfigAccept={this.onObjCreateConfigAccept} definedObjects={this.state.definedObjects} currentTab={this.state.currentObjName} onTabSwitch={this.onTabSwitch} />
 			    <BlocklyWorkspace
 			      className="blocklyCanvas"
 			      toolboxConfiguration={toolbox!}
@@ -109,8 +112,7 @@ export default class WoblocksController extends Component{
 			        sounds : true, 
 			        oneBasedIndex : true
 			      }}
-			    />
-		    	{this.state.isOnScene} {this.state.currentObjName}
+			    />												
 			</>
 		    )
 		    

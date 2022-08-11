@@ -7,7 +7,7 @@ export function HeaderContent(props:any) {
     return <AppBar position="static">
         <Toolbar>
             <Typography variant="h5">Woblocks</Typography>
-            <ObjectTabs openCreateObjectModal={props.openCreateObjectModal}/>
+            <ObjectTabs openCreateObjectModal={props.openCreateObjectModal} definedObjects={props.definedObjects} currentTab={props.currentTab} onTabSwitch={props.onTabSwitch} />
             <PlayDialogButton/>
         </Toolbar>
     </AppBar>

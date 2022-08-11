@@ -25,7 +25,7 @@ export default function ContentManager(props:any){
     ]
 
 	return <>
-		<HeaderContent openCreateObjectModal={openCreateObjectModal}/>
-		<ModalWindow state={modalState} closeModal={closeModal} representations={representations}/>
+		<HeaderContent openCreateObjectModal={openCreateObjectModal} definedObjects={props.definedObjects} currentTab={props.currentTab} onTabSwitch={props.onTabSwitch} />
+		<ModalWindow state={modalState} closeModal={closeModal} representations={representations} onObjCreateConfigAccept={props.onObjCreateConfigAccept}/>
 	</>
 }
