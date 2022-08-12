@@ -2,58 +2,47 @@ import { Tab, Tabs } from "@material-ui/core"
 import WollokIcon from "./WollokIcon"
 import AddObjectDialogButton from "./AddObjectDialogButton"
 import { WollokObject } from "../models/WollokObject"
-import { useState , useReducer} from "react"
+import { useState , useReducer, useContext} from "react"
 import { Whatshot } from "@material-ui/icons"
+
+import WBContext from '../WBContext'
+
 
 export default function ObjectTabs (props:any) {
 
-    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-/*
+    //const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-
-    const mainTab = new WollokObject("stub", WollokIcon)
-    //new WollokObject("fueguito", Whatshot)
-    //const wollokObjs = [mainTab] // TODO: this is an example, should be taken from global state
-    
-    const [wollokObjs,setWollokObjs] = useState([mainTab]);
-    const [currentTabId, setCurrentTabId] = useState(mainTab.id()) // TODO: probably this should be global state
-    
+    const {globalState, setGlobalState} = useContext(WBContext);
 
     const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
-        console.log('onTabSelected');
-        if(tabId != currentTabId){
-            //EventEmitter.emit('TabSwitch', { previous:wollokObjs.map(function(elem){return elem.name} ).indexOf(currentTabId) , new:wollokObjs.map(function(elem){return elem.name} ).indexOf(tabId) , currentObjectName:tabId} );
-            setCurrentTabId(tabId)
-        }
-    }
-
-    const AddTab = (chosenName:string) => {
-        //if(!wollokObjs.map(function(elem){return elem.name }).includes(chosenName) ){
-            setWollokObjs(wollokObjs.concat([new WollokObject(chosenName, Whatshot)]));
-            setCurrentTabId(chosenName);
-            forceUpdate();
-    }
-*/
-    const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
-        props.onTabSwitch(tabId);
-        forceUpdate();
+        globalState.currentTab = tabId;
+        setGlobalState(globalState);
+        //forceUpdate();
     }
 
 
     return <>
         <Tabs 
-            value={props.currentTab}
+            value={globalState.currentTabIndex}
             onChange={onTabSelected}
             variant="scrollable"
         >
-            { ([new WollokObject("scene", WollokIcon)].concat(props.definedObjects.map(function(elem:any){return new WollokObject(elem.name, Whatshot) } ) )).map( wollokObject => 
+
+        { globalState.tabObjects.map(function(elem:any){ <Tab value={elem.name} key={elem.name} > {elem.name} </Tab> }) }
+
+        </Tabs>
+        <AddObjectDialogButton />
+    </>  
+}
+
+/*
+        { globalState.tabObjects.map(function(elem:any){ <Tab value={elem.name} icon={elem.icon} key={elem.name} /> }) }
+
+            { globalState.tabObjects.map( wollokObject => 
                 <Tab 
                     value={wollokObject.id()}
                     icon={<wollokObject.Icon/>} 
                     key={wollokObject.id()}
                 />
             )}
-        </Tabs>
-        <AddObjectDialogButton openCreateObjectModal={props.openCreateObjectModal} />
-    </>  
-}
+*/

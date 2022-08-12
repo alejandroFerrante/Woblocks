@@ -1,11 +1,15 @@
-import { useState } from "react"
+import { useContext } from "react"
 import NewObjectModal from './NewObjectModal'
 
+import WBContext from '../WBContext'
 
 export default function ModalWindow(props:any){
 	
+	const {globalState} = useContext(WBContext);
 
 	return <>
-		{ props.state == 'OBJCREATE_OPEN' && <NewObjectModal closeModal={props.closeModal} representations={props.representations} onObjCreateConfigAccept={props.onObjCreateConfigAccept}/>}		
+		{ globalState.modalState == 'OBJCREATE_OPEN' && <NewObjectModal/>}		
 	</>
+
+	//
 }
