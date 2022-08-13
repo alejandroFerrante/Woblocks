@@ -36,7 +36,6 @@ export default function ObjectConfigForm(props:any){
 
 export function Slider(props:any){
 
-
     const currentSlides = props.slides.filter(function(elem:any){return (!props.isVisual) || (elem.isVisual == true)});
     if(props.index > currentSlides.length - 1){props.setSliderIndex(0);}
 

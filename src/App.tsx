@@ -10,7 +10,8 @@ import WollokIcon from "./components/WollokIcon"
 
 import {WBProvider} from './WBContext'
 
-import ModalWindow from './components/ModalWindow'
+import ContentManager from './components/ContentManager'
+
 
 import MyContextButton from './components/MyContextButton'////////TEST
 
@@ -37,9 +38,7 @@ function App() {
   const [myAppState,setMyAppState] = useState({
     modalState:'CLOSED',
     currentTabIndex:0,
-    tabObjects: [{name:'scene', icon:'wkIcon'}],
-    xmlSceneContent : '',
-    objectsInfoMap : {}
+    tabObjects: [{name:'scene', icon:'wkIcon'}]
   }); 
 
   const [myVal,setMyVal] = useState(0);////////TEST
@@ -62,6 +61,9 @@ function App() {
       <WBProvider state={myAppState} stateSetter={setMyAppStateFunc} /*this part only for testing -->*/ val={myVal} valSetter={setMyVal} >
         <>
           <HeaderContent />
+          <ContentManager />
+          <BlocklyWoblocks />
+
           <MyContextButton />      
           
           {'myVal:'+myVal}<br/>

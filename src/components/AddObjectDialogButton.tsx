@@ -15,7 +15,7 @@ export default function AddObjectDialogButton(props:any){
         if(globalState.modalState !== 'OBJCREATE_OPEN'){
             globalState.modalState = 'OBJCREATE_OPEN';
             setGlobalState(globalState);
-            valSetter(5);
+            valSetter( (val + 1) % 2);
         }
     }
 

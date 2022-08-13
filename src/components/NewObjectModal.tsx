@@ -1,34 +1,63 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 
 import ObjectConfigForm from './ObjectConfigForm'
 import { AppBar, Dialog, DialogProps, IconButton, IconButtonProps, Toolbar, Typography } from '@material-ui/core'
 import { Close as CloseIcon, Done as DoneIcon } from '@material-ui/icons'
 
-import EventEmitter from './eventEmitter'
+import woblocksControl from '../models/woblocksControl'
 
-export default function ModalWindow(props:any){
+import WBContext from '../WBContext'
+
+export default function NewObjectModal(props:any){
 	
-	const [state,setState] = useState('CLOSED');
-
 	const [visualMode,setVisualMode] = useState(false);
     const [sliderIndex,setSliderIndex] = useState(0);
     const [chosenName,setChosenName] = useState('');
 
-	const handleClose = () => {}
+    const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
+
+	const handleClose = () => {
+		console.log('NewObjectModal handleClose');
+		globalState.modalState = 'CLOSED';
+        setGlobalState(globalState);
+        valSetter( (val + 1) % 2);
+	}
 
 	const handleAccept = () => {
 		//{chosenName, chosenRepresentation}
 		const rep = props.representations.filter(function(elem:any){return (!visualMode) || (elem.isVisual == true)})[sliderIndex];
-		props.onObjCreateConfigAccept({chosenName:chosenName, chosenRepresentation:rep});
-		console.log('ModalWindow handleAccept');
-		props.closeModal();
+		console.log('NewObjectModal handleAccept');
+
+		//SAVE CURRENT WORKSPACE
+		if(globalState.currentTabIndex == 0){
+			woblocksControl.saveSceneXmlContent();
+		}else{
+			woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
+		}
+
+		//ADD TAB OBJ
+		globalState.tabObjects.push( {name:chosenName, icon:'wkIcon'} );
+
+		//SELECT TAB
+		globalState.currentTabIndex = globalState.tabObjects.length - 1;
+
+		//ADD OBJ DATA
+		woblocksControl.addObjectNamed(chosenName, rep.name,rep.isVisual);
+
+		//LOAD NEW WORKSPACE
+		woblocksControl.addDefaultObjectXmlToWorkspaceNamed(chosenName);//this clears the workspace
+
+		globalState.modalState = 'CLOSED';
+        setGlobalState(globalState);
+        
+        valSetter( (val + 1) % 2);
 	}
 
 	return <>
 		<Dialog  open={true} onClose={handleClose}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" onClick={props.closeModal} aria-label="Cerrar">
+                    <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>
                     <Typography>Crear Objeto</Typography>

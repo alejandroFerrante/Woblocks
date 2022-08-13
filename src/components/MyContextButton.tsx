@@ -10,7 +10,7 @@ export default function MyContextButton(props:any){
         console.log('MyContextButton handleCLick >> ');
         globalState.modalState = 'OPEN';
         setGlobalState(globalState);
-        valSetter(5);
+        valSetter( (val + 1) % 2);
     }
 
     return <>
