@@ -7,6 +7,9 @@ import { Close as CloseIcon, Done as DoneIcon } from '@material-ui/icons'
 import woblocksControl from '../models/woblocksControl'
 
 import WBContext from '../WBContext'
+import {imagePathManager} from '../ImagePathManager'
+
+import swal from 'sweetalert'
 
 export default function NewObjectModal(props:any){
 	
@@ -16,6 +19,7 @@ export default function NewObjectModal(props:any){
 
     const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 
+    //COMPONENT USED FOR SETTING OBJECT NAME AND REPRESENTATION
 	const handleClose = () => {
 		console.log('NewObjectModal handleClose');
 		globalState.modalState = 'CLOSED';
@@ -24,8 +28,16 @@ export default function NewObjectModal(props:any){
 	}
 
 	const handleAccept = () => {
+		if(!chosenName || chosenName === ''){
+			swal("No ha completado el nombre", "", "warning");
+			return;
+		}
+		if(globalState.tabObjects.map(function(elem:any){return elem.name}).includes(chosenName) ){
+			swal("Un objeto con este nombre ya existe", "", "warning");
+			return;
+		}
 		//{chosenName, chosenRepresentation}
-		const rep = props.representations.filter(function(elem:any){return (!visualMode) || (elem.isVisual == true)})[sliderIndex];
+		const rep = imagePathManager.representations.filter(function(elem:any){return (!visualMode) || (elem.isVisual == true)})[sliderIndex];
 		console.log('NewObjectModal handleAccept');
 
 		//SAVE CURRENT WORKSPACE
@@ -36,7 +48,7 @@ export default function NewObjectModal(props:any){
 		}
 
 		//ADD TAB OBJ
-		globalState.tabObjects.push( {name:chosenName, icon:'wkIcon'} );
+		globalState.tabObjects.push( {name:chosenName , icon:rep.name} );
 
 		//SELECT TAB
 		globalState.currentTabIndex = globalState.tabObjects.length - 1;
@@ -45,11 +57,15 @@ export default function NewObjectModal(props:any){
 		woblocksControl.addObjectNamed(chosenName, rep.name,rep.isVisual);
 
 		//LOAD NEW WORKSPACE
-		woblocksControl.addDefaultObjectXmlToWorkspaceNamed(chosenName);//this clears the workspace
+		var repImage = (rep.isVisual)? rep.alias : null;//if visual add the image method to the block construct
+		woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage(chosenName, repImage);//this clears the workspace
+
+		//SAVE OBJ WORKSPACE INFO
+		woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
+		woblocksControl.setObjectInfoOfIndex(globalState.currentTabIndex - 1, rep.name,visualMode);
 
 		globalState.modalState = 'CLOSED';
         setGlobalState(globalState);
-        
         valSetter( (val + 1) % 2);
 	}
 
@@ -66,7 +82,7 @@ export default function NewObjectModal(props:any){
                     </IconButton>
                 </Toolbar>
             </AppBar>
-		<ObjectConfigForm  visualMode={visualMode} sliderIndex={sliderIndex} chosenName={chosenName} setVisualMode={setVisualMode} setSliderIndex={setSliderIndex} setChosenName={setChosenName} representations={props.representations}/>
+			<ObjectConfigForm  editName={true} visualMode={visualMode} sliderIndex={sliderIndex} chosenName={chosenName} setVisualMode={setVisualMode} setSliderIndex={setSliderIndex} setChosenName={setChosenName} representations={imagePathManager.representations}/>
         </Dialog>
 
 	</>

@@ -23,11 +23,14 @@ export default function ObjectConfigForm(props:any){
     const cellStyle = {paddingLeft:"10%"};
     ///////////////////////////////////////////
 
+    //console.log('ObjectConfigForm props.visualMode:'+props.visualMode+' props.sliderIndex:'+props.sliderIndex);
+
     return <>
         <br/>
-        <div style={cellStyle} > Nombre<input onChange={onNameChange} /> </div>
+        { props.editName && <div style={cellStyle} >  Nombre <input onChange={onNameChange} /> </div> }
         <br/>
-        <div style={cellStyle} >es visual? <input onChange={onVisualModeChange} type="checkbox" /> </div> 
+        { (props.visualMode) && <div style={cellStyle} >es visual? <input onChange={onVisualModeChange}   checked type="checkbox" /> </div>}
+        { (!props.visualMode) && <div style={cellStyle} >es visual? <input onChange={onVisualModeChange}   type="checkbox" /> </div>} 
         <br/>
         <div style={cellStyle}><Slider slides={props.representations} isVisual={props.visualMode} index={props.sliderIndex} setSliderIndex={setIndex} /> </div>
     </>

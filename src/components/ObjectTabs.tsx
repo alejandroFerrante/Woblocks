@@ -5,21 +5,52 @@ import { WollokObject } from "../models/WollokObject"
 import { useState , useReducer, useContext} from "react"
 import { Whatshot } from "@material-ui/icons"
 
+import Blockly from 'blockly';
 import WBContext from '../WBContext'
+import woblocksControl from '../models/woblocksControl'
 
+import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from '../ImagePathManager'
 
 export default function ObjectTabs (props:any) {
 
     //const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-    const {globalState, setGlobalState} = useContext(WBContext);
+    const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 
     const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
-        globalState.currentTab = tabId;
-        setGlobalState(globalState);
-        //forceUpdate();
+        if(globalState.currentTabIndex !== tabId){
+            console.log(tabId);
+            
+
+            //SAVE CURRENT WORKSPACE
+            if(globalState.currentTabIndex == 0){
+                woblocksControl.saveSceneXmlContent();
+            }else{
+                woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
+            }
+
+            //LOAD NEW
+            if(Number(tabId) == 0){
+                woblocksControl.loadSceneXmlContent();
+            }else{
+                woblocksControl.loadDefinedObjectXmlContent(Number(tabId) - 1);
+            }
+            
+
+            woblocksControl.definedObjectsAsBlocklyBlocks();
+
+            var wsp:any = Blockly.getMainWorkspace(); 
+            wsp.getToolbox().clearSelection(); 
+
+            globalState.currentTabIndex = Number(tabId);
+            setGlobalState(globalState);
+            valSetter( (val + 1) % 2);
+        }
     }
 
+    
+
+    const elems = [{name:'banana'},{name:'manzana'}];
 
     return <>
         <Tabs 
@@ -28,9 +59,13 @@ export default function ObjectTabs (props:any) {
             variant="scrollable"
         >
 
-        { globalState.tabObjects.map(function(elem:any){ <Tab value={elem.name} key={elem.name} > {elem.name} </Tab> }) }
+
+        { globalState.tabObjects.map( function(elem:any){  
+            return <Tab label={elem.name} key={elem.name} ></Tab> }
+        )}
 
         </Tabs>
+
         <AddObjectDialogButton />
     </>  
 }

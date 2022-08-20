@@ -1,16 +1,11 @@
 import Blockly from 'blockly';
-import './woblocks_blocks'
+import './woblocks_blocks.tsx'
+import {getRepIconFor} from '../ImagePathManager'
 
 var woblocksControl = {};
 woblocksControl.private = {};
-//START
-	//INIT
-	//CONFIGURE BLOCKLY (Inject options, override click function)
-	//LOAD SCENE IF CACHED <LATER>
-	//SET AVAILABLE REPRESENTATIONS <HARDCODED AT FIRST>
 
 
-//INITIALIZATION
 woblocksControl.init = function(){
 	this.mainSceneInfo = {xml:Blockly.Xml.textToDom('<xml></xml>') };
 	
@@ -18,75 +13,67 @@ woblocksControl.init = function(){
 	this.definedObjectsInfo.objectNames = []; //name list
 	this.definedObjectsInfo.objectsInfoMap = {};//Map Name => {definedObjectXmlContent , definedObjectsMappingInfo}
 	//definedObjectXmlContent : xml
-	//definedObjectsMappingInfo: {representationName,isVIsual}
+	//definedObjectsMappingInfo: {representationName,isVisual}
 
 	this.config = {};
 	this.config.wkImages = [];
 	this.config.height = 20;
 	this.config.width = 20;
-	this.config.backgroundImage = null;
-
-	this.representations = [];//names that resolve to icon and sprite
+	this.config.backgroundImage = '';
 	
 	this.wkGame = null;	
-}
-
-//SAVE/LOAD TAB CONTENT
-
-woblocksControl.loadSceneToolbox = function(){
-	this.loadToolboxConent(this.getMainToolboxXmlString());
-}
-
-woblocksControl.isObjectNamedPresent = function(anObjectName){
-	return this.definedObjectsInfo.objectNames.includes(anObjectName);
-}
-
-woblocksControl.saveSceneXmlContent = function(){
-	this.mainSceneInfo.xml = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
-	console.log('saveSceneXmlContent>> '+Blockly.Xml.domToText(this.mainSceneInfo.xml) );
-	return true;
-}
-
-woblocksControl.clearWorkspace = function(){
-	Blockly.getMainWorkspace().clear();
 }
 
 woblocksControl.addObjectNamed = function(aNewObjectName,aRepresentationName,isVisual){
 	if(this.definedObjectsInfo.objectNames.includes(aNewObjectName)){return false;}
 	this.definedObjectsInfo.objectNames.push(aNewObjectName);
-	this.definedObjectsInfo.objectsInfoMap[aNewObjectName] = {xml:Blockly.Xml.textToDom('<xml></xml>'),definedObjectsMappingInfo: {representationName:aRepresentationName,isVIsual:isVisual}};
+	this.definedObjectsInfo.objectsInfoMap[aNewObjectName] = {code:'',xml:'<xml></xml>',definedObjectsMappingInfo: {representationName:aRepresentationName,isVIsual:isVisual}};
+	return true;
+}
+
+//WORKSPACE XML & BLOCKS UTILS
+
+woblocksControl.saveSceneXmlContent = function(){
+	this.mainSceneInfo.xml = Blockly.Xml.domToText( Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace()) );
+	console.log('saveSceneXmlContent>> '+ this.mainSceneInfo.xml );
 	return true;
 }
 
 woblocksControl.addDefaultObjectXmlToWorkspaceNamed = function(anObjectName){
 	Blockly.getMainWorkspace().clear();
 	var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlNamed(anObjectName)+'</xml>';
-	//console.log('xmlStr: '+xmlStr);
-	var objXmlToAppend = Blockly.Xml.textToDom( xmlStr );
-	//console.log('objXmlToAppend: '+objXmlToAppend);
-	Blockly.Xml.appendDomToWorkspace( objXmlToAppend,Blockly.getMainWorkspace());
 
-	//console.log('HERE');
-	//var childBlock = Blockly.getMainWorkspace().newBlock('text');
-	//childBlock.setFieldValue('Hello', 'TEXT');
-	//childBlock.initSvg();
-	//childBlock.render();
+	var objXmlToAppend = Blockly.Xml.textToDom( xmlStr );
+	Blockly.Xml.appendDomToWorkspace( objXmlToAppend,Blockly.getMainWorkspace());
+}
+
+woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage = function(anObjectName,anImage){
+	Blockly.getMainWorkspace().clear();
+	var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlWithNameAndImage(anObjectName,anImage)+'</xml>';
+
+	var objXmlToAppend = Blockly.Xml.textToDom( xmlStr );
+	Blockly.Xml.appendDomToWorkspace( objXmlToAppend,Blockly.getMainWorkspace());
 }
 
 woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
 	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
 	
 	var objName = this.definedObjectsInfo.objectNames[anIndex];
-	this.definedObjectsInfo.objectsInfoMap[objName].xml = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
-	console.log('saveObjectTabXmlContentWithIndex objName:'+objName+' xml:'+Blockly.Xml.domToText(this.definedObjectsInfo.objectsInfoMap[objName].xml));
+	
+	const definitionBlock = woblocksControl.getAllParentlessObjects().filter(function(elem){
+		return (elem.type === 'action_start_wk') && elem.getNextBlock() && elem.getNextBlock().type === 'objetc_create_wk'
+	})[0];
+	this.definedObjectsInfo.objectsInfoMap[objName].xml = '<xml>'+Blockly.Xml.domToText(Blockly.Xml.blockToDom(definitionBlock))+'</xml>'; 
+	this.definedObjectsInfo.objectsInfoMap[objName].code =  Blockly.Blocks[ definitionBlock.type ].getValueWK(definitionBlock);
+
 	return true;
 }
 
 woblocksControl.loadSceneXmlContent = function(){
 	Blockly.getMainWorkspace().clear();
 	if(this.mainSceneInfo.xml){
-		console.log('loadSceneXmlContent '+Blockly.Xml.domToText(this.mainSceneInfo.xml) );
-		Blockly.Xml.appendDomToWorkspace(this.mainSceneInfo.xml,Blockly.getMainWorkspace());
+		console.log('loadSceneXmlContent '+this.mainSceneInfo.xml);
+		Blockly.Xml.appendDomToWorkspace( Blockly.Xml.textToDom( this.mainSceneInfo.xml ),Blockly.getMainWorkspace());
 	}
 }
 
@@ -95,346 +82,18 @@ woblocksControl.loadDefinedObjectXmlContent = function(anIndex){
 
 	var objName = this.definedObjectsInfo.objectNames[anIndex];
 	Blockly.getMainWorkspace().clear();
-	console.log('loadDefinedObjectXmlContent anIndex:'+anIndex+' objName:'+objName+' xml:'+Blockly.Xml.domToText(this.definedObjectsInfo.objectsInfoMap[objName].xml) );
 	if(this.definedObjectsInfo.objectsInfoMap[objName].xml){
-		Blockly.Xml.appendDomToWorkspace(this.definedObjectsInfo.objectsInfoMap[objName].xml,Blockly.getMainWorkspace());
+		Blockly.Xml.appendDomToWorkspace( Blockly.Xml.textToDom( this.definedObjectsInfo.objectsInfoMap[objName].xml ),Blockly.getMainWorkspace());
 	}
 	return true;
 }
-
-woblocksControl.definedObjectsAsBlocklyBlocks = function(){
-	console.log('definedObjectsAsBlocklyBlocks '+this.definedObjectsInfo.objectNames);
-	this.definedObjectsInfo.objectNames.map(function(aName){ woblocksControl.createDefinedObjectBlocklyBlock(aName,'iconsIsHardodedForNow') });
-}
-
-woblocksControl.createDefinedObjectBlocklyBlock = function(aliasBlockName, aliasBlockIconURL){
-
-  //REGISTER BLOCK
-  var functionString = ''; 
-  functionString += 'Blockly.Blocks[\''+aliasBlockName+'\'] = {\n';
-  functionString += ' init: function() {\n';
-  //functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\''+aliasBlockIconURL+'\', 25, 25, "*"));\n';
-  functionString += '  this.appendDummyInput().appendField(new Blockly.FieldImage(\'icons/representations/apple.png\', 25, 25, "*"));\n';
-  functionString += '  this.setTooltip("'+aliasBlockName+'");';
-
-  functionString += '  this.setOutput(true);\n';
-
-  functionString += '	this.setWarningText(\'MENSAJES:\');';
-  
-  functionString += '   this.setColour(\'#03071e\');';
-  functionString += ' },\n';
-  
-
-  functionString += ' saveConnections : function(containerBlock) {},\n';
-
-  functionString += ' updateShape_ : function() {},\n';
-
-  functionString += ' getMetaInfo:function(self){\n';
-  functionString += '	return {obj:\''+aliasBlockName+'\', method:null};	';
-  functionString += ' }\n';
-  functionString += '};';
-
-  eval(functionString);
-  
-
-  //DEFINE WK BEHAVIOUR
-  functionString = '';
-
-  functionString += 'Blockly.JavaScript[\''+aliasBlockName+'\'] = function(block) {\n';
-  functionString += '  return \''+aliasBlockName+'\';';
-  functionString += '};\n';
-
-  eval(functionString);
-
- 
-  functionString = 'Blockly.getMainWorkspace().getToolbox().clearSelection();\n';
-
-  eval(functionString);
-}
-
-/*
-woblocksControl.configureBlockly = function(aWorkspaceId, aToolbox){
-	
-	this.toolbox = aToolbox;
-
-	var options = { 
-		toolbox : aToolbox, 
-		collapse : true, 
-		comments : true, 
-		disable : true, 
-		maxBlocks : Infinity, 
-		trashcan : true, 
-		horizontalLayout : false, 
-		toolboxPosition : 'start', 
-		css : true, 
-		media : 'https://blockly-demo.appspot.com/static/media/', 
-		rtl : false, 
-		scrollbars : true, 
-		sounds : true, 
-		oneBasedIndex : true
-	};
-	 
-	// Inject workspace 
-	//this.workspace = Blockly.inject('blocklyDiv', options);
-	this.workspace = Blockly.inject(aWorkspaceId, options);
-
-	var clickEventFunction = Blockly.Events.Click;
-	Blockly.registry.unregister("event", "click"); 
-	Blockly.registry.register("event", "click",
-    function(a,b,c){ 
-    	var funk = clickEventFunction.bind(this); 
-    	funk(a,b,c); 
-    	if(c === 'block' && (a.type === 'objetc_create_wk' || woblocksControl.definedObjectsInfo.objectNames.includes(a.type) ) ){
-    		if(a.type === 'objetc_create_wk'){
-    			woblocksControl.showMessagesOfInWarningTextOf(a,a);
-    		} 
-
-    		if(woblocksControl.definedObjectsInfo.objectNames.includes(a.type) ){
-				woblocksControl.setMessagesForDefinedObjectNamedInto(a.type, a);    			
-    		}
-    	}
-    });
-}
-
-
-woblocksControl.setRepresentations = function(content, doAppend){
-	if(!this.representations){this.representations = [];}
-	if(doAppend){
-		this.representations = this.representations.concat(content);
-	}else{
-		this.representations = content;
-	}
-	this.representations = woblocksControl.private.removeDuplicates(this.representations);
-}
-
-woblocksControl.loadDefinedObjetcToolbox = function(anIndex){
-	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
-	var objName = this.definedObjectsInfo.objectNames[anIndex];
-	this.loadToolboxConent(this.getObjectToolboxXmlString(objName));
-}
-
-woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
-	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
-	
-	var objName = this.definedObjectsInfo.objectNames[anIndex];
-	this.definedObjectsInfo.objectsInfoMap[objName].xml = Blockly.Xml.workspaceToDom(this.workspace);
-	return true;
-}
-
-woblocksControl.saveObjectRepresentationInfoWithIndex = function(anIndex, aRepresentationName, representationIsVisual){
-	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
-	if(!this.representations.includes(aRepresentationName)){return false;}
-
-	var objName = this.definedObjectsInfo.objectNames[anIndex];
-	this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.representationName = aRepresentationName;
-	this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.isVIsual = representationIsVisual;
-}
-
-
-//RUN GAME
-
-
-woblocksControl.getSceneCodeAsWKString = function(newlineSeparator){
-	this.sceneErrorsFound = false;
-	var result = {definitions:[],executions:[]};
-	var objs = this.getAllParentlessObjects();
-	var res;
-	var validExecutionTypes = ['executor_wk','var_objetc_wk','instruction_wk','keyboard_event_wk','tick_event_wk','collission_wk','condition_wk'];
-
-	//INITIAL CONFIG
-	result.executions.push('game.width('+this.config.width+')'+newlineSeparator);
-	result.executions.push('game.height('+this.config.height+')'+newlineSeparator);
-	if(this.config.backgroundImage){
-		result.executions.push('game.boardGround("'+this.config.backgroundImage+'")'+newlineSeparator);
-	}
-	for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++){;
-		if(this.definedObjectsInfo.objectsInfoMap[this.definedObjectsInfo.objectNames[i]].definedObjectsMappingInfo.isVisual){
-			result.executions.push('game.addVisual("'+this.definedObjectsInfo.objectNames[i]+'")'+newlineSeparator);
-		}
-	}
-	result.executions.push('game.start()'+newlineSeparator);
-
-	//DEFINED OBJECTS
-	var tempBlock;
-	var newBlockId;
-	for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++){
-		newBlockId = Blockly.Xml.domToWorkspace(this.definedObjectsInfo.objectsInfoMap[this.definedObjectsInfo.objectNames[i]].xml , this.workspace)[0];
-	  	tempBlock = this.workspace.getBlockById(newBlockId);
-	  	tempBlock.initSvg();
-		res = Blockly.Wollok['action_start_wk'](tempBlock);
-		if(typeof res === 'string'){
-			result.definitions.push(res.replaceAll('\n',newlineSeparator));
-		}
-		tempBlock.dispose();
-	}
-
-	//WORKSPACE
-	for(var i = 0; i < objs.length && !this.sceneErrorsFound; i++){
-		if(Blockly.Wollok[ objs[i].type ] !== undefined){
-			
-			//EXECUTION
-			if(objs[i].type === 'action_start_wk' && objs[i].getNextBlock() !== undefined && objs[i].getNextBlock() !== null && validExecutionTypes.includes(objs[i].getNextBlock().type)){			
-
-				var current = objs[i].getNextBlock();
-
-				while(current !== null){
-					if(current.type !== null && validExecutionTypes.includes(current.type)){
-						//GET STR CODE
-						res = Blockly.Wollok[current.type](current);
-							
-						//DETECT ERROR
-						if(typeof res === 'string'){
-							result.executions.push( res.replaceAll('\n','') );
-						}else{
-							this.sceneErrorsFound = true;
-						}
-					}
-
-					//CONTINUE ITERATION
-					current = current.getNextBlock();
-				}
-				
-			//WORKSPACE OBJECT DEFINITION BLOCKS
-			}else if(objs[i].type === 'action_start_wk' && objs[i].getNextBlock() !== undefined && objs[i].getNextBlock() !== null && objs[i].getNextBlock().type === 'objetc_create_wk'){
-				//GET CODE
-	
-				res = Blockly.Wollok[ objs[i].type ](objs[i]);
-				
-				//DETECT ERROR
-				if(typeof res === 'string'){
-					//console.log(res);
-					result.definitions.push(res.replaceAll('\n',newlineSeparator));
-				}else{
-					this.sceneErrorsFound = true;
-				}
-			}
-		}
-	}
-
-
-	return result;
-}
-
-
-woblocksControl.runGame = function(gameDiv){
-	//CHECK & ALERT IF NO IMAGES? <LATER>
-	//FILL GENERATED CODE <LATER>
-	//GET SCENE CODE
-	var sceneText = this.getSceneCodeAsWKString('\n');
-	if(this.sceneErrorsFound){
-		//?		
-	}else{
-		var main = 'main';
-		var images = [];/////////////////////////////////////////
-		var sounds = [];
-		var sources = this.buildSources(sceneText.definitions,sceneText.executions);
-		var project = { main, images, sounds, sources };
-		this.wkGame = new Game(project);
-		this.wkGame.start(gameDiv);
-	}
-
-}
-
-woblocksControl.buildSources = function(definitions,executions) {
-    
-  const name = 'main.wlk'
-  var content = `
-  import wollok.game.*
-  program main { 
-  	`+executions.join('\n')+`
-  }
-  `+definitions.join('\n')+`
-  `
-  console.log({ content })
-  return [{ name, content }]
-}
-
-//REMOVE OBJECT
-woblocksControl.removeObjectNamed = function(aNewObjectName){
-	if(!this.definedObjectsInfo.objectNames.includes(aNewObjectName)){return false;}
-	this.definedObjectsInfo.objectNames.splice(this.definedObjectsInfo.objectNames.indexOf(aNewObjectName),1);
-	delete this.definedObjectsInfo.objectsInfoMap[aNewObjectName];
-	return true;
-}
-
-woblocksControl.removeObject = function(anIndex){
-	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
-	if(!this.definedObjectsInfo.objectNames.includes(aNewObjectName)){return false;}
-	this.definedObjectsInfo.objectNames.splice(this.definedObjectsInfo.objectNames.indexOf(aNewObjectName),1);
-	delete this.definedObjectsInfo.objectsInfoMap[aNewObjectName];
-	return true;
-}
-
-// DEFINED OBJECT TO BLOCKLY
-
-woblocksControl.setMessagesForDefinedObjectNamedInto = function(aName, aTargetBlock){
-	if(!this.definedObjectsInfo.objectNames.includes(aName)){return;}
-	if(!this.definedObjectsInfo.objectsInfoMap[aName].xml){aTargetBlock.setWarningText("MENSAJES:");}
-
-	var newBlockId = Blockly.Xml.domToWorkspace(this.definedObjectsInfo.objectsInfoMap[aName].xml , this.workspace)[0];
-  	var tempBlock = this.workspace.getBlockById(newBlockId);
-  	tempBlock.initSvg();
-	this.showMessagesOfInWarningTextOf(tempBlock,aTargetBlock);  	
-  	tempBlock.dispose();
-
-}
-
-woblocksControl.showMessagesOfInWarningTextOf = function(aBlock,anotherBlock){
-	var msgs = Blockly.Blocks['objetc_create_wk'].messagesOf(aBlock,this.workspace);
-	var msgsStr = "MENSAJES:";
-	for(var i = 0; i < msgs.length; i++){
-		msgsStr += "\n"+msgs[i];
-	}
-	anotherBlock.setWarningText(msgsStr);
-}
-
-//SAVE CONFIG INFO
-woblocksControl.saveConfigInfo = function(aHeight,aWidth, aBackgroundImageUrl){
-	this.config.height = aHeight;
-	this.config.width = aWidth;
-	this.config.backgroundImage = aBackgroundImageUrl;
-}
-
-
-//SAVE PROJECT
-woblocksControl.getProjetInfoAsJSON = function(){
-	var result = {};
-	result.mainSceneInfo = {xml:Blockly.Xml.domToText(this.mainSceneInfo.xml)};
-	result.definedObjectsInfo = { objectNames:this.definedObjectsInfo.objectNames };
-	result.definedObjectsInfo.objectsInfoMap = {};
-	this.definedObjectsInfo.objectNames.map(function(aName){
-		result.definedObjectsInfo.objectsInfoMap[aName] = {definedObjectsMappingInfo:woblocksControl.definedObjectsInfo.objectsInfoMap[aName].definedObjectsMappingInfo , xml:Blockly.Xml.domToText(woblocksControl.definedObjectsInfo.objectsInfoMap[aName].xml)};
-	});
-	result.config = this.config;
-	result.representations = this.representations;
-	return JSON.stringify(result);
-}
-
-//LOAD PROJECT
-woblocksControl.loadProjetInfoFromJSON = function(aJsonObjInfo){
-	var result = JSON.parse(aJsonObjInfo);
-	this.mainSceneInfo = {xml:Blockly.Xml.textToDom(result.mainSceneInfo.xml)};
-	this.definedObjectsInfo = { objectNames:result.definedObjectsInfo.objectNames, objectsInfoMap:{}};
-	this.definedObjectsInfo.objectNames.map(function(aName){
-		woblocksControl.definedObjectsInfo.objectsInfoMap[aName] = {definedObjectsMappingInfo:result.definedObjectsInfo.objectsInfoMap[aName].definedObjectsMappingInfo};
-		woblocksControl.definedObjectsInfo.objectsInfoMap[aName].xml = Blockly.Xml.textToDom(result.definedObjectsInfo.objectsInfoMap[aName].xml);
-	});
-	this.config = result.config;
-	this.representations = result.representations;
-}
-
-//OTHERS
-woblocksControl.getWorkspaceXmlContentAsList = function(){
-	return Blockly.Xml.workspaceToDom(this.workspace).childNodes;
-}
-
 
 woblocksControl.getAllParentlessObjects = function(){
 	var nodes = this.getWorkspaceXmlContentAsList();
 	var ids = [];for(var i = 0; i < nodes.length; i++){ids.push(nodes[i].id);}
 	//var ids = nodes.map(function(anElem){return anElem.id;});
 
-	var blocks = this.workspace.getAllBlocks();
+	var blocks = Blockly.getMainWorkspace().getAllBlocks();
 	var result = [];
 	for(var i = 0; i < blocks.length; i++ ){
 		if(ids.includes(blocks[i].id)){
@@ -448,27 +107,196 @@ woblocksControl.getAllParentlessObjects = function(){
 	return result;
 }
 
-woblocksControl.injectXmlToWorkspace =function(xmlContentList){
-	this.workspace.clear();
-	if(xmlContentList !== undefined && xmlContentList !== null && xmlContentList.length > 0){
-		var xml;
-		for(var i = 0; i < xmlContentList.length; i++){
-			xml = jQuery.parseXML(xmlContentList[i]);
-	    	Blockly.Xml.appendDomToWorkspace(xml,this.workspace);
+woblocksControl.getWorkspaceXmlContentAsList = function(){
+	return Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace()).childNodes;
+}
+
+woblocksControl.getAllStatementsOf = function(aBlock){
+	var result = [];
+	if(aBlock.statementInputCount > 0 && aBlock.getFirstStatementConnection().targetBlock()){
+		var iter = aBlock.getFirstStatementConnection().targetBlock();
+		result.push(iter);
+		while(iter.getNextBlock() != null){
+			iter = iter.getNextBlock();
+			result.push(iter);
 		}
 	}
+	return result;
 }
 
+// MAGIC: CREATES TOKEN BLOCKS BASED ON DEFINED OBJECTS
 
-woblocksControl.loadToolboxConent = function(stringXmlContent){
-	this.toolbox.innerHTML = stringXmlContent;
-	this.workspace.updateToolbox(this.toolbox);
+woblocksControl.definedObjectsAsBlocklyBlocksFor = function(aSpecificationsList){
+	aSpecificationsList.map(function(elem){
+
+	  Blockly.defineBlocksWithJsonArray([
+	  {
+	    "type": elem.name,
+		"message0": "%1",
+		"args0": [
+		  {
+		    "type": "field_image",
+		    "src": elem.iconUrl,
+		    "width": 25,
+		    "height": 25,
+		    "alt": "*",
+		    "flipRtl": false
+		  }
+		],
+		"output": null,
+		"colour": 120,
+		"tooltip": elem.name,
+		"helpUrl": ""
+	  }
+	]);
+
+	});
 }
-*/
+
+woblocksControl.definedObjectsAsBlocklyBlocks = function(){
+	var specList = woblocksControl.definedObjectsInfo.objectNames.map(function(objName){ 
+		return { name:objName , iconUrl: getRepIconFor(woblocksControl.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.representationName) } 
+	});
+	woblocksControl.definedObjectsAsBlocklyBlocksFor(specList);
+}
+
+//BUILD GAME
+
+woblocksControl.getExecutionString = function(){
+
+	const definitionBlocks = woblocksControl.getAllParentlessObjects().filter(function(elem){
+		return (elem.type === 'action_start_wk') && elem.getNextBlock() && elem.getNextBlock().type === 'objetc_create_wk'
+	});
+
+	const executionTypes = ['executor_wk', 'execution_res_wk', 'var_objetc_wk', 'keyboard_event_wk', 'tick_event_wk', 'collission_wk'];
+	const executionBlocks = woblocksControl.getAllParentlessObjects().filter(function(elem){
+		return (elem.type === 'action_start_wk') && elem.getNextBlock() && executionTypes.includes(elem.getNextBlock().type)
+	});
+	var result = `import wollok.game.*
+program main {
+Game.width(`+this.config.width+`)
+Game.height(`+this.config.height+`)
+`;
+	if(this.config.backgroundImage && this.config.backgroundImage !== ''){
+		result += `Game.boardGround("`+this.config.backgroundImage+`")
+		`;	
+	}
+
+    result += `Game.start()
+    `;
+
+    result += Object.keys(this.definedObjectsInfo.objectsInfoMap).filter(function(key){return woblocksControl.definedObjectsInfo.objectsInfoMap[key].definedObjectsMappingInfo.isVisual }).map(function(key){ return 'game.addVisual('+key+')'  }).join('\n');
+    
+	result += executionBlocks.map(function(elem){return Blockly.Blocks[elem.type].getValueWK(elem)}).join('\n');
+
+	result += '\n}\n';
+
+	result += definitionBlocks.map(function(elem){return Blockly.Blocks[elem.type].getValueWK(elem)}).join('\n')
+
+	result += Object.keys(this.definedObjectsInfo.objectsInfoMap).map(function(key){ return  woblocksControl.definedObjectsInfo.objectsInfoMap[key].code }).join('\n');
+
+	return result;
+}
+
+woblocksControl.buildWkProgramSourceFor = function(aProgramString){
+	return [ new Tuple( 'main.wlk', aProgramString )];
+}
+
+woblocksControl.buildWkProgramSource = function(aProgramString){
+	return woblocksControl.buildWkProgramSourceFor(woblocksControl.getExecutionString());
+}
+
+//IMAGES
+
+woblocksControl.LoadGivenImagesInto = async function (imgsToLoad,listToFill){
+	
+	for(var i = 0; i < imgsToLoad.length; i++){
+	  const response = await fetch(imgsToLoad[i].url)
+	  const imageBlob = await response.blob()
+	  imageBlob.name = imgsToLoad[i].alias;
+	  listToFill.push(buildImage(imageBlob));
+	  listToFill[listToFill.length - 1].path = imgsToLoad[i].url;   
+	}
+	
+}
+
+function buildImage(file) {
+    const possiblePaths = [file.name]
+    const url = URL.createObjectURL(file)
+    return { possiblePaths, url }
+}
+
+//OBJ REPRESENTATION INFO 
+
+woblocksControl.getObjectInfoOfIndex = function(anIndex){
+	//if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return null;}
+
+	var objName = this.definedObjectsInfo.objectNames[anIndex];
+	return {name:objName , representationName:this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.representationName, isVisual:this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.isVisual }
+}
+
+woblocksControl.setObjectInfoOfIndex = function(anIndex, aRepName,isVisualValue){
+	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return;}
+
+	var objName = this.definedObjectsInfo.objectNames[anIndex];	
+	this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.representationName = aRepName;
+	this.definedObjectsInfo.objectsInfoMap[objName].definedObjectsMappingInfo.isVisual = isVisualValue;
+}
+
+//REMOVE OBJECT
+
+woblocksControl.removeObjectOfIndex = function(anIndex){
+	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
+	
+	var objToRemove = this.definedObjectsInfo.objectNames[anIndex]; 
+	this.definedObjectsInfo.objectNames.splice(anIndex,1);
+	delete this.definedObjectsInfo.objectsInfoMap[objToRemove];
+	return true;
+}
+
+//SAVE PROJECT
+woblocksControl.getProjetInfoAsJSON = function(){
+	var result = {};
+	result.mainSceneInfo = {xml:this.mainSceneInfo.xml};
+	result.definedObjectsInfo = { objectNames:this.definedObjectsInfo.objectNames };
+	result.definedObjectsInfo.objectsInfoMap = {};
+	this.definedObjectsInfo.objectNames.map(function(aName){
+		result.definedObjectsInfo.objectsInfoMap[aName] = {
+			definedObjectsMappingInfo: 	woblocksControl.definedObjectsInfo.objectsInfoMap[aName].definedObjectsMappingInfo , 
+			xml: 	woblocksControl.definedObjectsInfo.objectsInfoMap[aName].xml,
+			code: 	woblocksControl.definedObjectsInfo.objectsInfoMap[aName].code
+		};
+	});
+	result.config = this.config;
+	return JSON.stringify(result);
+}
+
+//LOAD PROJECT
+woblocksControl.loadProjetInfoFromJSON = function(aJsonObjInfo){
+	var result = JSON.parse(aJsonObjInfo);
+	this.mainSceneInfo = {xml:result.mainSceneInfo.xml};
+	this.definedObjectsInfo = { objectNames:result.definedObjectsInfo.objectNames, objectsInfoMap:{}};
+	this.definedObjectsInfo.objectNames.map(function(aName){
+		woblocksControl.definedObjectsInfo.objectsInfoMap[aName] = {definedObjectsMappingInfo:result.definedObjectsInfo.objectsInfoMap[aName].definedObjectsMappingInfo};
+		woblocksControl.definedObjectsInfo.objectsInfoMap[aName].xml = result.definedObjectsInfo.objectsInfoMap[aName].xml;
+	});
+	this.config = result.config;
+}
+
+//SAVE CONFIG INFO
+woblocksControl.saveConfigInfo = function(aHeight,aWidth, aBackgroundImageUrl){
+	this.config.height = aHeight;
+	this.config.width = aWidth;
+	this.config.backgroundImage = aBackgroundImageUrl;
+}
+
+//STRING XML METHODS
+
 woblocksControl.getMainToolboxXmlString =	function(){
 	var xmlStr = `<xml>
 
-	<category name="ATOMICOS" toolboxitemid="atomics">
+	<category name="BLOQUES BASICOS" toolboxitemid="atomics">
+
 	    <block type="logic_boolean" >
 	        <field name="BOOL">TRUE</field>
 	    </block>
@@ -496,9 +324,13 @@ woblocksControl.getMainToolboxXmlString =	function(){
 
 	    <block type="condition_wk" >
 	    </block>
+
+	    <block type="return_wk" >
+	    </block>
+
 	</category>
 
-	<category name="WK DEFINICIONES">
+	<category name="DEFINICION DE OBJETOS">
 	    <block type="action_start_wk" >
 	    </block>
 
@@ -544,7 +376,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    </block>
 	</category>
 
-	<category name="WK EJECUCION">
+	<category name="ENVIO DE MENSAJES">
 	    <block deletable="false" type="action_start_wk">
 	    </block>
 
@@ -599,11 +431,9 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="collission_wk">
 	    </block>
 
-	    <block type="foreach_wk">
-	    </block>
 	</category>
 
-	<category name="OBJETOS" toolboxitemid="custom" >
+	<category name="OBJETOS DEFINIDOS" toolboxitemid="custom" >
 	    <block type="game_wk"></block>
 	`
 
@@ -616,111 +446,163 @@ woblocksControl.getMainToolboxXmlString =	function(){
 		return xmlStr;
 }
 
+woblocksControl.getObjectToolboxXmlStringForIndex =	function(anIndex){
+	return woblocksControl.getObjectToolboxXmlString(this.definedObjectsInfo.objectNames[anIndex]);
+}
+
 woblocksControl.getObjectToolboxXmlString =	function(currentObject){
-	var xmlStr = '';
-	xmlStr += '		    <category name="ATOMICOS" toolboxitemid="atomics">\n';
+	var xmlStr = `<xml>
 
-	xmlStr += '		      <block type="logic_boolean" >\n';
-	xmlStr += '		        <field name="BOOL">TRUE</field>\n';
-	xmlStr += '		      </block>\n';
-	xmlStr += '		      <block type="math_number" >\n';
-	xmlStr += '		        <field name="NUM">123</field>\n';
-	xmlStr += '		      </block>\n';
-	xmlStr += '		      <block type="text" >\n';
-	xmlStr += '		        <field name="TEXT"></field>\n';
-	xmlStr += '		      </block>\n';
-	xmlStr += '		      <block type="lists_create_with" >\n';
-	xmlStr += '		        <mutation items="0"></mutation>\n';
-	xmlStr += '		      </block>\n';
-	xmlStr += '		      <block type="lists_create_with">\n';
-	xmlStr += '		        <mutation items="1"></mutation>\n';
-	xmlStr += '		        <value name="ADD0">\n';
-	xmlStr += '		          <block type="text">\n';
-	xmlStr += '		            <field name="TEXT"></field>\n';
-	xmlStr += '		          </block>\n';
-	xmlStr += '		        </value>\n';
-	xmlStr += '		      </block>\n';
+	<category name="BLOQUES BASICOS" toolboxitemid="atomics">
 
-	xmlStr += '		      <block type="condition_wk" >';
-	xmlStr += '		      </block>';
+	    <block type="logic_boolean" >
+	        <field name="BOOL">TRUE</field>
+	    </block>
 
-	xmlStr += '		    </category>\n';
+	    <block type="math_number" >
+	        <field name="NUM">123</field>
+	    </block>
 
-	xmlStr += '		    <category name="WK">\n';
-	xmlStr += '		      <block type="objetc_property_wk">\n';
-	xmlStr += '		        <value name="name">\n';
-	xmlStr += '		          <block type="text">\n';
-	xmlStr += '		            <field name="TEXT">aPropertyName</field>\n';
-	xmlStr += '		          </block>\n';
-	xmlStr += '		        </value>\n';
-	xmlStr += '		        <value name="value">\n';
-	xmlStr += '		          <block type="text">\n';
-	xmlStr += '		            <field name="TEXT">aPropertyValue</field>\n';
-	xmlStr += '		          </block>\n';
-	xmlStr += '		        </value>\n';
-	xmlStr += '		      </block>\n';
+	    <block type="text" >
+	        <field name="TEXT"></field>
+	    </block>
 
-	xmlStr += '			      <block type="method_create_wk">';
-	xmlStr += '			        <value name="name">';
-	xmlStr += '			          <block type="text">';
-	xmlStr += '			            <field name="TEXT">aMethodName</field>';
-	xmlStr += '			          </block>';
-	xmlStr += '			        </value>';
-	xmlStr += '			        <value name="params">';
-	xmlStr += '			          <block type="lists_create_with">';
-	xmlStr += '			            <mutation items="0"></mutation>';
-	xmlStr += '			          </block>';
-	xmlStr += '			        </value>';
-	xmlStr += '			        <statement name="instructions">';
-	xmlStr += '			          <block type="instruction_wk">';
-	xmlStr += '			            <value name="instruction">';
-	xmlStr += '			              <block type="text">';
-	xmlStr += '			                <field name="TEXT">anInstruction</field>';
-	xmlStr += '			              </block>';
-	xmlStr += '			            </value>';
-	xmlStr += '			          </block>';
-	xmlStr += '			        </statement>';
-	xmlStr += '			      </block>';
+	    <block type="lists_create_with" >
+	        <mutation items="0"></mutation>
+	    </block>
 
-	xmlStr += '		      <block type="instruction_wk">\n';
-	xmlStr += '		        <value name="instruction">\n';
-	xmlStr += '		          <block type="text">\n';
-	xmlStr += '		            <field name="TEXT">anInstruction</field>\n';
-	xmlStr += '		          </block>\n';
-	xmlStr += '		        </value>\n';
-	xmlStr += '		      </block>\n';
+	    <block type="lists_create_with">
+	        <mutation items="1"></mutation>
+	        <value name="ADD0">
+	            <block type="text">
+	            <field name="TEXT"></field>
+	            </block>
+	        </value>
+	    </block>
 
-	xmlStr += '		      <block type="executor_wk" >';		
-	xmlStr += '		      	<value name="executor">';
-	xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
-	//xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
-	xmlStr += '		      	</value></block></statement>';
-	xmlStr += '		      </block>';
+	    <block type="condition_wk" >
+	    </block>
 
-	xmlStr += '		      <block type="execution_res_wk" >';		
-	xmlStr += '		      	<value name="executor">';
-	//xmlStr += '		        	<block type="text"><field name="TEXT">anObj</field></block>';
-	xmlStr += '		        </value>';
-	xmlStr += '		        <statement name="params"><block type="executor_param_wk"><value name="param">';
-	xmlStr += ' 				<block type="text"><field name="TEXT">aParam</field></block>';
-	xmlStr += '		      	</value></block></statement>';
-	xmlStr += '		      </block>';		
+	    <block type="return_wk" >
+	    </block>
 
-	xmlStr += '		      </category>\n';
+	</category>
 
-	xmlStr +='		    <category name="OBJETOS" toolboxitemid="custom" >\n';
-	xmlStr +='				<block type="game_wk"></block>';
+	<category name="DEFINICION DE OBJETOS">
+	    <block type="action_start_wk" >
+	    </block>
+
+	    <block type="action_start_wk">
+	        <next>
+	            <block type="objetc_create_wk">
+	            </block>
+	        </next>
+	    </block>
+
+	    <block type="objetc_property_wk">
+	        <value name="value">
+	            <block type="text">
+	            <field name="TEXT">aPropertyValue</field>
+	            </block>
+	        </value>
+	    </block>
+
+	    <block type="method_create_wk">
+	        <value name="params">
+	            <block type="lists_create_with">
+	            <mutation items="0"></mutation>
+	            </block>
+	        </value>
+	        <statement name="instructions">
+	            <block type="instruction_wk">
+	            <value name="instruction">
+	                <block type="text">
+	                <field name="TEXT">anInstruction</field>
+	                </block>
+	            </value>
+	            </block>
+	        </statement>
+	    </block>
+
+
+	    <block type="instruction_wk">
+	        <value name="instruction">
+	            <block type="text">
+	            <field name="TEXT">anInstruction</field>
+	            </block>
+	        </value>
+	    </block>
+	</category>
+
+	<category name="ENVIO DE MENSAJES">
+	    <block deletable="false" type="action_start_wk">
+	    </block>
+
+	    <block type="executor_wk" >		
+	        <value name="executor">
+	        </value>
+	        <statement name="params"><block type="executor_param_wk"><value name="param">
+	        <block type="text"><field name="TEXT">aParam</field></block>
+	        </value></block></statement>
+	    </block>
+
+	    <block type="execution_res_wk" >		
+	        <value name="executor">
+	        </value>
+	        <statement name="params">
+	            <block type="executor_param_wk">
+	                <value name="param">
+	                    <block type="text"><field name="TEXT">aParam</field></block>
+	                </value>
+	            </block>
+	        </statement>
+	    </block>		
+
+	    <block type="executor_param_wk">
+	        <value name="param">
+	            <block type="text"><field name="TEXT">aParam</field></block>
+	        </value>
+	    </block>
+
+	    <block type="var_objetc_wk">
+	        <value name="value">
+	            <block type="text">
+	            <field name="TEXT">aVariableValue</field>
+	            </block>
+	        </value>
+	    </block>
+
+	    <block type="instruction_wk">
+	        <value name="instruction">
+	            <block type="text">
+	            <field name="TEXT">anInstruction</field>
+	            </block>
+	        </value>
+	    </block>
+
+	    <block type="keyboard_event_wk">
+	    </block>
+
+	    <block type="tick_event_wk">
+	    </block>
+
+	    <block type="collission_wk">
+	    </block>
+
+	</category>
+
+	<category name="OBJETOS DEFINIDOS" toolboxitemid="custom" >
+	    <block type="game_wk"></block>
+	`
+
 	if(this.definedObjectsInfo.objectNames.length > 0){
 		for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
-			if(currentObject != this.definedObjectsInfo.objectNames[i]){
+			if(this.definedObjectsInfo.objectNames[i] != currentObject ){
 				xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
 			}
 		}
 	}
-	xmlStr +='		    </category>\n';
-
+	xmlStr +='		    </category>\n</xml>';
 	return xmlStr;
 }
 
@@ -743,15 +625,53 @@ woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
 		defaultXml +='	</block>';
 	return defaultXml;
 }
-/*
-woblocksControl.getImagePathOfRepresentation = function(aRepresentationName){
 
+woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(proposedName,anImage){
+	var defaultXml = '  <block deletable="false" movable = "false" type="action_start_wk">';
+		defaultXml +='		<next>';
+		defaultXml +='			<block deletable="false" type="objetc_create_wk" >';
+		defaultXml +='				<field name="name">'+proposedName+'</field>'; 
+		defaultXml +='				<statement name="properties">';
+		defaultXml +='					<block type="objetc_property_wk" >';
+		defaultXml +='						<value name="value">';
+		defaultXml +='							<block type="text">';
+		defaultXml +='								<field name="TEXT">aPropertyValue</field>';
+		defaultXml +='							</block>';
+		defaultXml +='						</value>';
+		defaultXml +='					</block>';
+		if(anImage){
+			defaultXml +='					<next>';
+			defaultXml +='						<block type="method_create_wk" >';
+
+			defaultXml +='							<field name="name">image</field>';
+
+			defaultXml +='							<value name="params">';
+			defaultXml +='								<block type="list_create_with" >';
+			defaultXml +='									<mutation items="0"></mutation>';
+			defaultXml +='								</block>';
+			defaultXml +='							</value>';
+
+			defaultXml +='							<statement>';
+
+			defaultXml +='								<block type="instruction_wk" >';
+			defaultXml +='									<value name="instruction" >';
+			defaultXml +='										<block type="text">';
+			defaultXml +='											<field name="TEXT">return "'+anImage+'"</field>';
+			defaultXml +='										</block>';
+			defaultXml +='									</value>';
+			defaultXml +='								</block>';
+
+			defaultXml +='							</statement>';
+			defaultXml +='						</block>';
+			defaultXml +='					</next>';
+		}
+		defaultXml +='				</statement>';
+		defaultXml +='			</block>';
+		defaultXml +='		</next>';
+		defaultXml +='	</block>';
+	return defaultXml;
 }
 
-woblocksControl.getIconPathOfRepresentation = function(aRepresentationName){
-	
-}
-*/
 woblocksControl.init()
 
 export default woblocksControl;
