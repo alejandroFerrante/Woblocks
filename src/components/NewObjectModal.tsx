@@ -57,8 +57,9 @@ export default function NewObjectModal(props:any){
 		woblocksControl.addObjectNamed(chosenName, rep.name,rep.isVisual);
 
 		//LOAD NEW WORKSPACE
-		var repImage = (rep.isVisual)? rep.alias : null;//if visual add the image method to the block construct
-		woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage(chosenName, repImage);//this clears the workspace
+		var repImage = (visualMode)? rep.alias : null;//if visual add the image method to the block construct
+		//console.log('NewObjectModal '+visualMode+' '+repImage);
+		woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage	(chosenName, repImage);//this clears the workspace
 
 		//SAVE OBJ WORKSPACE INFO
 		woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);

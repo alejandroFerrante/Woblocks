@@ -48,7 +48,9 @@ woblocksControl.addDefaultObjectXmlToWorkspaceNamed = function(anObjectName){
 }
 
 woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage = function(anObjectName,anImage){
+	console.log('woblocksControl addDefaultObjectXmlToWorkspaceWithNameAndImage '+anObjectName+' '+anImage);
 	Blockly.getMainWorkspace().clear();
+	//var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlWithNameAndImage(anObjectName,anImage)+'</xml>';
 	var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlWithNameAndImage(anObjectName,anImage)+'</xml>';
 
 	var objXmlToAppend = Blockly.Xml.textToDom( xmlStr );
@@ -63,8 +65,8 @@ woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
 	const definitionBlock = woblocksControl.getAllParentlessObjects().filter(function(elem){
 		return (elem.type === 'action_start_wk') && elem.getNextBlock() && elem.getNextBlock().type === 'objetc_create_wk'
 	})[0];
-	this.definedObjectsInfo.objectsInfoMap[objName].xml = '<xml>'+Blockly.Xml.domToText(Blockly.Xml.blockToDom(definitionBlock))+'</xml>'; 
-	this.definedObjectsInfo.objectsInfoMap[objName].code =  Blockly.Blocks[ definitionBlock.type ].getValueWK(definitionBlock);
+	this.definedObjectsInfo.objectsInfoMap[objName].xml = '<xml>'+( (definitionBlock)?Blockly.Xml.domToText(Blockly.Xml.blockToDom(definitionBlock)):'' )+'</xml>'; 
+	this.definedObjectsInfo.objectsInfoMap[objName].code =  (definitionBlock)?Blockly.Blocks[ definitionBlock.type ].getValueWK(definitionBlock):'';
 
 	return true;
 }
@@ -706,50 +708,87 @@ woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
 	return defaultXml;
 }
 
-woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(proposedName,anImage){
-	var defaultXml = '  <block deletable="false" movable = "false" type="action_start_wk">';
-		defaultXml +='		<next>';
-		defaultXml +='			<block deletable="false" type="objetc_create_wk" >';
-		defaultXml +='				<field name="name">'+proposedName+'</field>'; 
-		defaultXml +='				<statement name="properties">';
-		defaultXml +='					<block type="objetc_property_wk" >';
-		defaultXml +='						<value name="value">';
-		defaultXml +='							<block type="text">';
-		defaultXml +='								<field name="TEXT">aPropertyValue</field>';
-		defaultXml +='							</block>';
-		defaultXml +='						</value>';
-		defaultXml +='					</block>';
-		if(anImage){
-			defaultXml +='					<next>';
-			defaultXml +='						<block type="method_create_wk" >';
-
-			defaultXml +='							<field name="name">image</field>';
-
-			defaultXml +='							<value name="params">';
-			defaultXml +='								<block type="list_create_with" >';
-			defaultXml +='									<mutation items="0"></mutation>';
-			defaultXml +='								</block>';
-			defaultXml +='							</value>';
-
-			defaultXml +='							<statement>';
-
-			defaultXml +='								<block type="instruction_wk" >';
-			defaultXml +='									<value name="instruction" >';
-			defaultXml +='										<block type="text">';
-			defaultXml +='											<field name="TEXT">return "'+anImage+'"</field>';
-			defaultXml +='										</block>';
-			defaultXml +='									</value>';
-			defaultXml +='								</block>';
-
-			defaultXml +='							</statement>';
-			defaultXml +='						</block>';
-			defaultXml +='					</next>';
-		}
-		defaultXml +='				</statement>';
-		defaultXml +='			</block>';
-		defaultXml +='		</next>';
-		defaultXml +='	</block>';
-	return defaultXml;
+woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage){
+	var strXml = '';
+	strXml += '<block type="action_start_wk">\n';
+	strXml += '	<next>\n';
+	strXml += '		<block type="objetc_create_wk">\n';
+	strXml += '			<field name="name">'+aName+'</field>\n';
+	strXml += '			<statement name="properties">\n';
+	strXml += '				<block type="objetc_property_wk">\n';
+	strXml += '					<field name="name">name</field>\n';
+	strXml += '					<value name="value">\n';
+	strXml += '						<block type="text">\n';
+	strXml += '							<field name="TEXT">'+aName+'</field>\n';
+	strXml += '						</block>\n';
+	strXml += '					</value>\n';
+	strXml += '				</block>\n';
+	if(anImage){
+		strXml += '				<block type="method_create_wk" >\n';
+		strXml += '					<field name="name">position</field>\n';
+		strXml += '					<value name="params">\n';
+		strXml += '						<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
+		strXml += '					</value>\n';
+		strXml += '					<statement name="instructions">\n';
+		strXml += '						<block type="instruction_wk" >\n';
+		strXml += '							<value name="instruction">\n';
+		strXml += '								<block type="return_wk" >\n';
+		strXml += '									<value name="value">\n';
+		strXml += '										<block type="execution_res_wk" >\n';
+		strXml += '											<field name="method">at</field>\n';
+		strXml += '											<value name="executor">\n';
+		strXml += '												<block type="game_wk"></block>\n';
+		strXml += '											</value>\n';
+		strXml += '											<statement name="params">\n';
+		strXml += '												<block type="executor_param_wk">\n';
+		strXml += '													<value name="param">\n';
+		strXml += '														<block type="text">\n';
+		strXml += '															<field name="TEXT">0</field>\n';
+		strXml += '														</block>\n';
+		strXml += '													</value>\n';
+		strXml += '													<next>\n';
+		strXml += '														<block type="executor_param_wk" >\n';
+		strXml += '															<value name="param">\n';
+		strXml += '																<block type="text">\n';
+		strXml += '																	<field name="TEXT">0</field>\n';
+		strXml += '																</block>\n';
+		strXml += '															</value>\n';
+		strXml += '														</block>\n';
+		strXml += '													</next>\n';
+		strXml += '												</block>\n';
+		strXml += '											</statement>\n';
+		strXml += '										</block>\n';
+		strXml += '									</value>\n';
+		strXml += '								</block>\n';
+		strXml += '							</value>\n';
+		strXml += '						</block>\n';
+		strXml += '					</statement>\n';
+		strXml += '					<next>\n';
+		strXml += '						<block type="method_create_wk" >\n';
+		strXml += '							<field name="name">image</field>\n';
+		strXml += '							<value name="params">\n';
+		strXml += '								<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
+		strXml += '							</value>\n';
+		strXml += '							<statement name="instructions">\n';
+		strXml += '								<block type="instruction_wk" >\n';
+		strXml += '									<value name="instruction">\n';
+		strXml += '										<block type="return_wk" >\n';
+		strXml += '											<value name="value">\n';
+		strXml += '												<block type="text"><field name="TEXT">"'+anImage+'"</field></block>\n';
+		strXml += '											</value>\n';
+		strXml += '										</block>\n';
+		strXml += '									</value>\n';
+		strXml += '								</block>\n';
+		strXml += '							</statement>\n';
+		strXml += '						</block>\n';
+		strXml += '					</next>\n';
+		strXml += '				</block>\n';
+	}
+	strXml += '			</statement>\n';
+	strXml += '		</block>\n';
+	strXml += '	</next>\n';
+	strXml += '</block>\n';
+	return strXml;
 }
 
 woblocksControl.init()

@@ -5,6 +5,8 @@ import BlocklyWoblocks from './components/BlocklyWoblocks';
 import { WollokObject } from './models/WollokObject';
 import { HeaderContent } from './components/HeaderContent';
 
+import Blockly from 'blockly'
+
 import WollokIcon from "./components/WollokIcon"
 
 import {WBProvider} from './WBContext'
@@ -69,6 +71,8 @@ function App() {
     }
   })
 
+  const foo = function(){console.log(Blockly.Xml.domToText( Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace() ) ))}
+
 /*
   HeaderContent:   HOLDS TABS AND BUTTONS
   ModalWindow:     HOLDS THE MODALS (Save project, Load Project, New Object, Game Config)  
@@ -79,6 +83,7 @@ function App() {
       <ThemeProvider theme={theme}>
       <WBProvider state={myAppState} stateSetter={setMyAppStateFunc} /*this part only for testing -->*/ val={myVal} valSetter={setMyVal} >
         <>
+          <button onClick={foo} />
           <HeaderContent />
           <ModalWindow />
           <BlocklyWoblocks />
