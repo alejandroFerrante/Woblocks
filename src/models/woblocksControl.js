@@ -35,7 +35,7 @@ woblocksControl.addObjectNamed = function(aNewObjectName,aRepresentationName,isV
 
 woblocksControl.saveSceneXmlContent = function(){
 	this.mainSceneInfo.xml = Blockly.Xml.domToText( Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace()) );
-	console.log('saveSceneXmlContent>> '+ this.mainSceneInfo.xml );
+	//console.log('saveSceneXmlContent>> '+ this.mainSceneInfo.xml );
 	return true;
 }
 
@@ -72,7 +72,7 @@ woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
 woblocksControl.loadSceneXmlContent = function(){
 	Blockly.getMainWorkspace().clear();
 	if(this.mainSceneInfo.xml){
-		console.log('loadSceneXmlContent '+this.mainSceneInfo.xml);
+		//console.log('loadSceneXmlContent '+this.mainSceneInfo.xml);
 		Blockly.Xml.appendDomToWorkspace( Blockly.Xml.textToDom( this.mainSceneInfo.xml ),Blockly.getMainWorkspace());
 	}
 }
@@ -198,6 +198,36 @@ Game.height(`+this.config.height+`)
 	return result;
 }
 
+//assumes a string where each line has no identation
+woblocksControl.simpleFormatter = function(str,useHtml){
+    var result = [];
+    var strLst = str.split('\n');
+    var lvl = 0;
+    strLst.forEach(function(line){
+        var diff = (line.split("{").length - 1) - (line.split("}").length - 1) 
+        console.log(line+'   diff:'+diff);
+        var padding = '';
+        if(useHtml){
+        	padding = '<span style="display: inline-block;margin-left: 40px;"></span>';
+        }
+
+        if( diff > 0 ){
+            result.push(padding.repeat(lvl)+line.replace('\n',''));
+            lvl += diff;
+        }else if(diff < 0){
+            lvl += diff;
+            result.push(padding.repeat(lvl)+line.replace('\n',''));
+            
+        }else{
+            result.push(padding.repeat(lvl)+line.replace('\n',''));
+        }
+    })
+    if(useHtml){
+    	return result.join('<br/>');
+    }
+    return result.join('\n');
+}
+
 woblocksControl.buildWkProgramSourceFor = function(aProgramString){
 	return [ new Tuple( 'main.wlk', aProgramString )];
 }
@@ -288,6 +318,56 @@ woblocksControl.saveConfigInfo = function(aHeight,aWidth, aBackgroundImageUrl){
 	this.config.height = aHeight;
 	this.config.width = aWidth;
 	this.config.backgroundImage = aBackgroundImageUrl;
+}
+
+//MESSAGES AN OBJECT CAN RESPOND
+
+woblocksControl.fillMessagesOfForWorkspace = function(){
+	
+	const objCreateBlocks = Blockly.getMainWorkspace().getAllBlocks().filter(function(aBlock){return (aBlock.type === 'objetc_create_wk')});
+	objCreateBlocks.forEach(function(elem){
+		const msgs = woblocksControl.messagesOf(elem);
+		elem.setWarningText('MENSAJES:\n'+msgs.join('\n'));
+	});
+	
+
+	const tokenBlocks = Blockly.getMainWorkspace().getAllBlocks().filter(function(aBlock){return woblocksControl.definedObjectsInfo.objectNames.includes(aBlock.type)});
+	tokenBlocks.forEach(function(elem){
+		var xmlStr = woblocksControl.definedObjectsInfo.objectsInfoMap[elem.type].xml;
+		xmlStr = xmlStr.substring(5 , xmlStr.length - 6);
+		const realBlock = Blockly.Xml.domToBlock( Blockly.Xml.textToDom(xmlStr),Blockly.getMainWorkspace());
+		//const realBlock = Blockly.Xml.domToBlock(Blockly.Xml.textToDom('<block type="text" />'),Blockly.getMainWorkspace());
+		const msgs = woblocksControl.messagesOf(realBlock);
+		elem.setWarningText('MENSAJES:\n'+msgs.join('\n'));
+		realBlock.dispose();
+	});
+}
+
+woblocksControl.messagesOf = function(targetBlock){
+    var methodCreateBlocks = Blockly.getMainWorkspace().getAllBlocks().filter(function(aBlock){return (aBlock.type === 'method_create_wk' && woblocksControl.hasAncestorWithId(aBlock , targetBlock.id))});
+    return methodCreateBlocks.map(function(elem){return elem.getFieldValue('name')});
+}    
+
+woblocksControl.hasAncestorWithId = function(aBlock, anId){
+  if(aBlock.previousConnection === null){return false;}
+    var iterator = aBlock.previousConnection.targetBlock();
+    for(var i  = 0; i < 5000; i++){
+      if(iterator === null){
+        return false;
+      }
+
+      if(iterator.id === anId){
+        return true;
+      }
+
+      if(iterator.previousConnection === null){
+        return false;
+      }
+
+      iterator = iterator.previousConnection.targetBlock();
+
+    } 
+    return false;
 }
 
 //STRING XML METHODS

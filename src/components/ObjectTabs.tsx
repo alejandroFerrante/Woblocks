@@ -29,16 +29,16 @@ export default function ObjectTabs (props:any) {
                 woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
             }
 
+            woblocksControl.definedObjectsAsBlocklyBlocks();
+
             //LOAD NEW
             if(Number(tabId) == 0){
                 woblocksControl.loadSceneXmlContent();
+                woblocksControl.fillMessagesOfForWorkspace();
             }else{
                 woblocksControl.loadDefinedObjectXmlContent(Number(tabId) - 1);
             }
             
-
-            woblocksControl.definedObjectsAsBlocklyBlocks();
-
             var wsp:any = Blockly.getMainWorkspace(); 
             wsp.getToolbox().clearSelection(); 
 

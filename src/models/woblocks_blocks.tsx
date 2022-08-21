@@ -57,7 +57,7 @@ Blockly.Blocks['objetc_create_wk'] = {
     .setCheck('objetc_definition_wk');
     this.setPreviousStatement(true, 'objetc_definition_wk');
     this.setTooltip('');
-    this.setWarningText('MENSAJES:');
+    //this.setWarningText('MENSAJES:');
     this.setColour('#03071e');
   },doActionWK : function(self:any, paramsMap:any){
     if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
@@ -287,11 +287,11 @@ Blockly.Blocks['executor_wk'] = {
       return value_executor+'.'+value_method+'('+value_params+')  ';
   },getValueWK: function(aBlock:any) {
       var executor_block = getBlockOfInputNamed(aBlock,'executor');
-      var value_executor = executor_block.getValueWK(executor_block);
+      var value_executor = executor_block?executor_block.getValueWK(executor_block):'';
       var value_methodName = aBlock.getFieldValue('method');
       var value_params = extractStatementsAsWkValues(aBlock);
 
-      var code = Blockly.Blocks['executor_wk'].doActionWK(aBlock,{'executor':value_executor,'method':value_methodName,'params':value_params},false);
+      var code = Blockly.Blocks['executor_wk'].doActionWK(aBlock,{'executor':value_executor?value_executor:'','method':value_methodName,'params':value_params},false);
       return code;
     }
 };
@@ -313,7 +313,7 @@ Blockly.Blocks['execution_res_wk'] = {
     this.setOutput(true);
   },getValueWK: function(aBlock:any) {
       var executor_block = getBlockOfInputNamed(aBlock,'executor');
-      var value_executor = executor_block.getValueWK(executor_block);
+      var value_executor = executor_block?executor_block.getValueWK(executor_block):'';
       var value_methodName = aBlock.getFieldValue('method');
       var value_params = extractStatementsAsWkValues(aBlock);
 

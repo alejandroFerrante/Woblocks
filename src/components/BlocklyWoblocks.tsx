@@ -15,6 +15,14 @@ export default function BlocklyWoblocks() {
 
   const toolbox = (globalState.currentTabIndex == 0)?Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString()) : Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlStringForIndex( globalState.currentTabIndex - 1));
 
+  const onXmlChange = function(value:string){
+   //console.log('XML CHANGE! '+value);
+   if((globalState.currentTabIndex == 0)){
+     woblocksControl.fillMessagesOfForWorkspace();
+   }
+   setXml(value); 
+  }
+
   return (<table><tr>
     <td style={{paddingBottom:"150px"}} >
     <BlocklyWorkspace
@@ -36,7 +44,7 @@ export default function BlocklyWoblocks() {
         oneBasedIndex : true
       }}
       initialXml={xml}
-      onXmlChange={setXml}
+      onXmlChange={onXmlChange}
     />
     </td>
     {globalState.currentTabIndex !== 0 && <td > <RemoveItemButton /> <CurrentObjectConfig /></td>}

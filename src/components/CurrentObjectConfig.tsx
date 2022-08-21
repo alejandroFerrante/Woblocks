@@ -11,12 +11,16 @@ export default function CurrentObjectConfig(){
 	const {globalState,val,setGlobalState,valSetter} = useContext(WBContext);
 	const objInfo = woblocksControl.getObjectInfoOfIndex(globalState.currentTabIndex - 1);//: {name ,representationName,isVisual};
 
-	const list = imagePathManager.representations.filter(function(elem:any){return (!objInfo.isVisual) || (elem.isVisual == true)});
+	const list = imagePathManager.representations.filter(function(elem:any){return (!objInfo.isVisual) || (elem.isVisual == true)}).map(function(elem){return elem.name});
 	const representationIndex = (list.includes(objInfo.representationName)) ? list.indexOf(objInfo.representationName) : 0
+
+	//console.log('CurrentObjectConfig currentTabIndex:'+globalState.currentTabIndex+' || name:'+objInfo.name+' repName:'+objInfo.representationName+' isVIsual:'+objInfo.isVisual+' repIndex:'+representationIndex);
+
+
+	const [visualMode,setVisualMode] = useState(objInfo.isVisual);
+    const [sliderIndex,setSliderIndex] = useState( representationIndex );
+    const [chosenName,setChosenName] = useState(objInfo.name);
 	
-
-	console.log('CurrentObjectConfig currentTabIndex:'+globalState.currentTabIndex+' || name:'+objInfo.name+' repName:'+objInfo.representationName+' isVIsual:'+objInfo.isVisual+' repIndex:'+representationIndex);
-
 	const setVisualModeFunc = function(newVal:any){
 		setVisualMode(newVal);
 		const rep = imagePathManager.representations.filter(function(elem:any){return (!newVal) || (elem.isVisual == true)})[sliderIndex];
@@ -31,13 +35,8 @@ export default function CurrentObjectConfig(){
 		var x = woblocksControl.getObjectInfoOfIndex(globalState.currentTabIndex - 1);
 	}
 
-	const [visualMode,setVisualMode] = useState(objInfo.isVisual);
-    const [sliderIndex,setSliderIndex] = useState( representationIndex );
-    const [chosenName,setChosenName] = useState(objInfo.name);
-	
-
 	return <>
-		<ObjectConfigForm editName={false}  visualMode={visualMode} sliderIndex={sliderIndex} chosenName={chosenName} setVisualMode={setVisualModeFunc} setSliderIndex={setSliderIndexFunc} setChosenName={setChosenName} representations={imagePathManager.representations}/>
+		<ObjectConfigForm editName={false}  visualMode={objInfo.isVisual} sliderIndex={representationIndex} chosenName={chosenName} setVisualMode={setVisualModeFunc} setSliderIndex={setSliderIndexFunc} setChosenName={setChosenName} representations={imagePathManager.representations}/>
 	</>
 
 }

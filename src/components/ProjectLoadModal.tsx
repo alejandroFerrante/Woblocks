@@ -9,7 +9,7 @@ import {getRepIconFor} from '../ImagePathManager'
 
 export default function ProjectLoadModal(){
 
-	//COMPONENT USED TO LOAD A wbk PROJECT FILE 
+	//COMPONENT USED FOR LOADING A wbk PROJECT FILE 
 	const handleAccept = () => {
 		woblocksControl.loadProjetInfoFromJSON(fileContent);
 		const fileContentJSON = JSON.parse(fileContent);
