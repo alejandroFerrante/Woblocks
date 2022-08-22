@@ -3,7 +3,7 @@ import WBContext from '../WBContext'
 
 import {getIconPathFor} from '../ImagePathManager'
 
-export default function ConfigButton(){
+export default function ShowAvailableSpritesButton(){
 
 	const {globalState,val,setGlobalState,valSetter} = useContext(WBContext);
 
@@ -11,11 +11,11 @@ export default function ConfigButton(){
 	const imgStyle = {width:"100%",height:"100%",color:"white"};
 
 	const handleClick = function(){
-		globalState.modalState = 'CONFIG_OPEN';
+		globalState.modalState = 'AVLBL_SPRITES_OPEN';
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('config')} title="Configuracion del Juego" /></button>
+	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('galery')} title="Mostrar Sprites Disponibles"/></button>
 
 }

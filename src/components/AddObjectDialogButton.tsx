@@ -20,7 +20,7 @@ export default function AddObjectDialogButton(props:any){
     }
 
     return <>
-        <IconButton color="inherit" aria-label="Añadir Objeto" onClick={handleCLick}>
+        <IconButton color="inherit" aria-label="Añadir Objeto"  onClick={handleCLick} title="Añadir Objeto">
             <AddIcon />
         </IconButton>
     </>

@@ -18,6 +18,6 @@ export default function LoadProjectButton(){
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('load')}/></button>
+	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('load')} title="Cargar Proyecto"/></button>
 
 }

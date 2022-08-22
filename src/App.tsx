@@ -71,8 +71,6 @@ function App() {
     }
   })
 
-  const foo = function(){console.log(Blockly.Xml.domToText( Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace() ) ))}
-
 /*
   HeaderContent:   HOLDS TABS AND BUTTONS
   ModalWindow:     HOLDS THE MODALS (Save project, Load Project, New Object, Game Config)  
@@ -83,7 +81,6 @@ function App() {
       <ThemeProvider theme={theme}>
       <WBProvider state={myAppState} stateSetter={setMyAppStateFunc} /*this part only for testing -->*/ val={myVal} valSetter={setMyVal} >
         <>
-          <button onClick={foo} />
           <HeaderContent />
           <ModalWindow />
           <BlocklyWoblocks />

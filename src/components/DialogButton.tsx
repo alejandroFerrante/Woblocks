@@ -24,7 +24,7 @@ export default function DialogButton({Icon, title, tooltip, children, onAccept, 
     const handleAccept = () => {setOpen(false);onAccept!()}
 
     return <>
-        <IconButton {...buttonProps} color="inherit" aria-label={tooltip} onClick={handleOpen}>
+        <IconButton {...buttonProps} color="inherit" aria-label={tooltip} onClick={handleOpen} title={tooltip}>
             <Icon />
         </IconButton>
         <Dialog {...dialogProps} open={open} onClose={handleClose}>

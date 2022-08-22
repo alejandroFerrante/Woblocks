@@ -18,6 +18,6 @@ export default function SaveProjectButton(){
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('save')}/></button>
+	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('save')} title="Guardar Proyecto"/></button>
 
 }

@@ -23,6 +23,6 @@ export default function ShowCodeButton(){
 		
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('showCode')}/></button>
+	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('showCode')} title="Mostrar Codigo Generado"/></button>
 
 }

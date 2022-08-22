@@ -6,6 +6,7 @@ import ConfigButton from './ConfigButton'
 import SaveProjectButton from './SaveProjectButton'
 import LoadProjectButton from './LoadProjectButton'
 import ShowCodeButton from './ShowCodeButton'
+import ShowAvailableSpritesButton from './ShowAvailableSpritesButton'
 
 import { useContext } from "react"
 import WBContext from '../WBContext'
@@ -25,6 +26,7 @@ export function HeaderContent(props:any) {
                     <SaveProjectButton />
                     <LoadProjectButton />
                     <ShowCodeButton />
+                    <ShowAvailableSpritesButton />
                 </>
             }
         </Toolbar>

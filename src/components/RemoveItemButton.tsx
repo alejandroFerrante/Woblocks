@@ -39,6 +39,6 @@ export default function RemoveItemButton(){
 	}
 
 	return <>
-		<button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('trash')}/></button>
+		<button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('trash')} title="Borrar Objeto" /></button>
 	</>
 }

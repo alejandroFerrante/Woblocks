@@ -36,6 +36,7 @@ export const imagePathManager = {
 		controller:require('./resources/wbIcons/controller.png'),
 		crash:require('./resources/wbIcons/crash.png'),
 		forEach:require('./resources/wbIcons/forEach.png'),
+		galery:require('./resources/wbIcons/galery.png'),
 		load:require('./resources/wbIcons/load.png'),
 		mSend:require('./resources/wbIcons/mSend.png'),
 		object:require('./resources/wbIcons/object.png'),

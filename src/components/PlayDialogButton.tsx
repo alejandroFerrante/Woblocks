@@ -33,7 +33,7 @@ export default function PlayDialogButton(){
 
     return <>{myRef}<DialogButton  
         title="Wollok Game"
-        tooltip="Ejecutar"
+        tooltip="Ejecutar Juego"
         Icon={SendIcon}
         dialogProps={{fullScreen: true}}
         >
