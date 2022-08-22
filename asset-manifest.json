@@ -1,12 +1,26 @@
 {
   "files": {
-    "main.css": "/Woblocks/static/css/main.e9143da6.css",
-    "main.js": "/Woblocks/static/js/main.952a5ecb.js",
-    "static/js/27.37dfb335.chunk.js": "/Woblocks/static/js/27.37dfb335.chunk.js",
+    "main.css": "/Woblocks/static/css/main.7a93c4ff.css",
+    "main.js": "/Woblocks/static/js/main.571d005e.js",
+    "static/js/27.4acd63aa.chunk.js": "/Woblocks/static/js/27.4acd63aa.chunk.js",
+    "static/media/GothamRounded-Bold.ttf": "/Woblocks/static/media/GothamRounded-Bold.ae3b95d0c6532a167baf.ttf",
+    "static/media/arrow.png": "/Woblocks/static/media/arrow.0d24d3b130e57196f8eb.png",
+    "static/media/forEach.png": "/Woblocks/static/media/forEach.5260faa58a52b75ad539.png",
+    "static/media/world.png": "/Woblocks/static/media/world.8e84bfd02e3c425b8aa7.png",
+    "static/media/question.png": "/Woblocks/static/media/question.aaf73c2a60821f76665d.png",
+    "static/media/wollok.png": "/Woblocks/static/media/wollok.cb3c350f0e2b37ada1a9.png",
+    "static/media/crash.png": "/Woblocks/static/media/crash.2a0f144a4b18f113a0c9.png",
+    "static/media/lion_icon.png": "/Woblocks/static/media/lion_icon.a11fa3816a5354457cba.png",
+    "static/media/timer.png": "/Woblocks/static/media/timer.fadcb12b4a258cd19eb9.png",
+    "static/media/circus_background.png": "/Woblocks/static/media/circus_background.e636b36a5741a7d892a2.png",
+    "static/media/pepita_icon.png": "/Woblocks/static/media/pepita_icon.8ae4ebb4ac48100e2512.png",
+    "static/media/question_black.png": "/Woblocks/static/media/question_black.7988c95845c5386ca026.png",
+    "static/media/pointer.png": "/Woblocks/static/media/pointer.e86b318d219aa2d36945.png",
+    "static/media/mSend.png": "/Woblocks/static/media/mSend.725b13af0c154ef2a0ee.png",
     "index.html": "/Woblocks/index.html"
   },
   "entrypoints": [
-    "static/css/main.e9143da6.css",
-    "static/js/main.952a5ecb.js"
+    "static/css/main.7a93c4ff.css",
+    "static/js/main.571d005e.js"
   ]
 }
