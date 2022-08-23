@@ -1,37 +1,31 @@
-import {useRef,createRef} from 'react'
 import { Send as SendIcon } from '@material-ui/icons'
 import DialogButton from './DialogButton'
-
-
-
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
 export default function PlayDialogButton(){
 
-	const onWollokGameDivRendered = (elem:any) => {
+	const onWollokGameDivRendered = (theDiv:any) => {
 
-		if(elem){
-			myRef = elem;
-			console.log('ELEM RENDERED');
-			var myProgramStr = woblocksControl.getExecutionString();
-			
-			var main = 'main';
-			var sounds:any[] = [];
-			var sources = woblocksControl.buildWkProgramSourceFor(myProgramStr);
-			var project = [ main, globalState.wkImages, sounds, sources ];
-			
-			//this.wkGame = new Game(project);
-			//this.wkGame.start(myRef);
-
+		if(!theDiv) return;
+		
+		const myProgramStr = woblocksControl.getExecutionString();
+		const sources = woblocksControl.buildWkProgramSourceFor(myProgramStr);
+		const project = { 
+			main: 'main',
+			images: globalState.wkImages, 
+			sounds: [], 
+			sources,
+			description: "HOLA SOY UNA DESCRIPCION" 
 		}
+		
+		//this.wkGame = new Game(project);
+		//this.wkGame.start(theDiv);
 	}
-	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
+	const {globalState} = useContext(WBContext);
 
-	var myRef:any;
-
-    return <>{myRef}<DialogButton  
+    return <><DialogButton  
         title="Wollok Game"
         tooltip="Ejecutar Juego"
         Icon={SendIcon}
