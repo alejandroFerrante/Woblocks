@@ -5,6 +5,9 @@ import {getIconPathFor} from '../ImagePathManager'
 
 import woblocksControl from '../models/woblocksControl'
 
+import { CloudUpload } from '@material-ui/icons'
+import {SvgIcon, IconButton} from '@material-ui/core/'
+
 export default function LoadProjectButton(){
 
 	const {globalState,val,setGlobalState,valSetter} = useContext(WBContext);
@@ -18,6 +21,11 @@ export default function LoadProjectButton(){
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('load')} title="Cargar Proyecto"/></button>
-
+	return<>
+		<IconButton onClick={handleClick} >
+			<SvgIcon titleAccess="Cargar Proyecto" >
+				<CloudUpload style={{color:"white"}} />
+    		</SvgIcon>
+	    </IconButton>
+	</>
 }

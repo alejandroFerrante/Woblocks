@@ -3,7 +3,6 @@ import { BlocklyWorkspace } from 'react-blockly'
 import woblocksControl from '../models/woblocksControl'
 import Blockly from 'blockly'
 import CurrentObjectConfig from './CurrentObjectConfig'
-import RemoveItemButton from './RemoveItemButton'
 
 
 import WBContext from '../WBContext'
@@ -23,8 +22,7 @@ export default function BlocklyWoblocks() {
    setXml(value); 
   }
 
-  return (<table><tr>
-    <td style={{paddingBottom:"150px"}} >
+  return (<table><tr><td style={{paddingBottom:"150px"}} >
     <BlocklyWorkspace
       className="blocklyCanvas"
       toolboxConfiguration={toolbox!}
@@ -46,8 +44,6 @@ export default function BlocklyWoblocks() {
       initialXml={xml}
       onXmlChange={onXmlChange}
     />
-    </td>
-    {globalState.currentTabIndex !== 0 && <td > <RemoveItemButton /> <CurrentObjectConfig /></td>}
-    </tr></table>
+    </td></tr></table>
   )
 }

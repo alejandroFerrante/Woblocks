@@ -16,6 +16,8 @@ import ModalWindow from './components/ModalWindow'
 import woblocksControl from './models/woblocksControl'
 import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from './ImagePathManager'
 
+import AlertModal from './components/AlertModal'
+
 class AppState {
   wollokObjects: WollokObject[] = []
 
@@ -29,8 +31,6 @@ class AppState {
 export const AppContext = React.createContext({} as AppState)
 
 function App() {
-
-  //console.log("APP called");
 
   // initial global state
   const appState: AppState = new AppState(); 
@@ -49,12 +49,13 @@ function App() {
   const [myAppState,setMyAppState] = useState({
     modalState:'CLOSED',
     currentTabIndex:0,
-    tabObjects: [{name:'escena', icon:'wollok'}],
+    tabObjects: [{name:'Escena', icon:'wollokBW'}],
     gameWidth:20,
     gameHeight:20,
     gameBackgroundImage:'',
     wkImages:wkImages,
-    wkGame:null
+    wkGame:null,
+    alertState:{ isOpen:false,title:'',body:'' as any, mode:'',onModalConrirm:()=>{}}
   }); 
 
   const [myVal,setMyVal] = useState(0);////////TEST
@@ -81,6 +82,7 @@ function App() {
       <ThemeProvider theme={theme}>
       <WBProvider state={myAppState} stateSetter={setMyAppStateFunc} /*this part only for testing -->*/ val={myVal} valSetter={setMyVal} >
         <>
+          <AlertModal />
           <HeaderContent />
           <ModalWindow />
           <BlocklyWoblocks />

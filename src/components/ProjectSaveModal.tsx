@@ -39,8 +39,6 @@ export default function ProjectSaveModal(){
 		setFilename(event.target.value);
 	}
 
-	const cellStyle = {paddingLeft:"10%"};
-
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 	const [filename, setFilename] = useState('');
 		
@@ -52,7 +50,7 @@ export default function ProjectSaveModal(){
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>
-                    <Typography>Cargar Proyecto</Typography>
+                    <Typography>Guardar Proyecto</Typography>
                     {filename !== '' && <IconButton edge="end" color="inherit" onClick={handleAccept} aria-label="Cerrar">
                         <DoneIcon />
                     </IconButton>}
@@ -61,7 +59,7 @@ export default function ProjectSaveModal(){
 		
 			<>
 				<br/>
-		        <div style={cellStyle} >Nombre de archivo<input value={filename} onChange={onFilenameChange} /> </div>
+		        <div >Nombre de archivo:<input value={filename} onChange={onFilenameChange} /> {'.wbk'}</div>
 		        <br/>
 		        
 		        

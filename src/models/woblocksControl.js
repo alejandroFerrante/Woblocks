@@ -20,7 +20,7 @@ woblocksControl.init = function(){
 	this.config.height = 20;
 	this.config.width = 20;
 	this.config.backgroundImage = '';
-	
+	this.toRemove = [];
 	this.wkGame = null;	
 }
 
@@ -50,7 +50,6 @@ woblocksControl.addDefaultObjectXmlToWorkspaceNamed = function(anObjectName){
 woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage = function(anObjectName,anImage){
 	console.log('woblocksControl addDefaultObjectXmlToWorkspaceWithNameAndImage '+anObjectName+' '+anImage);
 	Blockly.getMainWorkspace().clear();
-	//var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlWithNameAndImage(anObjectName,anImage)+'</xml>';
 	var xmlStr = '<xml>'+woblocksControl.getDefaultWKObjectXmlWithNameAndImage(anObjectName,anImage)+'</xml>';
 
 	var objXmlToAppend = Blockly.Xml.textToDom( xmlStr );
@@ -176,15 +175,15 @@ woblocksControl.getExecutionString = function(){
 	});
 	var result = `import wollok.game.*
 program main {
-Game.width(`+this.config.width+`)
-Game.height(`+this.config.height+`)
+game.width(`+this.config.width+`)
+game.height(`+this.config.height+`)
 `;
 	if(this.config.backgroundImage && this.config.backgroundImage !== ''){
-		result += `Game.boardGround("`+this.config.backgroundImage+`")
+		result += `game.boardGround("`+this.config.backgroundImage+`")
 		`;	
 	}
 
-    result += `Game.start()
+    result += `game.start()
     `;
 
     result += Object.keys(this.definedObjectsInfo.objectsInfoMap).filter(function(key){return woblocksControl.definedObjectsInfo.objectsInfoMap[key].definedObjectsMappingInfo.isVisual }).map(function(key){ return 'game.addVisual('+key+')'  }).join('\n');
@@ -281,6 +280,7 @@ woblocksControl.removeObjectOfIndex = function(anIndex){
 	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
 	
 	var objToRemove = this.definedObjectsInfo.objectNames[anIndex]; 
+	this.toRemove = [objToRemove];
 	this.definedObjectsInfo.objectNames.splice(anIndex,1);
 	delete this.definedObjectsInfo.objectsInfoMap[objToRemove];
 	return true;
@@ -405,6 +405,9 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    </block>
 
 	    <block type="condition_wk" >
+	    </block>
+
+	    <block type="sprite_block_wk" >
 	    </block>
 
 	    <block type="return_wk" >
@@ -565,6 +568,9 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    <block type="condition_wk" >
 	    </block>
 
+	   	<block type="sprite_block_wk" >
+	    </block>
+
 	    <block type="return_wk" >
 	    </block>
 
@@ -709,86 +715,87 @@ woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
 }
 
 woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage){
-	var strXml = '';
-	strXml += '<block type="action_start_wk">\n';
-	strXml += '	<next>\n';
-	strXml += '		<block type="objetc_create_wk">\n';
-	strXml += '			<field name="name">'+aName+'</field>\n';
-	strXml += '			<statement name="properties">\n';
-	strXml += '				<block type="objetc_property_wk">\n';
-	strXml += '					<field name="name">name</field>\n';
-	strXml += '					<value name="value">\n';
-	strXml += '						<block type="text">\n';
-	strXml += '							<field name="TEXT">'+aName+'</field>\n';
-	strXml += '						</block>\n';
-	strXml += '					</value>\n';
-	strXml += '				</block>\n';
+	var xmlStr = '';
+	xmlStr += '<block type="action_start_wk">\n';
+	xmlStr += '	<next>\n';
+	xmlStr += '		<block type="objetc_create_wk">\n';
+	xmlStr += '			<field name="name">'+aName+'</field>\n';
+	xmlStr += '			<statement name="properties">\n';
+	xmlStr += '				<block type="objetc_property_wk">\n';
+	xmlStr += '					<field name="name">name</field>\n';
+	xmlStr += '					<value name="value">\n';
+	xmlStr += '						<block type="text">\n';
+	xmlStr += '							<field name="TEXT">"'+aName+'"</field>\n';
+	xmlStr += '						</block>\n';
+	xmlStr += '					</value>\n';
 	if(anImage){
-		strXml += '				<block type="method_create_wk" >\n';
-		strXml += '					<field name="name">position</field>\n';
-		strXml += '					<value name="params">\n';
-		strXml += '						<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
-		strXml += '					</value>\n';
-		strXml += '					<statement name="instructions">\n';
-		strXml += '						<block type="instruction_wk" >\n';
-		strXml += '							<value name="instruction">\n';
-		strXml += '								<block type="return_wk" >\n';
-		strXml += '									<value name="value">\n';
-		strXml += '										<block type="execution_res_wk" >\n';
-		strXml += '											<field name="method">at</field>\n';
-		strXml += '											<value name="executor">\n';
-		strXml += '												<block type="game_wk"></block>\n';
-		strXml += '											</value>\n';
-		strXml += '											<statement name="params">\n';
-		strXml += '												<block type="executor_param_wk">\n';
-		strXml += '													<value name="param">\n';
-		strXml += '														<block type="text">\n';
-		strXml += '															<field name="TEXT">0</field>\n';
-		strXml += '														</block>\n';
-		strXml += '													</value>\n';
-		strXml += '													<next>\n';
-		strXml += '														<block type="executor_param_wk" >\n';
-		strXml += '															<value name="param">\n';
-		strXml += '																<block type="text">\n';
-		strXml += '																	<field name="TEXT">0</field>\n';
-		strXml += '																</block>\n';
-		strXml += '															</value>\n';
-		strXml += '														</block>\n';
-		strXml += '													</next>\n';
-		strXml += '												</block>\n';
-		strXml += '											</statement>\n';
-		strXml += '										</block>\n';
-		strXml += '									</value>\n';
-		strXml += '								</block>\n';
-		strXml += '							</value>\n';
-		strXml += '						</block>\n';
-		strXml += '					</statement>\n';
-		strXml += '					<next>\n';
-		strXml += '						<block type="method_create_wk" >\n';
-		strXml += '							<field name="name">image</field>\n';
-		strXml += '							<value name="params">\n';
-		strXml += '								<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
-		strXml += '							</value>\n';
-		strXml += '							<statement name="instructions">\n';
-		strXml += '								<block type="instruction_wk" >\n';
-		strXml += '									<value name="instruction">\n';
-		strXml += '										<block type="return_wk" >\n';
-		strXml += '											<value name="value">\n';
-		strXml += '												<block type="text"><field name="TEXT">"'+anImage+'"</field></block>\n';
-		strXml += '											</value>\n';
-		strXml += '										</block>\n';
-		strXml += '									</value>\n';
-		strXml += '								</block>\n';
-		strXml += '							</statement>\n';
-		strXml += '						</block>\n';
-		strXml += '					</next>\n';
-		strXml += '				</block>\n';
+		xmlStr += '					<next>\n';
+		xmlStr += '						<block type="method_create_wk">\n';
+		xmlStr += '							<field name="name">image</field>\n';
+		xmlStr += '							<value name="params">\n';
+		xmlStr += '								<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
+		xmlStr += '							</value>\n';
+		xmlStr += '							<statement name="instructions">\n';
+		xmlStr += '								<block type="return_wk">\n';
+		xmlStr += '									<value name="value">\n';
+		xmlStr += '										<block type="sprite_block_wk">\n';
+		xmlStr += '											<field name="Sprite">'+anImage+'</field>\n';
+		xmlStr += '										</block>\n';
+		xmlStr += '									</value>\n';
+		xmlStr += '								</block>\n';
+		xmlStr += '							</statement>\n';
+		xmlStr += '							<next>\n';
+		xmlStr += '								<block type="method_create_wk">\n';
+		xmlStr += '									<field name="name">position</field>\n';
+		xmlStr += '									<value name="params">\n';
+		xmlStr += '										<block type="lists_create_with" ><mutation items="0"></mutation></block>\n';
+		xmlStr += '									</value>\n';
+		xmlStr += '									<statement name="instructions">\n';
+		xmlStr += '										<block type="return_wk">\n';
+		xmlStr += '											<value name="value">\n';
+		xmlStr += '												<block type="execution_res_wk">\n';
+		xmlStr += '													<field name="method">at</field>\n';
+		xmlStr += '													<value name="executor">\n';
+		xmlStr += '														<block type="game_wk"></block>\n';
+		xmlStr += '													</value>\n';
+		xmlStr += '													<statement name="params">\n';
+		xmlStr += '														<block type="executor_param_wk">\n';
+		xmlStr += '															<value name="param">\n';
+		xmlStr += '																<block type="text"><field name="TEXT">0</field></block>\n';
+		xmlStr += '															</value>\n';
+		xmlStr += '															<next>\n';
+		xmlStr += '																<block type="executor_param_wk">\n';
+		xmlStr += '																	<value name="param">\n';
+		xmlStr += '																		<block type="text"><field name="TEXT">0</field></block>\n';
+		xmlStr += '																	</value>\n';
+		xmlStr += '																</block>\n';
+		xmlStr += '															</next>\n';
+		xmlStr += '														</block>\n';
+		xmlStr += '													</statement>\n';
+		xmlStr += '												</block>\n';
+		xmlStr += '											</value>\n';
+		xmlStr += '										</block>\n';
+		xmlStr += '									</statement>\n';
+		xmlStr += '								</block>\n';
+		xmlStr += '							</next>\n';
+		xmlStr += '						</block>\n';
+		xmlStr += '					</next>\n';
 	}
-	strXml += '			</statement>\n';
-	strXml += '		</block>\n';
-	strXml += '	</next>\n';
-	strXml += '</block>\n';
-	return strXml;
+	xmlStr += '				</block>\n';
+	xmlStr += '			</statement>\n';
+	xmlStr += '		</block>\n';
+	xmlStr += '	</next>\n';
+	xmlStr += '</block>\n';
+	return xmlStr;
+}
+
+//OTHERS
+
+woblocksControl.sanitizedeletedObjects = function(){
+	Blockly.getMainWorkspace().getAllBlocks().filter(function(elem){return woblocksControl.toRemove.includes(elem.type)}).forEach(function(aBlock){
+			aBlock.dispose();
+	});
+	woblocksControl.toRemove = [];
 }
 
 woblocksControl.init()

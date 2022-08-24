@@ -3,14 +3,12 @@ import WBContext from '../WBContext'
 
 import {getIconPathFor} from '../ImagePathManager'
 
-//import woblocksControl from '../models/woblocksControl'
+import { Save } from '@material-ui/icons'
+import {SvgIcon, IconButton} from '@material-ui/core/'
 
 export default function SaveProjectButton(){
 
 	const {globalState,val,setGlobalState,valSetter} = useContext(WBContext);
-
-	const buttonStyle = {width:"40px",height:"33px",backgroundColor:"transparent",borderColor:"transparent"};
-	const imgStyle = {width:"100%",height:"100%",color:"white"};
 
 	const handleClick = function(){
 		globalState.modalState = 'PROJSAVE_OPEN';
@@ -18,6 +16,12 @@ export default function SaveProjectButton(){
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('save')} title="Guardar Proyecto"/></button>
+	return<>
+		<IconButton onClick={handleClick} >
+			<SvgIcon titleAccess="Guardar Proyecto" >
+				<Save style={{color:"white"}} />
+    		</SvgIcon>
+	    </IconButton>
+	</>
 
 }

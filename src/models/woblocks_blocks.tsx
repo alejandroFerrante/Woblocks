@@ -1,6 +1,6 @@
 import Blockly from 'blockly'
 
-import {imagePathManager, getIconPathFor} from '../ImagePathManager'
+import {imagePathManager, getIconPathFor, getAllSprites} from '../ImagePathManager'
 
 import woblocksControl from '../models/woblocksControl'
 
@@ -564,7 +564,29 @@ Blockly.Blocks['game_wk'] = {
     this.setTooltip("Game");
     this.setColour('#32a852');
   },getValueWK(aBlock:any){
-    return 'Game';
+    return 'game';
+  }
+};
+
+Blockly.Blocks['sprite_block_wk'] = {
+  init: function() {
+    var options = [
+        ['none', 'NONE'],
+        [{'src': 'canada.png', 'width': 50, 'height': 25, 'alt': 'Canada'}, 'CANADA'],
+        [{'src': 'usa.png', 'width': 50, 'height': 25, 'alt': 'USA'}, 'USA'],
+        [{'src': 'mexico.png', 'width': 50, 'height': 25, 'alt': 'Mexico'}, 'MEXICO']
+    ];
+    options = getAllSprites().map(function(elem){ return [{'src':elem.url ,'width': 50, 'height': 50, 'alt': elem.alias },elem.alias] });
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown(options), 'Sprite');
+    this.setOutput(true);
+  },doActionWK:function(self:any, paramsMap:any){
+    return '"'+paramsMap['sprite']+'"';
+  },getValueWK(aBlock:any){
+      var value_sprite = extractFieldNamed(aBlock,'Sprite');
+      var code = Blockly.Blocks['sprite_block_wk'].doActionWK(aBlock,{'sprite':value_sprite});
+      return code;
+
   }
 };
 
@@ -580,7 +602,8 @@ Blockly.Blocks['return_wk'] = {
     this.setInputsInline(true);//
     this.setTooltip('');
     this.setColour('#469b9e');
-    this.setOutput(true);
+    //this.setOutput(true);
+    this.setPreviousStatement(true, null);
   },doActionWK:function(self:any, paramsMap:any){
     return 'return '+paramsMap['value'];
   },getValueWK(aBlock:any){

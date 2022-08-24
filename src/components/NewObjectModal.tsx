@@ -9,7 +9,6 @@ import woblocksControl from '../models/woblocksControl'
 import WBContext from '../WBContext'
 import {imagePathManager} from '../ImagePathManager'
 
-import swal from 'sweetalert'
 
 export default function NewObjectModal(props:any){
 	
@@ -27,13 +26,22 @@ export default function NewObjectModal(props:any){
         valSetter( (val + 1) % 2);
 	}
 
+	const openAlert = function(aTitle:string,aBody:string){
+		globalState.alertState.isOpen = true;
+	    globalState.alertState.title = aTitle;
+	    globalState.alertState.body = aBody;
+	    globalState.alertState.mode = 'WARNING';
+	    setGlobalState(globalState);
+	    valSetter( (val+1) % 2 );
+	}
+
 	const handleAccept = () => {
 		if(!chosenName || chosenName === ''){
-			swal("No ha completado el nombre", "", "warning");
+			openAlert("Nombre Incompleto","No ha completado ningun nombre");
 			return;
 		}
 		if(globalState.tabObjects.map(function(elem:any){return elem.name}).includes(chosenName) ){
-			swal("Un objeto con este nombre ya existe", "", "warning");
+			openAlert("Nombre Repetido","Un objeto con este nombre ya fue creado");
 			return;
 		}
 		//{chosenName, chosenRepresentation}

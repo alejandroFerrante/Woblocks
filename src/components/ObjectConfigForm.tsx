@@ -1,12 +1,12 @@
-import {useState} from "react"
-import { Component } from "react"
-
+import {useState, Component} from "react"
+import {Switch , SvgIcon } from "@material-ui/core/"
+import { ArrowForward, ArrowBack } from '@material-ui/icons'
 
 export default function ObjectConfigForm(props:any){
 
     //SLIDER FUNCTIONS/////////////////////////
     const onVisualModeChange = (event:any) => {
-        props.setVisualMode(event.target.checked);
+        props.setVisualMode( ! props.visualMode);
     }
 
     const setIndex = function(anIndex:any){
@@ -20,17 +20,17 @@ export default function ObjectConfigForm(props:any){
 
 
     //STYLES///////////////////////////////////    
-    const cellStyle = {paddingLeft:"10%"};
+    const cellStyle = {paddingLeft:"10%",paddingRight:"10%"};
     ///////////////////////////////////////////
 
     //console.log('ObjectConfigForm props.visualMode:'+props.visualMode+' props.sliderIndex:'+props.sliderIndex);
 
     return <>
         <br/>
+        <br/>
         { props.editName && <div style={cellStyle} >  Nombre <input onChange={onNameChange} /> </div> }
         <br/>
-        { (props.visualMode) && <div style={cellStyle} >es visual? <input onChange={onVisualModeChange}   checked type="checkbox" /> </div>}
-        { (!props.visualMode) && <div style={cellStyle} >es visual? <input onChange={onVisualModeChange}   type="checkbox" /> </div>} 
+        <div style={{paddingLeft:"10%"}} >{'Es Visual? '} <Switch checked={props.visualMode} onClick={onVisualModeChange}/></div>
         <br/>
         <div style={cellStyle}><Slider slides={props.representations} isVisual={props.visualMode} index={props.sliderIndex} setSliderIndex={setIndex} /> </div>
     </>
@@ -60,20 +60,14 @@ export function Slider(props:any){
 
     //STYLES///////////////////////////////////
     const containerStyles = {
-        width: "950px",
-        height: "600px",
-        margin: "0 auto",
-        paddingLeft:"5%"
+        width: "100%"
     }
 
     const sliderStyle = {
-        height: "100%",
-        position: "relative"
+        height: "100%"
     }
 
     const slideStyle = {
-        width: "60%",
-        height: "60%",
         boarderRadius: "10px",
         backgroundPosition: "center",
         backgroundSize: "cover"
@@ -82,27 +76,27 @@ export function Slider(props:any){
 
     return <>
         <div style={containerStyles} >
-            Representacion: <label>{currentSlides[props.index].name}</label>
             <table>
               
               <tr>
-                <td><div onClick={previousIndex}> {'<'} </div></td>
+
+                <td><div onClick={previousIndex}> <SvgIcon ><ArrowBack /></SvgIcon> </div></td>
                 
                 <td><div style={slideStyle} > 
-
-                    {props.isVisual && <div>
-                        <img style={{width:"40px",height:"40px"}} src={currentSlides[props.index].icon}  />
-                        <img style={{width:"140px",height:"140px"}} src={currentSlides[props.index].url} />
-                    </div>}
-
+                    <div style={{textAlign:"center"}} >
                     
-                    {!props.isVisual && <div>
-                        <img style={{width:"140px",height:"140px"}} src={currentSlides[props.index].icon} />
-                    </div>}
+                        <>    
+                        <img style={{width:"140px",height:"140px"}} src={currentSlides[props.index].icon}  />
+                           {props.isVisual && 
+                                <img style={{width:"140px",height:"140px"}} src={currentSlides[props.index].url} />
+                            }
+                        </>
 
+
+                    </div>
                 </div></td>
                
-                <td><div onClick={nextIndex}> {'>'} </div></td>
+                <td><div onClick={nextIndex}> <SvgIcon ><ArrowForward /></SvgIcon> </div></td>
                
                </tr>
 

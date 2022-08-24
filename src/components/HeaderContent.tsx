@@ -6,7 +6,6 @@ import ConfigButton from './ConfigButton'
 import SaveProjectButton from './SaveProjectButton'
 import LoadProjectButton from './LoadProjectButton'
 import ShowCodeButton from './ShowCodeButton'
-import ShowAvailableSpritesButton from './ShowAvailableSpritesButton'
 
 import { useContext } from "react"
 import WBContext from '../WBContext'
@@ -19,16 +18,15 @@ export function HeaderContent(props:any) {
         <Toolbar>
             <WoblocksLogo/>
             <ObjectTabs />
-            <PlayDialogButton/>
             {globalState.currentTabIndex === 0 && 
                 <>
                     <ConfigButton />
                     <SaveProjectButton />
                     <LoadProjectButton />
                     <ShowCodeButton />
-                    <ShowAvailableSpritesButton />
                 </>
             }
+            <PlayDialogButton/>
         </Toolbar>
     </AppBar>
 }

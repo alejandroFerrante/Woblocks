@@ -24,7 +24,6 @@ export const imagePathManager = {
 		{isVisual:false,  name:"tick",icon:require('./resources/representations/icons/tick.png'),alias:"", url:""}
 	],
 	wbIcons:{
-		
 		action:require('./resources/wbIcons/action.png'),
 		arrow:require('./resources/wbIcons/arrow.png'),
 		buttonPress:require('./resources/wbIcons/buttonPress.png'),

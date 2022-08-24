@@ -3,12 +3,12 @@ import WBContext from '../WBContext'
 
 import {getIconPathFor} from '../ImagePathManager'
 
+import { PermDataSetting } from '@material-ui/icons'
+import {SvgIcon, IconButton} from '@material-ui/core/'
+
 export default function ConfigButton(){
 
 	const {globalState,val,setGlobalState,valSetter} = useContext(WBContext);
-
-	const buttonStyle = {width:"40px",height:"33px",backgroundColor:"transparent",borderColor:"transparent"};
-	const imgStyle = {width:"100%",height:"100%",color:"white"};
 
 	const handleClick = function(){
 		globalState.modalState = 'CONFIG_OPEN';
@@ -16,6 +16,11 @@ export default function ConfigButton(){
         valSetter( (val + 1) % 2);
 	}
 
-	return <button style={buttonStyle} onClick={handleClick} ><img style={imgStyle} src={getIconPathFor('config')} title="Configuracion del Juego" /></button>
-
+	return <>
+		<IconButton onClick={handleClick} >
+			<SvgIcon titleAccess="Configuracion del Juego" >
+				<PermDataSetting style={{color:"white"}} />
+    		</SvgIcon>
+	    </IconButton>
+	</>
 }
