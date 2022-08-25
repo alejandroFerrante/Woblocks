@@ -27,7 +27,7 @@ export default function GameConfigModal(){
    		valSetter( (val + 1) % 2);	
 	}
 
-	const cellStyle = {paddingLeft:"10%"};
+	const cellStyle = {paddingLeft:"30%",paddingRight:"10%"};
 
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 	const [myWidth, setMyWidth] = useState(globalState.gameWidth);
@@ -36,10 +36,10 @@ export default function GameConfigModal(){
 	const [sliderIndex,setSliderIndex] = useState( (backNames.includes(globalState.gameBackgroundImage)) ? backNames.indexOf(globalState.gameBackgroundImage) + 1 : 0 );
 
 	return <>
-		<Dialog  open={true} onClose={handleClose}>
+		<Dialog  open={true} onClose={handleClose} fullWidth  maxWidth="sm" >
 			
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar style={{justifyContent:"space-between"}} >
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>
@@ -51,13 +51,14 @@ export default function GameConfigModal(){
             </AppBar>
 		
 			<>
-				<br/>
+				<br/><br/>
 		        <div style={cellStyle} > Ancho<input value={myWidth} onChange={(event) => {setMyWidth(event.target.value)}} /> </div>
 		        <br/>
 		        <div style={cellStyle} > Alto<input value={myHeight} onChange={(event) => {setMyHeight(event.target.value)}} /> </div> 
 		        <br/>
 		        <div style={cellStyle}><Slider slides={[{name:'ninguna',url:''}].concat(getBackgrounds())} index={sliderIndex} setSliderIndex={setSliderIndex} /> </div>
-			</>
+			    <br/>
+            </>
 			
         </Dialog>
 
@@ -85,8 +86,6 @@ export function Slider(props:any){
 
     //STYLES///////////////////////////////////
     const containerStyles = {
-        width: "950px",
-        height: "600px",
         margin: "0 auto",
         paddingLeft:"5%"
     }

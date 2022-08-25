@@ -204,7 +204,9 @@ woblocksControl.simpleFormatter = function(str,useHtml){
     var result = [];
     var strLst = str.split('\n');
     var lvl = 0;
-    strLst.forEach(function(line){
+    var line;
+    strLst.forEach(function(aLine){
+        line = aLine.replace(/^\s+|\s+$/g, '');
         var diff = (line.split("{").length - 1) - (line.split("}").length - 1) 
         console.log(line+'   diff:'+diff);
         var padding = '';
@@ -372,6 +374,19 @@ woblocksControl.hasAncestorWithId = function(aBlock, anId){
     return false;
 }
 
+//OTHERS
+
+woblocksControl.sanitizedeletedObjects = function(){
+	Blockly.getMainWorkspace().getAllBlocks().filter(function(elem){return woblocksControl.toRemove.includes(elem.type)}).forEach(function(aBlock){
+			aBlock.dispose();
+	});
+	woblocksControl.toRemove = [];
+}
+
+woblocksControl.closeToolbox = function(){
+	Blockly.getMainWorkspace().getToolbox().clearSelection();
+}
+
 //STRING XML METHODS
 
 woblocksControl.getMainToolboxXmlString =	function(){
@@ -429,7 +444,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="objetc_property_wk">
 	        <value name="value">
 	            <block type="text">
-	            <field name="TEXT">aPropertyValue</field>
+	            <field name="TEXT">unaPropiedad</field>
 	            </block>
 	        </value>
 	    </block>
@@ -444,7 +459,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	            <block type="instruction_wk">
 	            <value name="instruction">
 	                <block type="text">
-	                <field name="TEXT">anInstruction</field>
+	                <field name="TEXT">unaInstruccion</field>
 	                </block>
 	            </value>
 	            </block>
@@ -455,7 +470,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="instruction_wk">
 	        <value name="instruction">
 	            <block type="text">
-	            <field name="TEXT">anInstruction</field>
+	            <field name="TEXT">unaInstruccion</field>
 	            </block>
 	        </value>
 	    </block>
@@ -469,7 +484,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">aParam</field></block>
+	        <block type="text"><field name="TEXT">unParametro</field></block>
 	        </value></block></statement>
 	    </block>
 
@@ -479,7 +494,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="text"><field name="TEXT">aParam</field></block>
+	                    <block type="text"><field name="TEXT">unParametro</field></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -487,14 +502,14 @@ woblocksControl.getMainToolboxXmlString =	function(){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="text"><field name="TEXT">aParam</field></block>
+	            <block type="text"><field name="TEXT">unParametro</field></block>
 	        </value>
 	    </block>
 
 	    <block type="var_objetc_wk">
 	        <value name="value">
 	            <block type="text">
-	            <field name="TEXT">aVariableValue</field>
+	            <field name="TEXT">unValorDeVariable</field>
 	            </block>
 	        </value>
 	    </block>
@@ -502,7 +517,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="instruction_wk">
 	        <value name="instruction">
 	            <block type="text">
-	            <field name="TEXT">anInstruction</field>
+	            <field name="TEXT">unaInstruccion</field>
 	            </block>
 	        </value>
 	    </block>
@@ -590,7 +605,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    <block type="objetc_property_wk">
 	        <value name="value">
 	            <block type="text">
-	            <field name="TEXT">aPropertyValue</field>
+	            <field name="TEXT">unValorDePropiedad</field>
 	            </block>
 	        </value>
 	    </block>
@@ -605,7 +620,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	            <block type="instruction_wk">
 	            <value name="instruction">
 	                <block type="text">
-	                <field name="TEXT">anInstruction</field>
+	                <field name="TEXT">unaInstruccion</field>
 	                </block>
 	            </value>
 	            </block>
@@ -616,7 +631,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    <block type="instruction_wk">
 	        <value name="instruction">
 	            <block type="text">
-	            <field name="TEXT">anInstruction</field>
+	            <field name="TEXT">unaInstruccion</field>
 	            </block>
 	        </value>
 	    </block>
@@ -630,7 +645,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">aParam</field></block>
+	        <block type="text"><field name="TEXT">unParametro</field></block>
 	        </value></block></statement>
 	    </block>
 
@@ -640,7 +655,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="text"><field name="TEXT">aParam</field></block>
+	                    <block type="text"><field name="TEXT">unParametro</field></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -648,14 +663,14 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="text"><field name="TEXT">aParam</field></block>
+	            <block type="text"><field name="TEXT">unParametro</field></block>
 	        </value>
 	    </block>
 
 	    <block type="var_objetc_wk">
 	        <value name="value">
 	            <block type="text">
-	            <field name="TEXT">aVariableValue</field>
+	            <field name="TEXT">unValorDeVariable</field>
 	            </block>
 	        </value>
 	    </block>
@@ -663,7 +678,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    <block type="instruction_wk">
 	        <value name="instruction">
 	            <block type="text">
-	            <field name="TEXT">anInstruction</field>
+	            <field name="TEXT">unaInstruccion</field>
 	            </block>
 	        </value>
 	    </block>
@@ -703,7 +718,7 @@ woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
 		defaultXml +='					<block type="objetc_property_wk">';
 		defaultXml +='						<value name="value">';
 		defaultXml +='							<block type="text">';
-		defaultXml +='								<field name="TEXT">aPropertyValue</field>';
+		defaultXml +='								<field name="TEXT">unValorDePropiedad</field>';
 		defaultXml +='							</block>';
 		defaultXml +='						</value>';
 		defaultXml +='					</block>';
@@ -789,14 +804,7 @@ woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage)
 	return xmlStr;
 }
 
-//OTHERS
 
-woblocksControl.sanitizedeletedObjects = function(){
-	Blockly.getMainWorkspace().getAllBlocks().filter(function(elem){return woblocksControl.toRemove.includes(elem.type)}).forEach(function(aBlock){
-			aBlock.dispose();
-	});
-	woblocksControl.toRemove = [];
-}
 
 woblocksControl.init()
 

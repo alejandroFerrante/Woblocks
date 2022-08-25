@@ -10,7 +10,6 @@ import Blockly from 'blockly';
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
-
 import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from '../ImagePathManager'
 
 export default function ObjectTabs (props:any) {
@@ -43,8 +42,7 @@ export default function ObjectTabs (props:any) {
                 woblocksControl.loadDefinedObjectXmlContent(Number(tabId) - 1);
             }
             
-            var wsp:any = Blockly.getMainWorkspace(); 
-            wsp.getToolbox().clearSelection(); 
+            woblocksControl.closeToolbox();
 
             globalState.currentTabIndex = Number(tabId);
             setGlobalState(globalState);

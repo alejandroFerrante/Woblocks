@@ -53,17 +53,17 @@ export default function ProjectLoadModal(){
 		fr.readAsText(something.target.files[0]);
 	}
 
-	const cellStyle = {paddingLeft:"10%"};
+	const cellStyle = {paddingLeft:"20%",paddingRight:"10%"};
 
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 	const [filename, setFilename] = useState('');
 	const [fileContent, setFileContent] = useState('');
 
 	return <>
-		<Dialog  open={true} onClose={handleClose}>
+		<Dialog  open={true} onClose={handleClose} fullWidth  maxWidth="sm" >
 			
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar style={{justifyContent:"space-between"}} >
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>

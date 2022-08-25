@@ -66,12 +66,13 @@ export default function NewObjectModal(props:any){
 
 		//LOAD NEW WORKSPACE
 		var repImage = (visualMode)? rep.alias : null;//if visual add the image method to the block construct
-		//console.log('NewObjectModal '+visualMode+' '+repImage);
 		woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage	(chosenName, repImage);//this clears the workspace
 
 		//SAVE OBJ WORKSPACE INFO
 		woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
 		woblocksControl.setObjectInfoOfIndex(globalState.currentTabIndex - 1, rep.name,visualMode);
+
+		woblocksControl.closeToolbox();
 
 		globalState.modalState = 'CLOSED';
         setGlobalState(globalState);
@@ -79,13 +80,15 @@ export default function NewObjectModal(props:any){
 	}
 
 	return <>
-		<Dialog  open={true} onClose={handleClose}>
+		<Dialog  open={true} onClose={handleClose} fullWidth  maxWidth="sm">
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar style={{justifyContent:"space-between"}} >
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>
-                    <Typography>Crear Objeto</Typography>
+                    <Typography>
+                    	<b><div style={{textAlign:"center"}}>Crear Objeto</div></b>
+                    </Typography>
                     <IconButton edge="end" color="inherit" onClick={handleAccept} aria-label="Cerrar">
                         <DoneIcon />
                     </IconButton>

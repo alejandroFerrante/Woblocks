@@ -52,12 +52,11 @@ Blockly.Blocks['objetc_create_wk'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('wollokBW'), 40, 40, "*",null,null,null));
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("anObjectName"), "name");
+        .appendField(new Blockly.FieldTextInput("unNombre"), "name");
     this.appendStatementInput('properties')
     .setCheck('objetc_definition_wk');
     this.setPreviousStatement(true, 'objetc_definition_wk');
     this.setTooltip('');
-    //this.setWarningText('MENSAJES:');
     this.setColour('#03071e');
   },doActionWK : function(self:any, paramsMap:any){
     if(! Blockly.Blocks['action_start_wk'].isLinkedToActionStart(self)){return '';}
@@ -66,10 +65,8 @@ Blockly.Blocks['objetc_create_wk'] = {
     var value_properties = paramsMap['properties']; 
     var code = 'object ';
     code += value_objname.replaceAll("'","");
-    code += '{\nvar name = ';
-    code += value_objname+'\n';
+    code += '{\n';
     code += value_properties.join('\n');
-    
     code += ' \n}';
     
     return code;
@@ -101,7 +98,7 @@ Blockly.Blocks['objetc_create_wk'] = {
 Blockly.Blocks['objetc_property_wk'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aPropertyName"), "name");
+        .appendField(new Blockly.FieldTextInput("unNombreDePropiedad"), "name");
     this.appendValueInput("value")
         .appendField(new Blockly.FieldImage(getIconPathFor('arrow'), 30, 30, "",null,null,null));
     this.setInputsInline(true);
@@ -147,7 +144,7 @@ Blockly.Blocks['objetc_property_wk'] = {
 Blockly.Blocks['method_create_wk'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aMethodName"), "name")
+        .appendField(new Blockly.FieldTextInput("unNombreDeMensaje"), "name")
         .appendField(new Blockly.FieldImage(getIconPathFor('action'), 35, 35, "*",null,null,null));
     this.appendValueInput("params")
         .setCheck("Array");
@@ -245,7 +242,7 @@ Blockly.Blocks['executor_wk'] = {
         .appendField(new Blockly.FieldImage(getIconPathFor('mSend'), 35, 35, "",null,null,null));
     
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aMethodName"), "method");
+        .appendField(new Blockly.FieldTextInput("unNombreDeMensaje"), "method");
     this.appendStatementInput('params')
     .appendField('');    
     this.setTooltip('');
@@ -304,7 +301,7 @@ Blockly.Blocks['execution_res_wk'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('mSend'), 35, 35, "",null,null,null));
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aMethodName"), "method");
+        .appendField(new Blockly.FieldTextInput("unNombreDeMensaje"), "method");
     this.appendStatementInput('params')
     .appendField('');    
     this.setInputsInline(true);//
@@ -364,7 +361,7 @@ Blockly.Blocks['executor_param_wk'] = {
 Blockly.Blocks['var_objetc_wk'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("aVariableName"), "name");
+        .appendField(new Blockly.FieldTextInput("unNombreDeVariable"), "name");
     this.appendValueInput("value")
         .appendField(new Blockly.FieldImage(getIconPathFor('arrow'), 30, 30, "",null,null,null));
     this.setInputsInline(true);
@@ -442,7 +439,7 @@ Blockly.Blocks['tick_event_wk'] = {
   init: function() {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('timer') , 35, 35, "",null,null,null))
-        .appendField(new Blockly.FieldTextInput("eventName"), "event_name")
+        .appendField(new Blockly.FieldTextInput("nombreDelEvento"), "event_name")
         .appendField(new Blockly.FieldNumber("1000"), "timer");
     this.appendStatementInput("instructions").setCheck('execution_wk');
     this.setPreviousStatement(true,'execution_wk');
@@ -473,8 +470,8 @@ Blockly.Blocks['collission_wk'] = {
   init: function() {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('crash'), 35, 35, "",null,null,null))
-        .appendField(new Blockly.FieldTextInput("targetName"), "target_name");
-    this.appendDummyInput().appendField(new Blockly.FieldTextInput("collidedParamName"), "collided_name")
+        .appendField(new Blockly.FieldTextInput("nombreDelObjeto"), "target_name");
+    this.appendDummyInput().appendField(new Blockly.FieldTextInput("nombreDeQuienColisiono"), "collided_name")
     this.appendStatementInput("instructions").setCheck('execution_wk');
     this.setPreviousStatement(true,'execution_wk');
     this.setNextStatement(true,'execution_wk');

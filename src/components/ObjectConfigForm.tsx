@@ -20,7 +20,7 @@ export default function ObjectConfigForm(props:any){
 
 
     //STYLES///////////////////////////////////    
-    const cellStyle = {paddingLeft:"10%",paddingRight:"10%"};
+    const cellStyle = {paddingLeft:"25%",paddingRight:"10%"};
     ///////////////////////////////////////////
 
     //console.log('ObjectConfigForm props.visualMode:'+props.visualMode+' props.sliderIndex:'+props.sliderIndex);
@@ -30,7 +30,7 @@ export default function ObjectConfigForm(props:any){
         <br/>
         { props.editName && <div style={cellStyle} >  Nombre <input onChange={onNameChange} /> </div> }
         <br/>
-        <div style={{paddingLeft:"10%"}} >{'Es Visual? '} <Switch checked={props.visualMode} onClick={onVisualModeChange}/></div>
+        <div style={cellStyle} >{'Es Visual? '} <Switch checked={props.visualMode} onClick={onVisualModeChange}/></div>
         <br/>
         <div style={cellStyle}><Slider slides={props.representations} isVisual={props.visualMode} index={props.sliderIndex} setSliderIndex={setIndex} /> </div>
     </>

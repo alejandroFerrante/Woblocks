@@ -18,14 +18,18 @@ import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from './
 
 import AlertModal from './components/AlertModal'
 
+declare module '@material-ui/styles' {
+  interface SimplePaletteColorOptions {
+    magic: string
+  }
+}
+
 class AppState {
   wollokObjects: WollokObject[] = []
 
   addWollokObject(wo: WollokObject): void {
     
   }
-  tst:string = "foo"
-  setTst = (newVal:string) => {this.tst = newVal;console.log('setTst>> this.tst:'+this.tst);}
 }
 
 export const AppContext = React.createContext({} as AppState)
@@ -37,8 +41,6 @@ function App() {
 
 
   const setMyAppStateFunc = (newVal:any) =>{ /*console.log('setMyAppStateFunc');*/ setMyAppState(newVal); }
-
-
 
 
   //LOAD IMAGES
@@ -68,9 +70,17 @@ function App() {
       },
       secondary: {
         main: "#DA2028"
+      },
+      error:{
+        main:"#ab8585"
+      },
+      success:{
+        main:"#94ab85"
       }
+
     }
   })
+
 
 /*
   HeaderContent:   HOLDS TABS AND BUTTONS
