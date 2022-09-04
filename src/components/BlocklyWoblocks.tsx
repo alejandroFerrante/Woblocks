@@ -2,10 +2,11 @@ import { useState, useContext } from 'react'
 import { BlocklyWorkspace } from 'react-blockly'
 import woblocksControl from '../models/woblocksControl'
 import Blockly from 'blockly'
-import CurrentObjectConfig from './CurrentObjectConfig'
 
 
 import WBContext from '../WBContext'
+
+import "../woblocksClasses.css";
 
 export default function BlocklyWoblocks() {
   const [xml, setXml] = useState("");
@@ -23,27 +24,29 @@ export default function BlocklyWoblocks() {
   }
 
   return (<table><tr><td style={{paddingBottom:"150px"}} >
-    <BlocklyWorkspace
-      className="blocklyCanvas"
-      toolboxConfiguration={toolbox!}
-      workspaceConfiguration={{ 
-        collapse : true, 
-        comments : true, 
-        disable : true, 
-        maxBlocks : Infinity, 
-        trashcan : true, 
-        horizontalLayout : false, 
-        toolboxPosition : 'start', 
-        css : true, 
-        media : 'https://blockly-demo.appspot.com/static/media/', 
-        rtl : false, 
-        scrollbars : true, 
-        sounds : true, 
-        oneBasedIndex : true
-      }}
-      initialXml={xml}
-      onXmlChange={onXmlChange}
-    />
+    <div /*style={{position:"relative",width:"1200px", height:"100%"}}*/ >
+      <BlocklyWorkspace
+        className="blocklyCanvas blocklyWorkspaceClass"
+        toolboxConfiguration={toolbox!}
+        workspaceConfiguration={{ 
+          collapse : true, 
+          comments : true, 
+          disable : true, 
+          maxBlocks : Infinity, 
+          trashcan : true, 
+          horizontalLayout : false, 
+          toolboxPosition : 'start', 
+          css : true, 
+          media : 'https://blockly-demo.appspot.com/static/media/', 
+          rtl : false, 
+          scrollbars : true, 
+          sounds : true, 
+          oneBasedIndex : true
+        }}
+        initialXml={xml}
+        onXmlChange={onXmlChange}
+      />
+    </div>
     </td></tr></table>
   )
 }

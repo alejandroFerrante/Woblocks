@@ -208,7 +208,7 @@ woblocksControl.simpleFormatter = function(str,useHtml){
     strLst.forEach(function(aLine){
         line = aLine.replace(/^\s+|\s+$/g, '');
         var diff = (line.split("{").length - 1) - (line.split("}").length - 1) 
-        console.log(line+'   diff:'+diff);
+        //console.log(line+'   diff:'+diff);
         var padding = '';
         if(useHtml){
         	padding = '<span style="display: inline-block;margin-left: 40px;"></span>';
@@ -484,7 +484,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">unParametro</field></block>
+	        <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	        </value></block></statement>
 	    </block>
 
@@ -494,7 +494,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="text"><field name="TEXT">unParametro</field></block>
+	                    <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -502,7 +502,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="text"><field name="TEXT">unParametro</field></block>
+	            <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	        </value>
 	    </block>
 
@@ -645,7 +645,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">unParametro</field></block>
+	        <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	        </value></block></statement>
 	    </block>
 
@@ -655,7 +655,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="text"><field name="TEXT">unParametro</field></block>
+	                    <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -663,7 +663,7 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="text"><field name="TEXT">unParametro</field></block>
+	            <block type="text"><field name="TEXT">unaInstruccion</field></block>
 	        </value>
 	    </block>
 

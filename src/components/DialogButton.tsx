@@ -7,7 +7,7 @@ type DialogButtonProps = {
     title: string,
     tooltip: string,
     children: ReactNode,
-    onAccept?: ()=>void, 
+    onAccept?: ()=>void,
     buttonProps?: IconButtonProps,
     dialogProps?: Partial<DialogProps>
 }
@@ -19,7 +19,7 @@ type DialogButtonProps = {
  */
 export default function DialogButton({Icon, title, tooltip, children, onAccept, buttonProps, dialogProps}: DialogButtonProps){
     const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
+    const handleOpen = () => {setOpen(true);}
     const handleClose = () => setOpen(false)
     const handleAccept = () => {setOpen(false);onAccept!()}
 
@@ -29,18 +29,20 @@ export default function DialogButton({Icon, title, tooltip, children, onAccept, 
         </IconButton>
         <Dialog {...dialogProps} open={open} onClose={handleClose}>
             <AppBar position="static">
-                <Toolbar>
+                <Toolbar >
                     <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Cerrar">
                         <CloseIcon />
                     </IconButton>
-                    <Typography>{title}</Typography>
+                    <Typography style={{paddingLeft:"30%",paddingRight:"30%"}} >{title}</Typography>
                     { // If we have a callback onAccept, then we are an "Accept/Cancel" dialog
                     onAccept && <IconButton edge="end" color="inherit" onClick={handleAccept} aria-label="Cerrar">
                         <DoneIcon />
                     </IconButton>}
                 </Toolbar>
             </AppBar>
-            {children}
+            <div style={{minWidth:"500px"}}>
+                {children}
+            </div>
         </Dialog>
     </>
 }
