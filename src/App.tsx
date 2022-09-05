@@ -63,7 +63,7 @@ function App() {
     /* NEW OBJECT*/
     proposedNewObjName:'',
     proposedNewObjIsVisual:false,
-    proposedNewObjRepIcon:0
+    selectedRepresentation: imagePathManager.representations[0]
 
   }); 
 

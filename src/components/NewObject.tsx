@@ -2,25 +2,11 @@ import { useState, useContext } from "react"
 import { Menu, Button, Grid, TextField, Switch, SvgIcon, FormGroup, FormControlLabel } from '@material-ui/core'
 import { ArrowForward, ArrowBack } from '@material-ui/icons'
 import WBContext from '../WBContext'
-import {imagePathManager} from '../ImagePathManager'
-import { generate } from 'shortid'
+import {imagePathManager, Representation} from '../ImagePathManager'
 
 export default function NewObject(props:any){
 	
     const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
-
-    const currentRepresentations = imagePathManager.representations.filter(function(elem:any){return (!globalState.proposedNewObjIsVisual) || (elem.isVisual == true)});
-    
-    const colSize = 4;
-    var iconsGrid = [];
-    var current = [];
-    for(var i = 0; i < imagePathManager.representations.length; i++){
-    	current.push({index:i , url:imagePathManager.representations[i].icon});
-    	if(current.length === colSize || i == imagePathManager.representations.length - 1){
-    		iconsGrid.push(current);
-    		current = [];
-    	}
-    }
 
     //Icon Select
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -40,36 +26,22 @@ export default function NewObject(props:any){
 		valSetter( (val + 1) % 2);
     }
 
-    const onVisualModeChange = function(){
-    	globalState.proposedNewObjIsVisual = ! globalState.proposedNewObjIsVisual;
-    	globalState.proposedNewObjRepIcon = 0;
+    const onVisualModeChange = function(isVisual: boolean){
+    	globalState.proposedNewObjIsVisual = isVisual;
+    	globalState.selectedRepresentation = imagePathManager.representations[0];
     	setGlobalState(globalState);
 		valSetter( (val + 1) % 2);	
     }
 
     //Slider
-    const nextIndex = () => {
-    	if(globalState.proposedNewObjRepIcon == currentRepresentations.length - 1){
-            globalState.proposedNewObjRepIcon = 0;
-        }else{
-        	globalState.proposedNewObjRepIcon = globalState.proposedNewObjRepIcon +1;
-        }
+    const nextRepresentation = (isForward = true) => () => {
+    	globalState.selectedRepresentation = imagePathManager.nextVisual(globalState.selectedRepresentation, isForward)
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
     }
 
-    const previousIndex = () => {
-        if(globalState.proposedNewObjRepIcon == 0 ){
-            globalState.proposedNewObjRepIcon = currentRepresentations.length - 1;
-        }else{
-            globalState.proposedNewObjRepIcon = globalState.proposedNewObjRepIcon -1;
-        }
-        setGlobalState(globalState);
-        valSetter( (val + 1) % 2);
-    }
-
-    const iconSelected = function(aNewValue:any){
-    	globalState.proposedNewObjRepIcon = aNewValue;
+    const representationSelected = function(representation: Representation){
+    	globalState.selectedRepresentation = representation;
     	setGlobalState(globalState);
         valSetter( (val + 1) % 2);
         handleCloseShowMenu();
@@ -95,7 +67,7 @@ export default function NewObject(props:any){
 						alt="Ícono del objeto"
 						title={(!globalState.proposedNewObjIsVisual && 'Seleccionar Icono') || 'el icono cambiara al seleccionar un sprite'} 
 						style={iconStyle} 
-						src={currentRepresentations[globalState.proposedNewObjRepIcon].icon}
+						src={globalState.selectedRepresentation.icon}
 					/>
 				</Button>} 
 				label="Ícono"
@@ -109,24 +81,18 @@ export default function NewObject(props:any){
 				'aria-labelledby': 'basic-button',
 				}}
 			>
-			<Grid>
-
-				<table>	{	
-					iconsGrid.map( row =>
-						<tr key={generate()}>
-							{row.map(icon =>
-								<td key={icon.url}><img 
+				<Grid container >{
+						imagePathManager.representations.map(representation => 
+							<Grid item xs={4} key={representation.icon}>
+								<img 
 									alt="Ícono"
 									style={iconStyle} 
-									src={icon.url} 
-									onClick={()=>{iconSelected(icon.index)}} />
-								</td>
-							)}
-						</tr>
-					) 		
-				} </table>
-
-			</Grid>
+									src={representation.icon} 
+									onClick={()=>{representationSelected(representation)}} 
+								/>
+							</Grid>
+						)
+				}</Grid>
 			</Menu>
 
 			{/********* Nombre del objeto */}
@@ -144,12 +110,12 @@ export default function NewObject(props:any){
 
 			{/********* Switch objeto visual y selector de imagen */}
 			<FormControlLabel 
-				control={<Switch checked={props.visualMode} onClick={onVisualModeChange} title="Un objeto visual existira graficamente en el juego. Debe poseer un metodo image y position"/>} 
+				control={<Switch checked={props.visualMode} onClick={ (event:any) => onVisualModeChange(event.target.checked)} title="Un objeto visual existira graficamente en el juego. Debe poseer un metodo image y position"/>} 
 				label="¿Es visual?" 
 			/>
 			{ globalState.proposedNewObjIsVisual && 
 				<table style={{paddingLeft:"30%"}}>
-	      			<td><div onClick={previousIndex}> <SvgIcon ><ArrowBack /></SvgIcon> </div></td>
+	      			<td><div onClick={nextRepresentation(false)}> <SvgIcon ><ArrowBack /></SvgIcon> </div></td>
 	                
 	                <td><div style={slideStyle} > 
 	                    <div style={{textAlign:"center"}} >
@@ -157,13 +123,13 @@ export default function NewObject(props:any){
 	                        	<img 
 									alt="Imagen del objeto en el juego"
 									style={{width:"140px",height:"140px"}} 
-									src={currentRepresentations[globalState.proposedNewObjRepIcon].url}
+									src={globalState.selectedRepresentation.url}
 								/>   
 	                        </>
 	                    </div>
 	                </div></td>
 	               
-	                <td><div onClick={nextIndex}> <SvgIcon ><ArrowForward /></SvgIcon> </div></td>
+	                <td><div onClick={nextRepresentation()}> <SvgIcon ><ArrowForward /></SvgIcon> </div></td>
 	  			</table>
       		}
 		</FormGroup>		 

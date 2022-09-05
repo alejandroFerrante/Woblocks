@@ -1,4 +1,12 @@
 
+export type Representation = {
+	isVisual: boolean,
+	name: string,
+	icon: any,
+	alias: string,
+	url: any
+}
+
 export const imagePathManager = {
 
 	sprites:{
@@ -53,6 +61,13 @@ export const imagePathManager = {
 		wollok:require('./resources/wbIcons/wollok.png'),
 		wollokBW:require('./resources/wbIcons/wollokBW.png'),
 		world:require('./resources/wbIcons/world.png')
+	},
+
+	nextVisual: function(currentRep: Representation, isForward: boolean){
+		// TODO: revisar
+		var visuals = imagePathManager.representations.filter( rep => rep.isVisual)
+		var nextIndex = 1 + visuals.indexOf(currentRep) + (isForward ? 1 : -1)
+		return [visuals[visuals.length-1], ...visuals, visuals[0]][nextIndex]
 	}
 }
 

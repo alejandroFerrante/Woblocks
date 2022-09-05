@@ -128,8 +128,7 @@ function NewObjectAccept(){
             return;
         }
         //{chosenName, chosenRepresentation}
-        const rep = imagePathManager.representations.filter(function(elem:any){return (!globalState.proposedNewObjIsVisual) || (elem.isVisual == true)})[globalState.proposedNewObjRepIcon];
-        console.log('NewObjectModal handleAccept');
+        const rep = globalState.selectedRepresentation
 
         //SAVE CURRENT WORKSPACE
         if(globalState.currentTabIndex == 0){
