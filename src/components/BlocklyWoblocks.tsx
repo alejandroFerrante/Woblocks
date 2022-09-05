@@ -23,7 +23,7 @@ export default function BlocklyWoblocks() {
    setXml(value); 
   }
 
-  return (<table><tr><td style={{paddingBottom:"150px"}} >
+  return (
     <div /*style={{position:"relative",width:"1200px", height:"100%"}}*/ >
       <BlocklyWorkspace
         className="blocklyCanvas blocklyWorkspaceClass"
@@ -47,6 +47,5 @@ export default function BlocklyWoblocks() {
         onXmlChange={onXmlChange}
       />
     </div>
-    </td></tr></table>
   )
 }
