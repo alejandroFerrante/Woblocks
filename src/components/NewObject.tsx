@@ -1,59 +1,9 @@
 import { useState, useContext } from "react"
-
-import { Menu, Button, MenuItem, Grid, Paper, TextField, Switch, SvgIcon } from '@material-ui/core'
-import { Close as CloseIcon, Done as DoneIcon } from '@material-ui/icons'
+import { Menu, Button, Grid, TextField, Switch, SvgIcon } from '@material-ui/core'
 import { ArrowForward, ArrowBack } from '@material-ui/icons'
-import woblocksControl from '../models/woblocksControl'
-
 import WBContext from '../WBContext'
 import {imagePathManager} from '../ImagePathManager'
-
-
-/*
-export function NewObjectAccept(){
-		const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
-
-		if(!globalState.proposedNewObjName || globalState.proposedNewObjName === ''){
-			return;
-		}
-		if(globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName) ){
-			return;
-		}
-		//{chosenName, chosenRepresentation}
-		const rep = imagePathManager.representations.filter(function(elem:any){return (!globalState.proposedNewObjIsVisual) || (elem.isVisual == true)})[globalState.proposedNewObjRepIcon];
-		console.log('NewObjectModal handleAccept');
-
-		//SAVE CURRENT WORKSPACE
-		if(globalState.currentTabIndex == 0){
-			woblocksControl.saveSceneXmlContent();
-		}else{
-			woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
-		}
-
-		//ADD TAB OBJ
-		globalState.tabObjects.push( {name:globalState.proposedNewObjName , icon:rep.name} );
-
-		//SELECT TAB
-		globalState.currentTabIndex = globalState.tabObjects.length - 1;
-
-		//ADD OBJ DATA
-		woblocksControl.addObjectNamed(globalState.proposedNewObjName, rep.name,rep.isVisual);
-
-		//LOAD NEW WORKSPACE
-		var repImage = (globalState.proposedNewObjIsVisual)? rep.alias : null;//if visual add the image method to the block construct
-		woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage	(globalState.proposedNewObjName, repImage);//this clears the workspace
-
-		//SAVE OBJ WORKSPACE INFO
-		woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
-		woblocksControl.setObjectInfoOfIndex(globalState.currentTabIndex - 1, rep.name,globalState.proposedNewObjIsVisual);
-
-		woblocksControl.closeToolbox();
-
-        setGlobalState(globalState);
-        valSetter( (val + 1) % 2);
-	
-}
-*/
+import { generate } from 'shortid'
 
 export default function NewObject(props:any){
 	
@@ -140,7 +90,12 @@ export default function NewObject(props:any){
 	        id="basic-button" aria-controls={selectIconOpen ? 'basic-menu' : undefined}
 	        aria-haspopup="true" aria-expanded={selectIconOpen ? 'true' : undefined}
 	        onClick={showHideIconsMenu} >
-        		<img title={(!globalState.proposedNewObjIsVisual && 'Seleccionar Icono') || 'el icono cambiara al seleccionar un sprite'} style={iconStyle} src={currentRepresentations[globalState.proposedNewObjRepIcon].icon} />
+        		<img 
+					alt="Ícono del objeto"
+					title={(!globalState.proposedNewObjIsVisual && 'Seleccionar Icono') || 'el icono cambiara al seleccionar un sprite'} 
+					style={iconStyle} 
+					src={currentRepresentations[globalState.proposedNewObjRepIcon].icon}
+				/>
       	  </Button>
         </td>
       	
@@ -161,7 +116,11 @@ export default function NewObject(props:any){
 	                <td><div style={slideStyle} > 
 	                    <div style={{textAlign:"center"}} >
 	                        <>    
-	                        	<img style={{width:"140px",height:"140px"}} src={currentRepresentations[globalState.proposedNewObjRepIcon].url} />   
+	                        	<img 
+									alt="Imagen del objeto en el juego"
+									style={{width:"140px",height:"140px"}} 
+									src={currentRepresentations[globalState.proposedNewObjRepIcon].url}
+								/>   
 	                        </>
 	                    </div>
 	                </div></td>
@@ -181,16 +140,20 @@ export default function NewObject(props:any){
       >
       <Grid>
 
-      	<table>
-      		{	iconsGrid.map( function(row:any){
-      				return <tr>
-      				{row.map(function(elem:any){
-      					return <td> <img style={iconStyle} src={elem.url} onClick={()=>{iconSelected(elem.index)}} /> </td>
-      				})}
-      				</tr>
-      			} ) 		
-      		}
-      	</table>
+      	<table>	{	
+			iconsGrid.map( row =>
+				<tr key={generate()}>
+      				{row.map(icon =>
+      					<td><img 
+							alt="Ícono"
+							style={iconStyle} 
+							src={icon.url} 
+							onClick={()=>{iconSelected(icon.index)}} />
+						</td>
+      				)}
+      			</tr>
+      		) 		
+      	} </table>
 
       </Grid>
 
