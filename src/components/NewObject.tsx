@@ -1,5 +1,5 @@
 import { useState, useContext } from "react"
-import { Menu, Button, Grid, TextField, Switch, SvgIcon } from '@material-ui/core'
+import { Menu, Button, Grid, TextField, Switch, SvgIcon, FormGroup, FormControlLabel } from '@material-ui/core'
 import { ArrowForward, ArrowBack } from '@material-ui/icons'
 import WBContext from '../WBContext'
 import {imagePathManager} from '../ImagePathManager'
@@ -82,34 +82,72 @@ export default function NewObject(props:any){
         backgroundSize: "cover"
     }
 
-	return <>      
-	<table>
-        <tr>
-        <td>
-		  <Button
-	        id="basic-button" aria-controls={selectIconOpen ? 'basic-menu' : undefined}
-	        aria-haspopup="true" aria-expanded={selectIconOpen ? 'true' : undefined}
-	        onClick={showHideIconsMenu} >
-        		<img 
-					alt="Ícono del objeto"
-					title={(!globalState.proposedNewObjIsVisual && 'Seleccionar Icono') || 'el icono cambiara al seleccionar un sprite'} 
-					style={iconStyle} 
-					src={currentRepresentations[globalState.proposedNewObjRepIcon].icon}
-				/>
-      	  </Button>
-        </td>
-      	
-      	<td style={{paddingLeft:"20%"}} >
-      		<TextField label="Nombre" onChange={onNameChange} error={globalState.proposedNewObjName === '' || globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName)} helperText={((globalState.proposedNewObjName === '' && 'El nombre no puede ser vacio') || (globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName) && 'Un objeto con este nombre ya fue creado'))}/>
-      	</td>
-      	<td style={{paddingLeft:"15%"}}>
-      		{'Es Visual? '} <Switch checked={props.visualMode} onClick={onVisualModeChange} title="Un objeto visual existira graficamente en el juego. Debe poseer un metodo image y position"/>
-      	</td>
-      	</tr>
-      	
-      </table>
-      
-      { globalState.proposedNewObjIsVisual && 
+	return <> 
+		<FormGroup row={true}>
+
+			{/********* Selector de íconos */}
+			<FormControlLabel control={
+				<Button
+		id="basic-button" aria-controls={selectIconOpen ? 'basic-menu' : undefined}
+		aria-haspopup="true" aria-expanded={selectIconOpen ? 'true' : undefined}
+		onClick={showHideIconsMenu} >
+					<img 
+						alt="Ícono del objeto"
+						title={(!globalState.proposedNewObjIsVisual && 'Seleccionar Icono') || 'el icono cambiara al seleccionar un sprite'} 
+						style={iconStyle} 
+						src={currentRepresentations[globalState.proposedNewObjRepIcon].icon}
+					/>
+				</Button>} 
+				label="Ícono"
+			/>
+			<Menu
+				id="basic-menu"
+				anchorEl={anchorEl}
+				open={selectIconOpen}
+				onClose={handleCloseShowMenu}
+				MenuListProps={{
+				'aria-labelledby': 'basic-button',
+				}}
+			>
+			<Grid>
+
+				<table>	{	
+					iconsGrid.map( row =>
+						<tr key={generate()}>
+							{row.map(icon =>
+								<td key={icon.url}><img 
+									alt="Ícono"
+									style={iconStyle} 
+									src={icon.url} 
+									onClick={()=>{iconSelected(icon.index)}} />
+								</td>
+							)}
+						</tr>
+					) 		
+				} </table>
+
+			</Grid>
+			</Menu>
+
+			{/********* Nombre del objeto */}
+			<TextField 
+				label="Nombre" 
+				onChange={onNameChange} 
+				error={
+					globalState.proposedNewObjName === '' || 
+						globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName)
+				} 
+				helperText={
+					((globalState.proposedNewObjName === '' && 'El nombre no puede ser vacio') || (globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName) && 'Un objeto con este nombre ya fue creado'))
+				}
+			/>
+
+			{/********* Switch objeto visual y selector de imagen */}
+			<FormControlLabel 
+				control={<Switch checked={props.visualMode} onClick={onVisualModeChange} title="Un objeto visual existira graficamente en el juego. Debe poseer un metodo image y position"/>} 
+				label="¿Es visual?" 
+			/>
+			{ globalState.proposedNewObjIsVisual && 
 				<table style={{paddingLeft:"30%"}}>
 	      			<td><div onClick={previousIndex}> <SvgIcon ><ArrowBack /></SvgIcon> </div></td>
 	                
@@ -128,36 +166,6 @@ export default function NewObject(props:any){
 	                <td><div onClick={nextIndex}> <SvgIcon ><ArrowForward /></SvgIcon> </div></td>
 	  			</table>
       		}
-      <br/>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={selectIconOpen}
-        onClose={handleCloseShowMenu}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-      <Grid>
-
-      	<table>	{	
-			iconsGrid.map( row =>
-				<tr key={generate()}>
-      				{row.map(icon =>
-      					<td><img 
-							alt="Ícono"
-							style={iconStyle} 
-							src={icon.url} 
-							onClick={()=>{iconSelected(icon.index)}} />
-						</td>
-      				)}
-      			</tr>
-      		) 		
-      	} </table>
-
-      </Grid>
-
-      </Menu>
-		 
+		</FormGroup>		 
 	</>
 }
