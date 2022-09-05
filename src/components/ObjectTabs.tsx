@@ -11,7 +11,7 @@ import Blockly from 'blockly';
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
-import { imagePathManager, getIconPathFor, getRepIconFor } from '../ImagePathManager'
+import { getIconPathFor, getRepIconFor } from '../ImagePathManager'
 
 import NewObject from './NewObject'
 //import NewObjectAccept from './NewObject'
@@ -80,45 +80,7 @@ export default function ObjectTabs (props:any) {
         valSetter( (val+1) % 2 );
     }
 
-    return <>
-        <Tabs 
-            value={globalState.currentTabIndex}
-            onChange={onTabSelected}
-            variant="scrollable"
-        >
-        
-        { globalState.tabObjects.map( function(elem:any){  
-            return <Tab label = { (elem.name === 'Escena' && <WollokIcon />) || 
-                    <table title={elem.name} >
-                        <tr>
-                        <img 
-                            alt="Ícono del objeto" 
-                            src={ getIconPathFor(elem.icon) || getRepIconFor(elem.icon) } 
-                            style={{width:"45px",height:"45px"}}>
-                        </img>
-                        { 
-                            <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')}}>
-                              <Close/>
-                          </SvgIcon>
-                          
-                        }
-                        </tr>
-                    </table>
-                } key={elem.name} >
-                </Tab> }
-        )}
-
-
-        </Tabs>
-
-        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={NewObjectAccept}>
-            <NewObject />
-        </DialogButton>
-
-    </>  
-}
-
-function NewObjectAccept(){
+    function NewObjectAccept(){
         const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 
         if(!globalState.proposedNewObjName || globalState.proposedNewObjName === ''){
@@ -159,4 +121,42 @@ function NewObjectAccept(){
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
     
+    }
+
+    return <>
+        <Tabs 
+            value={globalState.currentTabIndex}
+            onChange={onTabSelected}
+            variant="scrollable"
+        >
+        
+        { globalState.tabObjects.map( function(elem:any){  
+            return <Tab label = { (elem.name === 'Escena' && <WollokIcon />) || 
+                    <table title={elem.name} >
+                        <tr>
+                        <img 
+                            alt="Ícono del objeto" 
+                            src={ getIconPathFor(elem.icon) || getRepIconFor(elem.icon) } 
+                            style={{width:"45px",height:"45px"}}>
+                        </img>
+                        { 
+                            <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')}}>
+                              <Close/>
+                          </SvgIcon>
+                          
+                        }
+                        </tr>
+                    </table>
+                } key={elem.name} >
+                </Tab> }
+        )}
+
+
+        </Tabs>
+
+        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(NewObjectAccept)}>
+            <NewObject />
+        </DialogButton>
+
+    </>  
 }

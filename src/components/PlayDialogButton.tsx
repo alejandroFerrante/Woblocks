@@ -31,7 +31,7 @@ export default function PlayDialogButton(){
         Icon={SendIcon}
         dialogProps={{fullScreen: true}}
         >
-    	<div ref={onWollokGameDivRendered} >
+    	<div>
         Soy Wollok game
         </div>
     </DialogButton></>
