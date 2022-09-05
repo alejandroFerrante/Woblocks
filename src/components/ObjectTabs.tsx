@@ -1,10 +1,9 @@
 import { Tab, Tabs } from "@material-ui/core"
 import WollokIcon from "./WollokIcon"
-import { WollokObject } from "../models/WollokObject"
-import { useState , useReducer, useContext} from "react"
+import { useContext } from "react"
 import { Close } from "@material-ui/icons"
 import { Add as AddIcon } from '@material-ui/icons'
-import {SvgIcon} from "@material-ui/core/"
+import { SvgIcon } from "@material-ui/core/"
 
 import DialogButton from './DialogButton'
 
@@ -12,7 +11,7 @@ import Blockly from 'blockly';
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
-import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from '../ImagePathManager'
+import { imagePathManager, getIconPathFor, getRepIconFor } from '../ImagePathManager'
 
 import NewObject from './NewObject'
 //import NewObjectAccept from './NewObject'
@@ -89,12 +88,14 @@ export default function ObjectTabs (props:any) {
         >
         
         { globalState.tabObjects.map( function(elem:any){  
-            return <Tab label={
-                ( (elem.name === 'Escena' && <Tab label={<SvgIcon> <WollokIcon /> </SvgIcon>} /> ) || 
-
+            return <Tab label = { (elem.name === 'Escena' && <WollokIcon />) || 
                     <table title={elem.name} >
                         <tr>
-                        <img src={ ((getIconPathFor(elem.icon) != '') && getIconPathFor(elem.icon) ) || getRepIconFor(elem.icon)} style={{width:"45px",height:"45px"}}></img>
+                        <img 
+                            alt="Ícono del objeto" 
+                            src={ getIconPathFor(elem.icon) || getRepIconFor(elem.icon) } 
+                            style={{width:"45px",height:"45px"}}>
+                        </img>
                         { 
                             <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')}}>
                               <Close/>
@@ -103,9 +104,6 @@ export default function ObjectTabs (props:any) {
                         }
                         </tr>
                     </table>
-
-                    )
-
                 } key={elem.name} >
                 </Tab> }
         )}
