@@ -5,14 +5,10 @@ import BlocklyWoblocks from './components/BlocklyWoblocks';
 import { WollokObject } from './models/WollokObject';
 import HeaderContent from './components/HeaderContent';
 
-import Blockly from 'blockly'
-
-import WollokIcon from "./components/WollokIcon"
-
 import {WBProvider} from './WBContext'
 
 import woblocksControl from './models/woblocksControl'
-import {imagePathManager, getIconPathFor, getRepIconFor, getAllSprites} from './ImagePathManager'
+import {imagePathManager, getAllSprites} from './ImagePathManager'
 
 declare module '@material-ui/styles' {
   interface SimplePaletteColorOptions {

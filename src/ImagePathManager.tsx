@@ -80,7 +80,7 @@ export const getIconPathFor = function(anIconName:string){
 }
 
 export const getRepIconFor =   function(aRepresentationIconName:string){
-	const found = imagePathManager.representations.find(elem => elem.name == aRepresentationIconName);
+	const found = imagePathManager.representations.find(elem => elem.name === aRepresentationIconName);
 
 	if(found){
 		return found.icon;	

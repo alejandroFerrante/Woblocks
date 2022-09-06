@@ -10,8 +10,6 @@ import { PermDataSetting, CloudUpload, Save, Code } from '@material-ui/icons'
 
 import WBContext from '../WBContext'
 
-import woblocksControl from '../models/woblocksControl'
-import {getBackgrounds} from '../ImagePathManager';
 
 import GeneratedCode from './GeneratedCode'
 import GameConfig from './GameConfig'
@@ -24,7 +22,7 @@ import ProjectSaveAccept from './ProjectSave'
 
 export default function HeaderContent(props:any) {
     
-	const {globalState,setGlobalState,val,valSetter} = useContext(WBContext);
+	const {globalState} = useContext(WBContext);
 
     const onGameConfigAccept = GameConfigAccept;
 
@@ -56,26 +54,3 @@ export default function HeaderContent(props:any) {
         </Toolbar>
     </AppBar>
 }
-
-/*
-                    <ChangeModalStateButton
-                        Icon = {PermDataSetting}
-                        newModalState = "CONFIG_OPEN"
-                        iconColor = "white"
-                        buttonTitle ="Configuracion del Juego"
-                    />
-
-                    <ChangeModalStateButton
-                        Icon = {CloudUpload}
-                        newModalState = "PROJLOAD_OPEN"
-                        iconColor = "white"
-                        buttonTitle ="Cargar Proyecto"
-                    />
-                    <ChangeModalStateButton
-                        Icon = {Save}
-                        newModalState = "PROJSAVE_OPEN"
-                        iconColor = "white"
-                        buttonTitle ="Guardar Proyecto"
-                    />
-
-*/

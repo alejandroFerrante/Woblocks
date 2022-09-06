@@ -28,7 +28,7 @@ export default function ObjectTabs (props:any) {
             
 
             //SAVE CURRENT WORKSPACE
-            if(globalState.currentTabIndex == 0){
+            if(globalState.currentTabIndex === 0){
                 woblocksControl.saveSceneXmlContent();
             }else{
                 woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
@@ -37,7 +37,7 @@ export default function ObjectTabs (props:any) {
             woblocksControl.definedObjectsAsBlocklyBlocks();
 
             //LOAD NEW
-            if(Number(tabId) == 0){
+            if(Number(tabId) === 0){
                 woblocksControl.loadSceneXmlContent();
                 woblocksControl.fillMessagesOfForWorkspace();
                 woblocksControl.sanitizedeletedObjects();
@@ -93,7 +93,7 @@ export default function ObjectTabs (props:any) {
         const rep = globalState.selectedRepresentation
 
         //SAVE CURRENT WORKSPACE
-        if(globalState.currentTabIndex == 0){
+        if(globalState.currentTabIndex === 0){
             woblocksControl.saveSceneXmlContent();
         }else{
             woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);

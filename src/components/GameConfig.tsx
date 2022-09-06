@@ -1,7 +1,5 @@
-import { AppBar, Dialog, DialogProps, IconButton, IconButtonProps, Toolbar, Typography } from '@material-ui/core'
-import { Close as CloseIcon, Done as DoneIcon } from '@material-ui/icons'
 
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import WBContext from '../WBContext'
 
 import {getBackgrounds} from '../ImagePathManager';
@@ -64,7 +62,7 @@ export function Slider(props:any){
     const backs = [{name:'ninguna',url:'',value:''}].concat(getBackgrounds());  
 
     const nextIndex = () => {
-        if(globalState.proposedBackgroundIndex == props.slides.length - 1){
+        if(globalState.proposedBackgroundIndex === props.slides.length - 1){
             globalState.proposedBackgroundIndex = 0;
         }else{
             globalState.proposedBackgroundIndex++;
@@ -74,7 +72,7 @@ export function Slider(props:any){
     }
 
     const previousIndex = () => {
-        if(globalState.proposedBackgroundIndex == 0 ){//if(currentIndex == 0 ){
+        if(globalState.proposedBackgroundIndex === 0 ){
             globalState.proposedBackgroundIndex = props.slides.length - 1;
         }else{
             globalState.proposedBackgroundIndex--;
@@ -84,11 +82,6 @@ export function Slider(props:any){
     }
 
     //STYLES///////////////////////////////////
-    const sliderStyle = {
-        height: "100%",
-        position: "relative"
-    }
-
     const slideStyle = {
         width: "60%",
         height: "60%",
@@ -109,7 +102,7 @@ export function Slider(props:any){
                 <td><div style={slideStyle} > 
 
                     <div>
-                        <img style={{width:"180px",height:"150px"}} src={backs[globalState.proposedBackgroundIndex].url} />
+                        <img alt="Imagen de Fondo" style={{width:"180px",height:"150px"}} src={backs[globalState.proposedBackgroundIndex].url} />
                     </div>
 
                 </div></td>

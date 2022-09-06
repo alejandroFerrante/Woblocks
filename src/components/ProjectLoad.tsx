@@ -1,7 +1,4 @@
-import { AppBar, Dialog, DialogProps, IconButton, IconButtonProps, Toolbar, Typography } from '@material-ui/core'
-import { Close as CloseIcon, Done as DoneIcon } from '@material-ui/icons'
-
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
@@ -10,7 +7,7 @@ import {getRepIconFor} from '../ImagePathManager'
 export function ProjectLoadAccept(){
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 	if(!globalState.proposedLoadFile){ return;}
-	
+
 	woblocksControl.loadProjetInfoFromJSON(globalState.proposedLoadFile);
 	const fileContentJSON = JSON.parse(globalState.proposedLoadFile);
 	globalState.proposedLoadFile = null;

@@ -13,11 +13,11 @@ export default function BlocklyWoblocks() {
 
   const {globalState} = useContext(WBContext);
 
-  const toolbox = (globalState.currentTabIndex == 0)?Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString()) : Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlStringForIndex( globalState.currentTabIndex - 1));
+  const toolbox = (globalState.currentTabIndex === 0)?Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString()) : Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlStringForIndex( globalState.currentTabIndex - 1));
 
   const onXmlChange = function(value:string){
    //console.log('XML CHANGE! '+value);
-   if((globalState.currentTabIndex == 0)){
+   if((globalState.currentTabIndex === 0)){
      woblocksControl.fillMessagesOfForWorkspace();
    }
    setXml(value); 

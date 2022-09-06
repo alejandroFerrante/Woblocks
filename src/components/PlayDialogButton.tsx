@@ -1,11 +1,12 @@
 import { Send as SendIcon } from '@material-ui/icons'
 import DialogButton from './DialogButton'
-import { useContext } from "react"
-import WBContext from '../WBContext'
-import woblocksControl from '../models/woblocksControl'
+//import { useContext } from "react"
+//import WBContext from '../WBContext'
+//import woblocksControl from '../models/woblocksControl'
 
 export default function PlayDialogButton(){
 
+/*
 	const onWollokGameDivRendered = (theDiv:any) => {
 
 		if(!theDiv) return;
@@ -24,7 +25,7 @@ export default function PlayDialogButton(){
 		//this.wkGame.start(theDiv);
 	}
 	const {globalState} = useContext(WBContext);
-
+*/
     return <><DialogButton  
         title="Wollok Game"
         tooltip="Ejecutar Juego"
