@@ -53,12 +53,13 @@ export default function NewObject(props:any){
         backgroundPosition: "center",
         backgroundSize: "cover"
     }
+    const cellStyle = {paddingRight:"3%"};
 
 	return <> 
-		<FormGroup row={true}>
+		<FormGroup row={true} style={{paddingBottom:"5%",paddingTop:"5%"}}>
 
 			{/********* Selector de íconos */}
-			<FormControlLabel control={
+			<FormControlLabel style={cellStyle} control={
 				<Button
 		id="basic-button" aria-controls={selectIconOpen ? 'basic-menu' : undefined}
 		aria-haspopup="true" aria-expanded={selectIconOpen ? 'true' : undefined}
@@ -97,6 +98,7 @@ export default function NewObject(props:any){
 
 			{/********* Nombre del objeto */}
 			<TextField 
+				style={cellStyle}
 				label="Nombre" 
 				onChange={onNameChange} 
 				error={
