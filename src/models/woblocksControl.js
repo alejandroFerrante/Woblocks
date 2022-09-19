@@ -232,7 +232,7 @@ woblocksControl.simpleFormatter = function(str,useHtml){
 }
 
 woblocksControl.buildWkProgramSourceFor = function(aProgramString){
-	return [ new Tuple( 'main.wlk', aProgramString )];
+	return [ { name: 'main.wlk', content: aProgramString }];
 }
 
 woblocksControl.buildWkProgramSource = function(aProgramString){
