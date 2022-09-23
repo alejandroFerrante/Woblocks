@@ -96,3 +96,7 @@ export const getAllSprites = function(){
 export const getBackgrounds = function(){
 	return Object.keys(imagePathManager.backgrounds).map(function(key:string){ const backs:any = imagePathManager.backgrounds; return {name:key , url:backs[key].url, value:backs[key].alias}});
 }
+
+export const getAllBackgrounds = function(){
+	return Object.values(imagePathManager.backgrounds);
+}

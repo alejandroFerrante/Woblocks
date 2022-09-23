@@ -8,7 +8,7 @@ import HeaderContent from './components/HeaderContent';
 import {WBProvider} from './WBContext'
 
 import woblocksControl from './models/woblocksControl'
-import {imagePathManager, getAllSprites} from './ImagePathManager'
+import {imagePathManager, getAllSprites, getAllBackgrounds} from './ImagePathManager'
 
 declare module '@material-ui/styles' {
   interface SimplePaletteColorOptions {
@@ -36,6 +36,7 @@ function App() {
   //LOAD IMAGES
   var wkImages:any[] = [];
   woblocksControl.LoadGivenImagesInto( getAllSprites() ,wkImages) ;
+  woblocksControl.LoadGivenImagesInto( getAllBackgrounds() ,wkImages) ;
 
   //INIT STATE
   const [myAppState,setMyAppState] = useState({

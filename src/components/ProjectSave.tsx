@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 
 //import EventEmitter from './EventEmitter'
 
+/*
 export function ProjectSaveAccept(){
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 
@@ -28,6 +29,8 @@ export function ProjectSaveAccept(){
 	valSetter( (val + 1) % 2);
 
 }
+*/
+
 export default function ProjectSave(){
 
 	//COMPONENT USED FOR DOWNLOADING CURRENT PROJECT 

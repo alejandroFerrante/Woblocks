@@ -23,9 +23,7 @@ export default function ObjectTabs (props:any) {
     const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 
     const onTabSelected = (event: React.ChangeEvent<{}>,tabId: string) => {
-        if(globalState.currentTabIndex !== tabId){
-            console.log(tabId);
-            
+        if(globalState.currentTabIndex !== tabId){ 
 
             //SAVE CURRENT WORKSPACE
             if(globalState.currentTabIndex === 0){
@@ -80,8 +78,7 @@ export default function ObjectTabs (props:any) {
         valSetter( (val+1) % 2 );
     }
 
-    function NewObjectAccept(){
-        const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
+    const newObjectAccept = function(){
 
         if(!globalState.proposedNewObjName || globalState.proposedNewObjName === ''){
             return;
@@ -154,7 +151,7 @@ export default function ObjectTabs (props:any) {
 
         </Tabs>
 
-        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(NewObjectAccept)}>
+        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(newObjectAccept)}>
             <NewObject />
         </DialogButton>
 

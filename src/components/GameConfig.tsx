@@ -7,18 +7,20 @@ import woblocksControl from '../models/woblocksControl'
 
 import TextField from '@material-ui/core/TextField';
 
+/*
 export function GameConfigAccept(){
     const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
     const backs = [{name:'ninguna',url:'',value:''}].concat(getBackgrounds());
 
     globalState.gameWidth = globalState.proposedWidth;
     globalState.gameHeight = globalState.proposedHeight;
-    globalState.gameBackgroundImage = backs[globalState.proposedBackgroundIndex];
+    globalState.gameBackgroundImage = backs[globalState.proposedBackgroundIndex].value;
     woblocksControl.saveConfigInfo(globalState.gameWidth,globalState.gameHeight, globalState.gameBackgroundImage);
 
     setGlobalState(globalState);
     valSetter( (val + 1) % 2);
 }
+*/
 
 export default function GameConfig(){
 

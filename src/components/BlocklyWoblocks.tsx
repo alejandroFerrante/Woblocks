@@ -8,14 +8,20 @@ import WBContext from '../WBContext'
 
 import "../woblocksClasses.css";
 
+import {getBackgrounds} from '../ImagePathManager';
+
+import { useBlocklyWorkspace } from 'react-blockly';
+import {useRef} from 'react'
+
 export default function BlocklyWoblocks() {
   const [xml, setXml] = useState("");
 
-  const {globalState} = useContext(WBContext);
+  const {globalState,setGlobalState} = useContext(WBContext);
 
   const toolbox = (globalState.currentTabIndex === 0)?Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString()) : Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlStringForIndex( globalState.currentTabIndex - 1));
 
   const onXmlChange = function(value:string){
+   alert('CHANGE');
    //console.log('XML CHANGE! '+value);
    if((globalState.currentTabIndex === 0)){
      woblocksControl.fillMessagesOfForWorkspace();
@@ -23,9 +29,40 @@ export default function BlocklyWoblocks() {
    setXml(value); 
   }
 
+  const onWorkspaceLoaded = function(theWk:any){
+    console.log('LOADED');
+  }
+/*
+  const [intialLoad,setIntialLoad] = useState(false);
+
+  if(!intialLoad){
+      const backs = [{name:'ninguna',url:'',value:''}].concat(getBackgrounds());
+      const loadResult = woblocksControl.loadLocalStorage();
+
+      globalState.currentTabIndex = 0;
+      globalState.tabObjects = [{name:'escena', icon:'wollok'}];
+      const newTabObjs = Object.keys(loadResult.objectsInfoMap).map(function(elem:any){
+          const iconName = loadResult.objectsInfoMap[elem].definedObjectsMappingInfo.representationName;
+          return {name:elem , icon:iconName }; 
+      });
+      globalState.tabObjects = globalState.tabObjects.concat(newTabObjs);
+      globalState.gameWidth = loadResult.configHeight;
+      globalState.gameHeight = loadResult.configWidth;
+      globalState.gameBackgroundImage = loadResult.configBackgroundImage;
+      globalState.proposedBackgroundIndex = 0;
+      if(backs.map(function(elem){return elem.value}).indexOf(loadResult.configBackgroundImage) >= 0){
+          globalState.proposedBackgroundIndex = backs.map(function(elem){return elem.value}).indexOf(loadResult.configBackgroundImage);
+      }
+
+      woblocksControl.loadSceneXmlContent();
+
+      setGlobalState(globalState);
+      setIntialLoad(true);
+    }
+*/
   return (
-    <div /*style={{position:"relative",width:"1200px", height:"100%"}}*/ >
-      <BlocklyWorkspace
+    <div>
+      <BlocklyWorkspace 
         className="blocklyCanvas blocklyWorkspaceClass"
         toolboxConfiguration={toolbox!}
         workspaceConfiguration={{ 
@@ -41,7 +78,8 @@ export default function BlocklyWoblocks() {
           rtl : false, 
           scrollbars : true, 
           sounds : true, 
-          oneBasedIndex : true
+          oneBasedIndex : true,
+          onInject:{onWorkspaceLoaded}
         }}
         initialXml={xml}
         onXmlChange={onXmlChange}

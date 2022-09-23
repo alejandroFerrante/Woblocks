@@ -4,6 +4,7 @@ import woblocksControl from '../models/woblocksControl'
 
 import {getRepIconFor} from '../ImagePathManager'
 
+/*
 export function ProjectLoadAccept(){
 	const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
 	if(!globalState.proposedLoadFile){ return;}
@@ -29,6 +30,7 @@ export function ProjectLoadAccept(){
 	valSetter( (val + 1) % 2);
 
 }
+*/
 
 export default function ProjectLoad(){
 

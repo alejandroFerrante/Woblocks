@@ -187,13 +187,12 @@ game.height(`+this.config.height+`)
     `;
 
     result += Object.keys(this.definedObjectsInfo.objectsInfoMap).filter(function(key){return woblocksControl.definedObjectsInfo.objectsInfoMap[key].definedObjectsMappingInfo.isVisual }).map(function(key){ return 'game.addVisual('+key+')'  }).join('\n');
-    
+    result += '\n';
 	result += executionBlocks.map(function(elem){return Blockly.Blocks[elem.type].getValueWK(elem)}).join('\n');
-
 	result += '\n}\n';
 
 	result += definitionBlocks.map(function(elem){return Blockly.Blocks[elem.type].getValueWK(elem)}).join('\n')
-
+	result += '\n';
 	result += Object.keys(this.definedObjectsInfo.objectsInfoMap).map(function(key){ return  woblocksControl.definedObjectsInfo.objectsInfoMap[key].code }).join('\n');
 
 	return result;
@@ -244,6 +243,7 @@ woblocksControl.buildWkProgramSource = function(aProgramString){
 woblocksControl.LoadGivenImagesInto = async function (imgsToLoad,listToFill){
 	
 	for(var i = 0; i < imgsToLoad.length; i++){
+	  //console.log('LoadGivenImagesInto>>>>>>>> '+imgsToLoad[i].alias+' || '+imgsToLoad[i].url);
 	  const response = await fetch(imgsToLoad[i].url)
 	  const imageBlob = await response.blob()
 	  imageBlob.name = imgsToLoad[i].alias;
@@ -305,6 +305,13 @@ woblocksControl.getProjetInfoAsJSON = function(){
 	return JSON.stringify(result);
 }
 
+woblocksControl.saveLocalStorage = function(){
+	window.localStorage.setItem("mainSceneInfo", this.mainSceneInfo);
+	window.localStorage.setItem("definedObjectsInfo", this.definedObjectsInfo);
+	window.localStorage.setItem("config",  this.config);
+	window.localStorage.setItem("haswoblocksStorage",true);
+}
+
 //LOAD PROJECT
 woblocksControl.loadProjetInfoFromJSON = function(aJsonObjInfo){
 	var result = JSON.parse(aJsonObjInfo);
@@ -313,8 +320,18 @@ woblocksControl.loadProjetInfoFromJSON = function(aJsonObjInfo){
 	this.definedObjectsInfo.objectNames.map(function(aName){
 		woblocksControl.definedObjectsInfo.objectsInfoMap[aName] = {definedObjectsMappingInfo:result.definedObjectsInfo.objectsInfoMap[aName].definedObjectsMappingInfo};
 		woblocksControl.definedObjectsInfo.objectsInfoMap[aName].xml = result.definedObjectsInfo.objectsInfoMap[aName].xml;
+		woblocksControl.definedObjectsInfo.objectsInfoMap[aName].code = result.definedObjectsInfo.objectsInfoMap[aName].code;
 	});
 	this.config = result.config;
+}
+
+woblocksControl.loadLocalStorage = function(){
+	if(window.localStorage.getItem("haswoblocksStorage") ){
+		this.mainSceneInfo = window.localStorage.getItem("mainSceneInfo");
+		this.definedObjectsInfo = window.localStorage.getItem("definedObjectsInfo");
+		this.config = window.localStorage.getItem("config");
+	}
+	return {objectsInfoMap:this.definedObjectsInfo.objectsInfoMap , configHeight: this.config.height, configWidth: this.config.width, configBackgroundImage:this.config.backgroundImage};
 }
 
 //SAVE CONFIG INFO
@@ -736,15 +753,15 @@ woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage)
 	xmlStr += '		<block type="objetc_create_wk">\n';
 	xmlStr += '			<field name="name">'+aName+'</field>\n';
 	xmlStr += '			<statement name="properties">\n';
-	xmlStr += '				<block type="objetc_property_wk">\n';
-	xmlStr += '					<field name="name">name</field>\n';
-	xmlStr += '					<value name="value">\n';
-	xmlStr += '						<block type="text">\n';
-	xmlStr += '							<field name="TEXT">"'+aName+'"</field>\n';
-	xmlStr += '						</block>\n';
-	xmlStr += '					</value>\n';
+	//xmlStr += '				<block type="objetc_property_wk">\n';
+	//xmlStr += '					<field name="name">name</field>\n';
+	//xmlStr += '					<value name="value">\n';
+	//xmlStr += '						<block type="text">\n';
+	//xmlStr += '							<field name="TEXT">"'+aName+'"</field>\n';
+	//xmlStr += '						</block>\n';
+	//xmlStr += '					</value>\n';
 	if(anImage){
-		xmlStr += '					<next>\n';
+		//xmlStr += '					<next>\n';
 		xmlStr += '						<block type="method_create_wk">\n';
 		xmlStr += '							<field name="name">image</field>\n';
 		xmlStr += '							<value name="params">\n';
@@ -794,9 +811,9 @@ woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage)
 		xmlStr += '								</block>\n';
 		xmlStr += '							</next>\n';
 		xmlStr += '						</block>\n';
-		xmlStr += '					</next>\n';
+		//xmlStr += '					</next>\n';
 	}
-	xmlStr += '				</block>\n';
+	//xmlStr += '				</block>\n';
 	xmlStr += '			</statement>\n';
 	xmlStr += '		</block>\n';
 	xmlStr += '	</next>\n';
