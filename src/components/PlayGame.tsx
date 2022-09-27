@@ -1,4 +1,5 @@
-import { useContext, useEffect, useRef } from "react"
+import { Button } from "@material-ui/core"
+import { useContext, useEffect, useRef, useState } from "react"
 import woblocksControl from "../models/woblocksControl"
 import WBContext from "../WBContext"
 import 'wollok-game-web'
@@ -6,6 +7,11 @@ import 'wollok-game-web'
 export default function PlayGame() {
     const { globalState } = useContext(WBContext)
     const divRef = useRef<any>();
+
+    let p5: p5 | null = null
+    const stop = () => {
+        p5?.remove()
+    }
 
     useEffect(() => {
         const myProgramStr = woblocksControl.getExecutionString()
@@ -21,8 +27,12 @@ export default function PlayGame() {
             description: "HOLA SOY UNA DESCRIPCION"
         }
 
-        new Game(project).start(divRef.current)
+        p5 = new Game(project).start(divRef.current)
+        return stop
     }, [divRef.current])
 
-    return <div ref={divRef} />
+    return <>
+        <Button onClick={stop}>STOP</Button>
+        <div ref={divRef} />
+    </>
 }
