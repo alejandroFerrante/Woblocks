@@ -31,8 +31,5 @@ export default function PlayGame() {
         return stop
     }, [divRef.current])
 
-    return <>
-        <Button onClick={stop}>STOP</Button>
-        <div ref={divRef} />
-    </>
+    return <div ref={divRef} />
 }
