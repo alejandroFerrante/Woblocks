@@ -4,6 +4,8 @@ import './App.css';
 import BlocklyWoblocks from './components/BlocklyWoblocks';
 import { WollokObject } from './models/WollokObject';
 import HeaderContent from './components/HeaderContent';
+import DeleteConfirm from './components/DeleteConfirm'
+
 
 import {WBProvider} from './WBContext'
 
@@ -49,6 +51,8 @@ function App() {
     wkImages:wkImages,
     wkGame:null,
 
+    itemIndexToDelete:-1,
+
     /* LOAD PROJECT*/
     proposedLoadFile:null,
     /* SAVE PROJECT*/
@@ -89,6 +93,7 @@ function App() {
         <>
           <HeaderContent />
           <BlocklyWoblocks />
+          { myAppState.itemIndexToDelete !=-1 && <DeleteConfirm />}
         </>
         </ WBProvider>
       </ThemeProvider>

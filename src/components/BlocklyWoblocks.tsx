@@ -14,14 +14,14 @@ import { useBlocklyWorkspace } from 'react-blockly';
 import {useRef} from 'react'
 
 export default function BlocklyWoblocks() {
-  const [xml, setXml] = useState("");
+  const [xml, setXml] = useState('<xml><block type="action_start_wk" deletable="false" ></block></xml>');
 
   const {globalState,setGlobalState} = useContext(WBContext);
 
   const toolbox = (globalState.currentTabIndex === 0)?Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getMainToolboxXmlString()) : Blockly.utils.toolbox.convertToolboxDefToJson(woblocksControl.getObjectToolboxXmlStringForIndex( globalState.currentTabIndex - 1));
 
   const onXmlChange = function(value:string){
-   alert('CHANGE');
+   //alert('CHANGE');
    //console.log('XML CHANGE! '+value);
    if((globalState.currentTabIndex === 0)){
      woblocksControl.fillMessagesOfForWorkspace();

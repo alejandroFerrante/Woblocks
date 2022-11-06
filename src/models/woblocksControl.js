@@ -62,7 +62,7 @@ woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
 	var objName = this.definedObjectsInfo.objectNames[anIndex];
 	
 	const definitionBlock = woblocksControl.getAllParentlessObjects().filter(function(elem){
-		return (elem.type === 'action_start_wk') && elem.getNextBlock() && elem.getNextBlock().type === 'objetc_create_wk'
+		return elem.type === 'objetc_create_wk'
 	})[0];
 	this.definedObjectsInfo.objectsInfoMap[objName].xml = '<xml>'+( (definitionBlock)?Blockly.Xml.domToText(Blockly.Xml.blockToDom(definitionBlock)):'' )+'</xml>'; 
 	this.definedObjectsInfo.objectsInfoMap[objName].code =  (definitionBlock)?Blockly.Blocks[ definitionBlock.type ].getValueWK(definitionBlock):'';
@@ -166,12 +166,13 @@ woblocksControl.definedObjectsAsBlocklyBlocks = function(){
 woblocksControl.getExecutionString = function(){
 
 	const definitionBlocks = woblocksControl.getAllParentlessObjects().filter(function(elem){
-		return (elem.type === 'action_start_wk') && elem.getNextBlock() && elem.getNextBlock().type === 'objetc_create_wk'
+		return elem.type === 'objetc_create_wk'
 	});
 
-	const executionTypes = ['executor_wk', 'execution_res_wk', 'var_objetc_wk', 'keyboard_event_wk', 'tick_event_wk', 'collission_wk'];
+	//const executionTypes = ['executor_wk', 'execution_res_wk', 'var_objetc_wk', 'keyboard_event_wk', 'tick_event_wk', 'collission_wk'];
+	const executionTypes = ['action_start_wk'];
 	const executionBlocks = woblocksControl.getAllParentlessObjects().filter(function(elem){
-		return (elem.type === 'action_start_wk') && elem.getNextBlock() && executionTypes.includes(elem.getNextBlock().type)
+		return executionTypes.includes(elem.type)
 	});
 	var result = `import wollok.game.*
 program main {
@@ -404,19 +405,66 @@ woblocksControl.closeToolbox = function(){
 	Blockly.getMainWorkspace().getToolbox().clearSelection();
 }
 
+woblocksControl.objectNamedIsPresent = function(aName){
+	return this.definedObjectsInfo.objectNames.includes(aName);
+}
+
 //STRING XML METHODS
 
 woblocksControl.getMainToolboxXmlString =	function(){
 	var xmlStr = `<xml>
 
-	<category name="BLOQUES BASICOS" toolboxitemid="atomics">
+	<category name="DEFINICIONES">
+        
+        <block type="objetc_create_wk">
+        </block>
 
-	    <block type="logic_boolean" >
-	        <field name="BOOL">TRUE</field>
+	    <block type="objetc_property_wk">
+	        <value name="value">
+	        </value>
 	    </block>
 
-	    <block type="math_number" >
-	        <field name="NUM">123</field>
+	    <block type="method_create_wk">
+	        <value name="params">
+	            <block type="lists_create_with">
+	            <mutation items="0"></mutation>
+	            </block>
+	        </value>
+	        <statement name="instructions">
+	        </statement>
+	    </block>
+
+	    <block type="param_wk" >
+	    </block>
+	
+	</category>
+
+	<category name="OBJETOS Y MENSAJES">
+
+	    <block type="executor_wk" >		
+	        <value name="executor">
+	        </value>
+	        <statement name="params"><block type="executor_param_wk"><value name="param">
+	        	                    <block type="param_wk" ></block>
+	        </value></block></statement>
+	    </block>
+
+	    <block type="execution_res_wk" >		
+	        <value name="executor">
+	        </value>
+	        <statement name="params">
+	            <block type="executor_param_wk">
+	                <value name="param">
+	                    <block type="param_wk" ></block>
+	                </value>
+	            </block>
+	        </statement>
+	    </block>		
+
+	    <block type="executor_param_wk">
+	        <value name="param">
+	            <block type="param_wk" ></block>
+	        </value>
 	    </block>
 
 	    <block type="text" >
@@ -427,15 +475,34 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <mutation items="0"></mutation>
 	    </block>
 
-	    <block type="lists_create_with">
-	        <mutation items="1"></mutation>
-	        <value name="ADD0">
-	            <block type="text">
-	            <field name="TEXT"></field>
-	            </block>
-	        </value>
+		<block type="game_wk"></block>
+	`;
+
+	if(this.definedObjectsInfo.objectNames.length > 0){
+		for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
+			xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
+			
+		}
+	}
+
+	xmlStr += `
+	</category>
+
+	<category name="EVENTOS">
+
+	    <block type="keyboard_event_wk">
 	    </block>
 
+	    <block type="tick_event_wk">
+	    </block>
+
+	    <block type="collission_wk">
+	    </block>
+	
+	</category>	
+
+	<category name="OTROS COMANDOS">
+	
 	    <block type="condition_wk" >
 	    </block>
 
@@ -445,24 +512,33 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="return_wk" >
 	    </block>
 
-	</category>
-
-	<category name="DEFINICION DE OBJETOS">
-	    <block type="action_start_wk" >
+	    <block type="var_objetc_wk">
+	        <value name="value">
+	        </value>
 	    </block>
 
-	    <block type="action_start_wk">
-	        <next>
-	            <block type="objetc_create_wk">
-	            </block>
-	        </next>
-	    </block>
+	</category>	
+	
+	</xml>    
+	`;
+
+	return xmlStr;
+}
+
+woblocksControl.getObjectToolboxXmlStringForIndex =	function(anIndex){
+	return woblocksControl.getObjectToolboxXmlString(this.definedObjectsInfo.objectNames[anIndex]);
+}
+
+woblocksControl.getObjectToolboxXmlString =	function(currentObject){
+	var xmlStr = `<xml>
+
+	<category name="DEFINICIONES">
+	    
+        <block type="objetc_create_wk">
+        </block>
 
 	    <block type="objetc_property_wk">
 	        <value name="value">
-	            <block type="text">
-	            <field name="TEXT">unaPropiedad</field>
-	            </block>
 	        </value>
 	    </block>
 
@@ -473,35 +549,21 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	            </block>
 	        </value>
 	        <statement name="instructions">
-	            <block type="instruction_wk">
-	            <value name="instruction">
-	                <block type="text">
-	                <field name="TEXT">unaInstruccion</field>
-	                </block>
-	            </value>
-	            </block>
 	        </statement>
 	    </block>
 
-
-	    <block type="instruction_wk">
-	        <value name="instruction">
-	            <block type="text">
-	            <field name="TEXT">unaInstruccion</field>
-	            </block>
-	        </value>
+	    <block type="param_wk" >
 	    </block>
+
 	</category>
 
-	<category name="ENVIO DE MENSAJES">
-	    <block deletable="false" type="action_start_wk">
-	    </block>
+	<category name="OBJETOS Y MENSAJES">
 
 	    <block type="executor_wk" >		
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">unaInstruccion</field></block>
+	                <block type="param_wk" ></block>
 	        </value></block></statement>
 	    </block>
 
@@ -511,7 +573,7 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="text"><field name="TEXT">unaInstruccion</field></block>
+	                    <block type="param_wk" ></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -519,65 +581,8 @@ woblocksControl.getMainToolboxXmlString =	function(){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="text"><field name="TEXT">unaInstruccion</field></block>
+	                    <block type="param_wk" ></block>
 	        </value>
-	    </block>
-
-	    <block type="var_objetc_wk">
-	        <value name="value">
-	            <block type="text">
-	            <field name="TEXT">unValorDeVariable</field>
-	            </block>
-	        </value>
-	    </block>
-
-	    <block type="instruction_wk">
-	        <value name="instruction">
-	            <block type="text">
-	            <field name="TEXT">unaInstruccion</field>
-	            </block>
-	        </value>
-	    </block>
-
-	    <block type="keyboard_event_wk">
-	    </block>
-
-	    <block type="tick_event_wk">
-	    </block>
-
-	    <block type="collission_wk">
-	    </block>
-
-	</category>
-
-	<category name="OBJETOS DEFINIDOS" toolboxitemid="custom" >
-	    <block type="game_wk"></block>
-	`
-
-		if(this.definedObjectsInfo.objectNames.length > 0){
-			for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
-				xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
-			}
-		}
-		xmlStr +='		    </category>\n</xml>';
-		return xmlStr;
-}
-
-woblocksControl.getObjectToolboxXmlStringForIndex =	function(anIndex){
-	return woblocksControl.getObjectToolboxXmlString(this.definedObjectsInfo.objectNames[anIndex]);
-}
-
-woblocksControl.getObjectToolboxXmlString =	function(currentObject){
-	var xmlStr = `<xml>
-
-	<category name="BLOQUES BASICOS" toolboxitemid="atomics">
-
-	    <block type="logic_boolean" >
-	        <field name="BOOL">TRUE</field>
-	    </block>
-
-	    <block type="math_number" >
-	        <field name="NUM">123</field>
 	    </block>
 
 	    <block type="text" >
@@ -588,117 +593,21 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <mutation items="0"></mutation>
 	    </block>
 
-	    <block type="lists_create_with">
-	        <mutation items="1"></mutation>
-	        <value name="ADD0">
-	            <block type="text">
-	            <field name="TEXT"></field>
-	            </block>
-	        </value>
-	    </block>
+	    <block type="game_wk"></block>
+	    `;
 
-	    <block type="condition_wk" >
-	    </block>
+	if(this.definedObjectsInfo.objectNames.length > 0){
+		for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
+			if(this.definedObjectsInfo.objectNames[i] != currentObject ){
+				xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
+			}
+		}
+	}
 
-	   	<block type="sprite_block_wk" >
-	    </block>
-
-	    <block type="return_wk" >
-	    </block>
-
+	xmlStr += `
 	</category>
 
-	<category name="DEFINICION DE OBJETOS">
-	    <block type="action_start_wk" >
-	    </block>
-
-	    <block type="action_start_wk">
-	        <next>
-	            <block type="objetc_create_wk">
-	            </block>
-	        </next>
-	    </block>
-
-	    <block type="objetc_property_wk">
-	        <value name="value">
-	            <block type="text">
-	            <field name="TEXT">unValorDePropiedad</field>
-	            </block>
-	        </value>
-	    </block>
-
-	    <block type="method_create_wk">
-	        <value name="params">
-	            <block type="lists_create_with">
-	            <mutation items="0"></mutation>
-	            </block>
-	        </value>
-	        <statement name="instructions">
-	            <block type="instruction_wk">
-	            <value name="instruction">
-	                <block type="text">
-	                <field name="TEXT">unaInstruccion</field>
-	                </block>
-	            </value>
-	            </block>
-	        </statement>
-	    </block>
-
-
-	    <block type="instruction_wk">
-	        <value name="instruction">
-	            <block type="text">
-	            <field name="TEXT">unaInstruccion</field>
-	            </block>
-	        </value>
-	    </block>
-	</category>
-
-	<category name="ENVIO DE MENSAJES">
-	    <block deletable="false" type="action_start_wk">
-	    </block>
-
-	    <block type="executor_wk" >		
-	        <value name="executor">
-	        </value>
-	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        <block type="text"><field name="TEXT">unaInstruccion</field></block>
-	        </value></block></statement>
-	    </block>
-
-	    <block type="execution_res_wk" >		
-	        <value name="executor">
-	        </value>
-	        <statement name="params">
-	            <block type="executor_param_wk">
-	                <value name="param">
-	                    <block type="text"><field name="TEXT">unaInstruccion</field></block>
-	                </value>
-	            </block>
-	        </statement>
-	    </block>		
-
-	    <block type="executor_param_wk">
-	        <value name="param">
-	            <block type="text"><field name="TEXT">unaInstruccion</field></block>
-	        </value>
-	    </block>
-
-	    <block type="var_objetc_wk">
-	        <value name="value">
-	            <block type="text">
-	            <field name="TEXT">unValorDeVariable</field>
-	            </block>
-	        </value>
-	    </block>
-
-	    <block type="instruction_wk">
-	        <value name="instruction">
-	            <block type="text">
-	            <field name="TEXT">unaInstruccion</field>
-	            </block>
-	        </value>
-	    </block>
+	<category name="EVENTOS">
 
 	    <block type="keyboard_event_wk">
 	    </block>
@@ -708,48 +617,53 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 
 	    <block type="collission_wk">
 	    </block>
+	
+	</category>	
 
-	</category>
+	<category name="OTROS COMANDOS">
+	
+	    <block type="condition_wk" >
+	    </block>
 
-	<category name="OBJETOS DEFINIDOS" toolboxitemid="custom" >
-	    <block type="game_wk"></block>
-	`
+	    <block type="sprite_block_wk" >
+	    </block>
 
-	if(this.definedObjectsInfo.objectNames.length > 0){
-		for(var i = 0; i < this.definedObjectsInfo.objectNames.length; i++ ){
-			if(this.definedObjectsInfo.objectNames[i] != currentObject ){
-				xmlStr +='			<block type="'+this.definedObjectsInfo.objectNames[i]+'"></block>';
-			}
-		}
-	}
-	xmlStr +='		    </category>\n</xml>';
+	    <block type="return_wk" >
+	    </block>
+
+	    <block type="var_objetc_wk">
+	        <value name="value">
+	        </value>
+	    </block>
+
+	</category>	
+	
+	</xml>
+	`;
+
 	return xmlStr;
 }
 
 woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
-	var defaultXml = '  <block deletable="false" movable = "false" type="action_start_wk">';
-		defaultXml +='		<next>';
-		defaultXml +='			<block deletable="false" type="objetc_create_wk" >';
-		defaultXml +='				<field name="name">'+proposedName+'</field>';
-		defaultXml +='				<statement name="properties">';
-		defaultXml +='					<block type="objetc_property_wk">';
-		defaultXml +='						<value name="value">';
-		defaultXml +='							<block type="text">';
-		defaultXml +='								<field name="TEXT">unValorDePropiedad</field>';
-		defaultXml +='							</block>';
-		defaultXml +='						</value>';
-		defaultXml +='					</block>';
-		defaultXml +='				</statement>';
-		defaultXml +='			</block>';
-		defaultXml +='		</next>';
-		defaultXml +='	</block>';
+	var defaultXml = '';
+	defaultXml +='	<block deletable="false" type="objetc_create_wk" >';
+	defaultXml +='		<field name="name">'+proposedName+'</field>';
+	defaultXml +='		<statement name="properties">';
+	defaultXml +='			<block type="objetc_property_wk">';
+	defaultXml +='				<value name="value">';
+	defaultXml +='					<block type="text">';
+	defaultXml +='						<field name="TEXT">unValorDePropiedad</field>';
+	defaultXml +='					</block>';
+	defaultXml +='				</value>';
+	defaultXml +='			</block>';
+	defaultXml +='		</statement>';
+	defaultXml +='	</block>';
+		
 	return defaultXml;
 }
 
 woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage){
 	var xmlStr = '';
-	xmlStr += '<block type="action_start_wk">\n';
-	xmlStr += '	<next>\n';
 	xmlStr += '		<block type="objetc_create_wk">\n';
 	xmlStr += '			<field name="name">'+aName+'</field>\n';
 	xmlStr += '			<statement name="properties">\n';
@@ -816,8 +730,6 @@ woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage)
 	//xmlStr += '				</block>\n';
 	xmlStr += '			</statement>\n';
 	xmlStr += '		</block>\n';
-	xmlStr += '	</next>\n';
-	xmlStr += '</block>\n';
 	return xmlStr;
 }
 

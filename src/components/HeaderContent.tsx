@@ -63,6 +63,7 @@ export default function HeaderContent(props:any) {
             globalState.proposedBackgroundIndex = backs.map(function(elem){return elem.value}).indexOf(fileContentJSON.config.backgroundImage);
         }
 
+        woblocksControl.definedObjectsAsBlocklyBlocks();
         woblocksControl.loadSceneXmlContent();
 
         setGlobalState(globalState);

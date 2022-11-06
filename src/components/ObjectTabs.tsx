@@ -16,6 +16,8 @@ import { getIconPathFor, getRepIconFor } from '../ImagePathManager'
 import NewObject from './NewObject'
 //import NewObjectAccept from './NewObject'
 
+import { Send as SendIcon } from '@material-ui/icons'
+
 export default function ObjectTabs (props:any) {
 
     //const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
@@ -67,7 +69,7 @@ export default function ObjectTabs (props:any) {
 
         valSetter( (val + 1) % 2);
     }    
-
+/*
     const openConfirm = function(aTitle:string,aBody:string){
         globalState.alertState.isOpen = true;
         globalState.alertState.title = aTitle;
@@ -76,6 +78,13 @@ export default function ObjectTabs (props:any) {
         globalState.alertState.onModalConrirm = removeItem;
         setGlobalState(globalState);
         valSetter( (val+1) % 2 );
+    }
+*/
+
+    const openItemDeleteConfirm = function(anIndex:number){
+        globalState.itemIndexToDelete = anIndex;
+        setGlobalState(globalState);
+        valSetter( (val + 1) % 2);
     }
 
     const newObjectAccept = function(){
@@ -137,8 +146,12 @@ export default function ObjectTabs (props:any) {
                             style={{width:"45px",height:"45px"}}>
                         </img>
                         { 
-                            <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')}}>
+                            <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{
+                                //openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')
+                                openItemDeleteConfirm(globalState.tabObjects.indexOf(elem) - 1);
+                            }}>
                               <Close/>
+
                           </SvgIcon>
                           
                         }
