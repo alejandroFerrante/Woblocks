@@ -5,11 +5,12 @@ import WBContext from "../WBContext"
 import 'wollok-game-web'
 
 export default function PlayGame() {
-    const { globalState } = useContext(WBContext)
+    const {globalState, setGlobalState, val, valSetter} = useContext(WBContext);
     const divRef = useRef<any>();
 
     let p5: p5 | null = null
     const stop = () => {
+        console.log(p5);
         p5?.remove()
     }
 
@@ -24,12 +25,19 @@ export default function PlayGame() {
             images: globalState.wkImages,
             sounds: [],
             sources,
-            description: "HOLA SOY UNA DESCRIPCION"
+            description: ""
         }
 
         p5 = new Game(project).start(divRef.current)
+        globalState.wkGame = p5;
+        console.log('!!!! '+globalState.wkGame);
+        setGlobalState(globalState);
+        valSetter( (val + 1) % 2);
         return stop
     }, [divRef.current])
 
-    return <div ref={divRef} />
+    return <>
+        <button onClick={stop}>STOP</button>
+        <div ref={divRef} />
+        </>
 }

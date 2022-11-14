@@ -55,6 +55,26 @@ Blockly.Blocks['action_start_wk'] = {
   }
 };
 
+//TEXT INPUT 
+Blockly.Blocks['text_input_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput(""), "inputName");
+    this.setOutput(true, null);
+    this.setColour(315);
+ this.setTooltip("");
+ this.setHelpUrl("");
+ this.setColour('#a8a8a8');
+  },doActionWK:function(self:any, paramsMap:any){
+    var value_name = paramsMap['name'];
+    return value_name;
+  },getValueWK: function(aBlock:any) {
+    var value_name = extractFieldNamed(aBlock,'inputName');
+    var code = Blockly.Blocks['text_input_wk'].doActionWK(aBlock,{'name':value_name});
+    return code;
+  }
+}
+
 //OBJECT DEFINITION
 //This block is used to create an object.It takes a text block for the nme and properties definition statements.
 Blockly.Blocks['objetc_create_wk'] = {
@@ -63,7 +83,7 @@ Blockly.Blocks['objetc_create_wk'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('wollokBW'), 40, 40, "*",null,null,null));
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("unNombre"), "name");
+        .appendField(new Blockly.FieldTextInput("unNombreDeObjeto"), "name");
     this.appendStatementInput('properties')
     .setCheck('objetc_definition_wk');
     //this.setPreviousStatement(true, 'objetc_definition_wk');
@@ -204,7 +224,7 @@ Blockly.Blocks['param_wk'] = {
   init: function() {
     this.appendDummyInput()
         .appendField("parámetro")
-        .appendField(new Blockly.FieldTextInput("unNombreDeParametro"), "paramName");
+        .appendField(new Blockly.FieldTextInput("nombre"), "paramName");
     this.setOutput(true, null);
     this.setColour(315);
  this.setTooltip("");
@@ -393,7 +413,7 @@ Blockly.Blocks['executor_param_wk'] = {
  };
 
 //VAR DECLARATION
-//used for defining a variabe within an execution.
+//used for asigning a variabe within an execution.
 Blockly.Blocks['var_objetc_wk'] = {
   init: function() {
     this.appendDummyInput()
@@ -411,7 +431,7 @@ Blockly.Blocks['var_objetc_wk'] = {
     var value_name = paramsMap['name'];
     var value_value = paramsMap['value'];
 
-    var code = '\n var ';
+    var code = '\n';
     if(value_name !== undefined && value_name !== null && value_name !== ''){
       code += value_name.replaceAll("'","");
     }else{
@@ -473,7 +493,7 @@ Blockly.Blocks['tick_event_wk'] = {
   init: function() {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('timer') , 35, 35, "",null,null,null))
-        .appendField(new Blockly.FieldTextInput("nombreDelEvento"), "event_name")
+        .appendField(new Blockly.FieldTextInput("unNombreDelEvento"), "event_name")
         .appendField(new Blockly.FieldNumber("1000"), "timer");
     this.appendStatementInput("instructions").setCheck('execution_wk');
     this.setPreviousStatement(true,'execution_wk');

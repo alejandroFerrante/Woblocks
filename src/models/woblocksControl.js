@@ -22,6 +22,14 @@ woblocksControl.init = function(){
 	this.config.backgroundImage = '';
 	this.toRemove = [];
 	this.wkGame = null;	
+
+	//override translations to turn native list block into parameter-list block
+	Blockly.Msg['LISTS_CREATE_EMPTY_TITLE'] = '';
+	Blockly.Msg['LISTS_CREATE_WITH_INPUT_WITH'] = '';
+	Blockly.Msg['LISTS_CREATE_WITH_CONTAINER_TITLE_ADD'] = '';
+	Blockly.Msg['LISTS_CREATE_WITH_ITEM_TITLE'] = 'parametro';
+
+
 }
 
 woblocksControl.addObjectNamed = function(aNewObjectName,aRepresentationName,isVisual){
@@ -184,7 +192,10 @@ game.height(`+this.config.height+`)
 		`;	
 	}
 
-    result += `game.start()
+    result += `keyboard.backspace().onPressDo{
+	game.remove()
+}
+game.start()
     `;
 
     result += Object.keys(this.definedObjectsInfo.objectsInfoMap).filter(function(key){return woblocksControl.definedObjectsInfo.objectsInfoMap[key].definedObjectsMappingInfo.isVisual }).map(function(key){ return 'game.addVisual('+key+')'  }).join('\n');
@@ -445,7 +456,6 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	        	                    <block type="param_wk" ></block>
 	        </value></block></statement>
 	    </block>
 
@@ -455,7 +465,6 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="param_wk" ></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -463,16 +472,11 @@ woblocksControl.getMainToolboxXmlString =	function(){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	            <block type="param_wk" ></block>
 	        </value>
 	    </block>
 
-	    <block type="text" >
-	        <field name="TEXT"></field>
-	    </block>
-
-	    <block type="lists_create_with" >
-	        <mutation items="0"></mutation>
+	    <block type="text_input_wk" >
+	        <field name="inputName"></field>
 	    </block>
 
 		<block type="game_wk"></block>
@@ -563,7 +567,6 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <value name="executor">
 	        </value>
 	        <statement name="params"><block type="executor_param_wk"><value name="param">
-	                <block type="param_wk" ></block>
 	        </value></block></statement>
 	    </block>
 
@@ -573,7 +576,6 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	        <statement name="params">
 	            <block type="executor_param_wk">
 	                <value name="param">
-	                    <block type="param_wk" ></block>
 	                </value>
 	            </block>
 	        </statement>
@@ -581,16 +583,11 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 
 	    <block type="executor_param_wk">
 	        <value name="param">
-	                    <block type="param_wk" ></block>
 	        </value>
 	    </block>
 
-	    <block type="text" >
-	        <field name="TEXT"></field>
-	    </block>
-
-	    <block type="lists_create_with" >
-	        <mutation items="0"></mutation>
+	    <block type="text_input_wk" >
+	        <field name="inputName"></field>
 	    </block>
 
 	    <block type="game_wk"></block>
@@ -651,8 +648,8 @@ woblocksControl.getDefaultWKObjectXmlNamed = function(proposedName){
 	defaultXml +='		<statement name="properties">';
 	defaultXml +='			<block type="objetc_property_wk">';
 	defaultXml +='				<value name="value">';
-	defaultXml +='					<block type="text">';
-	defaultXml +='						<field name="TEXT">unValorDePropiedad</field>';
+	defaultXml +='					<block type="text_input_wk">';
+	defaultXml +='						<field name="inputName">unValorDePropiedad</field>';
 	defaultXml +='					</block>';
 	defaultXml +='				</value>';
 	defaultXml +='			</block>';
@@ -707,12 +704,12 @@ woblocksControl.getDefaultWKObjectXmlWithNameAndImage = function(aName, anImage)
 		xmlStr += '													<statement name="params">\n';
 		xmlStr += '														<block type="executor_param_wk">\n';
 		xmlStr += '															<value name="param">\n';
-		xmlStr += '																<block type="text"><field name="TEXT">0</field></block>\n';
+		xmlStr += '																<block type="text_input_wk"><field name="inputName">0</field></block>\n';
 		xmlStr += '															</value>\n';
 		xmlStr += '															<next>\n';
 		xmlStr += '																<block type="executor_param_wk">\n';
 		xmlStr += '																	<value name="param">\n';
-		xmlStr += '																		<block type="text"><field name="TEXT">0</field></block>\n';
+		xmlStr += '																		<block type="text_input_wk"><field name="inputName">0</field></block>\n';
 		xmlStr += '																	</value>\n';
 		xmlStr += '																</block>\n';
 		xmlStr += '															</next>\n';
