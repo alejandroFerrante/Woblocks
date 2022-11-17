@@ -90,9 +90,15 @@ export default function ObjectTabs (props:any) {
     const newObjectAccept = function(){
 
         if(!globalState.proposedNewObjName || globalState.proposedNewObjName === ''){
+            globalState.proposedNewObjIsVisual = false;    
+            setGlobalState(globalState);
+            valSetter( (val + 1) % 2);
             return;
         }
         if(globalState.tabObjects.map(function(elem:any){return elem.name}).includes(globalState.proposedNewObjName) ){
+            globalState.proposedNewObjIsVisual = false;    
+            setGlobalState(globalState);
+            valSetter( (val + 1) % 2);
             return;
         }
         //{chosenName, chosenRepresentation}
@@ -124,6 +130,7 @@ export default function ObjectTabs (props:any) {
 
         woblocksControl.closeToolbox();
 
+        globalState.proposedNewObjIsVisual = false;
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
     
@@ -164,7 +171,7 @@ export default function ObjectTabs (props:any) {
 
         </Tabs>
 
-        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(newObjectAccept)}>
+        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(newObjectAccept)} onClose={()=>{globalState.proposedNewObjIsVisual = false;setGlobalState(globalState);valSetter( (val + 1) % 2);}}>
             <NewObject />
         </DialogButton>
 

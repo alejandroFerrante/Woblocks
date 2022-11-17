@@ -37,7 +37,6 @@ export default function PlayGame() {
     }, [divRef.current])
 
     return <>
-        <button onClick={stop}>STOP</button>
         <div ref={divRef} />
         </>
 }
