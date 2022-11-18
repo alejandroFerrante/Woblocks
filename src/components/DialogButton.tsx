@@ -21,7 +21,7 @@ type DialogButtonProps = {
 export default function DialogButton({Icon, title, tooltip, children, onAccept, onClose, buttonProps, dialogProps}: DialogButtonProps){
     const [open, setOpen] = useState(false)
     const handleOpen = () => {setOpen(true);}
-    const handleClose = () => {setOpen(false);onClose!();}
+    const handleClose = () => {setOpen(false);if(onClose){onClose();}}
     const handleAccept = () => {setOpen(false);onAccept!()}
 
     return <>

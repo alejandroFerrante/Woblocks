@@ -69,17 +69,6 @@ export default function ObjectTabs (props:any) {
 
         valSetter( (val + 1) % 2);
     }    
-/*
-    const openConfirm = function(aTitle:string,aBody:string){
-        globalState.alertState.isOpen = true;
-        globalState.alertState.title = aTitle;
-        globalState.alertState.body = aBody;
-        globalState.alertState.mode = 'CONFIRM';
-        globalState.alertState.onModalConrirm = removeItem;
-        setGlobalState(globalState);
-        valSetter( (val+1) % 2 );
-    }
-*/
 
     const openItemDeleteConfirm = function(anIndex:number){
         globalState.itemIndexToDelete = anIndex;
@@ -152,7 +141,7 @@ export default function ObjectTabs (props:any) {
                             src={ getIconPathFor(elem.icon) || getRepIconFor(elem.icon) } 
                             style={{width:"45px",height:"45px"}}>
                         </img>
-                        { 
+                        {   globalState.tabObjects.indexOf(elem) !== 0 &&
                             <SvgIcon style={{paddingBottom:"40%",height:"20px",width:"20px"}} onClick={()=>{
                                 //openConfirm('Borrar Objeto','¿Esta seguro que quiere eliminar este objeto?')
                                 openItemDeleteConfirm(globalState.tabObjects.indexOf(elem) - 1);

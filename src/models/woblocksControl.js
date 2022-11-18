@@ -159,6 +159,8 @@ woblocksControl.definedObjectsAsBlocklyBlocksFor = function(aSpecificationsList)
 	  }
 	]);
 
+	Blockly.Blocks[''+elem.name].getValueWK = function(aBlock){return elem.name;}
+
 	});
 }
 
@@ -418,6 +420,10 @@ woblocksControl.closeToolbox = function(){
 
 woblocksControl.objectNamedIsPresent = function(aName){
 	return this.definedObjectsInfo.objectNames.includes(aName);
+}
+
+woblocksControl.unselectAllBlocks = function(){
+	Blockly.getMainWorkspace().getAllBlocks().map(function(elem){elem.unselect();});
 }
 
 //STRING XML METHODS

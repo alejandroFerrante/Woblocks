@@ -10,11 +10,12 @@ export default function PlayGame() {
 
     let p5: p5 | null = null
     const stop = () => {
-        console.log(p5);
         p5?.remove()
     }
 
     useEffect(() => {
+        doWorkspaceSave();
+
         const myProgramStr = woblocksControl.getExecutionString()
         const sources = woblocksControl.buildWkProgramSourceFor(myProgramStr)
 
@@ -30,11 +31,21 @@ export default function PlayGame() {
 
         p5 = new Game(project).start(divRef.current)
         globalState.wkGame = p5;
-        console.log('!!!! '+globalState.wkGame);
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
         return stop
     }, [divRef.current])
+
+    const doWorkspaceSave = () => {
+            if(globalState.currentTabIndex === 0){
+                woblocksControl.saveSceneXmlContent();
+            }else{
+                woblocksControl.saveObjectTabXmlContentWithIndex(globalState.currentTabIndex - 1);
+            }
+            woblocksControl.definedObjectsAsBlocklyBlocks();
+            woblocksControl.unselectAllBlocks();
+            woblocksControl.closeToolbox();
+    }
 
     return <>
         <div ref={divRef} />
