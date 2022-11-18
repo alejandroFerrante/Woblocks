@@ -24,6 +24,7 @@ export const imagePathManager = {
 		{isVisual:true,   name:"pepita",icon:require('./resources/representations/icons/pepita_icon.png'),alias:"pepita.png", url:require('./resources/representations/pepita.png')},
 		{isVisual:true,   name:"bull",icon:require('./resources/representations/icons/bull_icon.png'),alias:"bull.png", url:require('./resources/representations/bull.png')},
 		{isVisual:true,   name:"lion",icon:require('./resources/representations/icons/lion_icon.png'),alias:"lion.png", url:require('./resources/representations/lion.png')},
+		{isVisual:true,   name:"fire",icon:require('./resources/representations/icons/fire_icon.png'),alias:"fire_wall.png", url:require('./resources/representations/fireWall.png')},
 		{isVisual:false,  name:"config",icon:require('./resources/representations/icons/config.png'),alias:"", url:""},
 		{isVisual:false,  name:"cross",icon:require('./resources/representations/icons/cross.png'),alias:"", url:""},
 		{isVisual:false,  name:"sound",icon:require('./resources/representations/icons/sound.png'),alias:"", url:""},

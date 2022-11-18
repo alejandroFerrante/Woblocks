@@ -634,12 +634,7 @@ Blockly.Blocks['game_wk'] = {
 
 Blockly.Blocks['sprite_block_wk'] = {
   init: function() {
-    var options = [
-        ['none', 'NONE'],
-        [{'src': 'canada.png', 'width': 50, 'height': 25, 'alt': 'Canada'}, 'CANADA'],
-        [{'src': 'usa.png', 'width': 50, 'height': 25, 'alt': 'USA'}, 'USA'],
-        [{'src': 'mexico.png', 'width': 50, 'height': 25, 'alt': 'Mexico'}, 'MEXICO']
-    ];
+    var options;
     options = getAllSprites().map(function(elem){ return [{'src':elem.url ,'width': 50, 'height': 50, 'alt': elem.alias },elem.alias] });
     this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown(options), 'Sprite');
@@ -685,6 +680,36 @@ Blockly.Blocks['return_wk'] = {
       var code = Blockly.Blocks['return_wk'].doActionWK(aBlock,{'value':value_value});
       return code;
 
+  }
+};
+
+Blockly.Blocks['operation_block_wk'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.appendValueInput("left_operand");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([["=", "="], ["==", "=="],["!=", "!="], [">", ">"], [">=", ">="], ["<", "<"], ["<=", "<="],['&&','&&'],['||','||']  ]), "operator"); //numeric operators? 
+    this.appendValueInput("right_operand");
+    this.setInputsInline(true);
+    this.setOutput(true);
+    this.setTooltip('');
+  },doActionWK:function(self:any, paramsMap:any){
+    return paramsMap['left_operand']+' '+paramsMap['operator']+' '+paramsMap['right_operand'];
+  },getValueWK(aBlock:any){
+      var valueBlock = getBlockOfInputNamed(aBlock,'left_operand');
+      var value_left_operand = '';
+      if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+        value_left_operand = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
+      }
+      var value_operator = extractFieldNamed(aBlock,'operator');
+      valueBlock = getBlockOfInputNamed(aBlock,'right_operand');
+      var value_right_operand = '';
+      if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+        value_right_operand = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
+      }
+      var code = Blockly.Blocks['operation_block_wk'].doActionWK(aBlock,{'left_operand':value_left_operand,'operator':value_operator,'right_operand':value_right_operand
+      });
+      return code;
   }
 };
 
