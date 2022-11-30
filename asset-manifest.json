@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Woblocks/static/css/main.dca4b2d6.css",
-    "main.js": "/Woblocks/static/js/main.b43a0646.js",
+    "main.js": "/Woblocks/static/js/main.59742610.js",
     "static/js/27.4acd63aa.chunk.js": "/Woblocks/static/js/27.4acd63aa.chunk.js",
     "static/media/GothamRounded-Bold.ttf": "/Woblocks/static/media/GothamRounded-Bold.ae3b95d0c6532a167baf.ttf",
     "static/media/arrow.png": "/Woblocks/static/media/arrow.0d24d3b130e57196f8eb.png",
@@ -21,6 +21,6 @@
   },
   "entrypoints": [
     "static/css/main.dca4b2d6.css",
-    "static/js/main.b43a0646.js"
+    "static/js/main.59742610.js"
   ]
 }
