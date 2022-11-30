@@ -40,6 +40,9 @@ export default function ProjectLoad(){
 
 	const fileLoaded = function(something:any){
 		
+		globalState.lastUsedName = something.target.files[0].name.replaceAll('.wbk','');
+		setGlobalState(globalState);
+
 		var fr = new FileReader();
 		fr.addEventListener("loadend", function(e:any) {
 		    globalState.proposedLoadFile = e.srcElement.result;
@@ -47,6 +50,8 @@ export default function ProjectLoad(){
 		});
 		  
 		fr.readAsText(something.target.files[0]);
+
+
 	}
 
 	const inputStyle = {paddingLeft:"5%",width:"80%",paddingRight:"5%"}

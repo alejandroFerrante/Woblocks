@@ -21,7 +21,7 @@ export default function NewObject(props:any){
 
 	//Others
 	const onNameChange = function(event:any){
-		globalState.proposedNewObjName = event.target.value;
+		globalState.proposedNewObjName = event.target.value.replace(/[^A-Za-z]+/g, '');
 		setGlobalState(globalState);
 		valSetter( (val + 1) % 2);
     }

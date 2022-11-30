@@ -45,6 +45,7 @@ export default function HeaderContent(props:any) {
         if(!globalState.proposedLoadFile){ return;}
 
         woblocksControl.loadProjetInfoFromJSON(globalState.proposedLoadFile);
+
         const fileContentJSON = JSON.parse(globalState.proposedLoadFile);
         globalState.proposedLoadFile = null;
 
@@ -87,6 +88,7 @@ export default function HeaderContent(props:any) {
         document.body.removeChild(anchor);
         window.URL.revokeObjectURL(anchor.href);
 
+        globalState.lastUsedName = globalState.proposedSaveName;
         globalState.proposedSaveName = '';
         setGlobalState(globalState);
         valSetter( (val + 1) % 2);
@@ -100,19 +102,19 @@ export default function HeaderContent(props:any) {
             {globalState.currentTabIndex === 0 && 
                 <>
 
-                    <DialogButton Icon = {PermDataSetting} title="Configuracion del Juego" tooltip="Configuracion del Juego" onAccept={gameConfigAccept} >
+                    <DialogButton Icon = {PermDataSetting} title="Configuracion del Juego" tooltip="Configuracion del Juego" onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} onAccept={gameConfigAccept} >
                         <GameConfig />                            
                     </DialogButton>
 
-                    <DialogButton Icon = {CloudUpload} title="Cargar Proyecto" tooltip="Cargar Proyecto" onAccept={projectLoadAccept} >
+                    <DialogButton Icon = {CloudUpload} title="Cargar Proyecto" tooltip="Cargar Proyecto" onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} onAccept={projectLoadAccept} >
                         <ProjectLoad />
                     </DialogButton>
 
-                    <DialogButton Icon = {Save} title="Guardar Proyecto" tooltip="Guardar Proyecto" onAccept={projectSaveAccept}>
+                    <DialogButton Icon = {Save} title="Guardar Proyecto" tooltip="Guardar Proyecto" onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} onAccept={projectSaveAccept}>
                         <ProjectSave />
                     </DialogButton>
 
-                    <DialogButton Icon = {Code} title="Codigo Generado" tooltip="Codigo Generado" >
+                    <DialogButton Icon = {Code} title="Codigo Generado" tooltip="Codigo Generado" onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} >
                         <GeneratedCode />                            
                     </DialogButton>
                 </>

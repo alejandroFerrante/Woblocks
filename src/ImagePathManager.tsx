@@ -13,7 +13,8 @@ export const imagePathManager = {
 		clown_0:{url:require('./resources/sprites/clown_0.png') , alias:'clown_0.png'},
 		clown_1:{url:require('./resources/sprites/clown_1.png') , alias:'clown_1.png'},
 		//fireWall:{url:require('./resources/sprites/fireWall.png') , alias:'fireWall.png'},
-		fireRing:{url:require('./resources/sprites/fireRing.png') , alias:'fireRing.png'},
+		//fireRing:{url:require('./resources/sprites/fireRing.png') , alias:'fireRing.png'},
+		fireRing:{url:require('./resources/sprites/spikeBall.png') , alias:'spikeBall.png'},
 		pepita:{url:require('./resources/representations/pepita.png') , alias:'pepita.png'},
 		bull:{url:require('./resources/representations/bull.png') , alias:'bull.png'},
 		lion:{url:require('./resources/representations/lion.png') , alias:'lion.png'}

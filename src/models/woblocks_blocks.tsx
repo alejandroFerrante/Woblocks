@@ -127,7 +127,7 @@ Blockly.Blocks['objetc_create_wk'] = {
 Blockly.Blocks['objetc_property_wk'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(new Blockly.FieldTextInput("unNombreDePropiedad"), "name");
+        .appendField(new Blockly.FieldTextInput("unNombreDeAtributo"), "name");
     this.appendValueInput("value")
         .appendField(new Blockly.FieldImage(getIconPathFor('arrow'), 30, 30, "",null,null,null));
     this.setInputsInline(true);
@@ -156,7 +156,7 @@ Blockly.Blocks['objetc_property_wk'] = {
     if(valueBlock){
       if(valueBlock.type === 'text'){
         value_value = extractValueFromTextBlock(valueBlock);
-      }else if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+      }else if( Blockly.Blocks[valueBlock.type] && Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) ){
         value_value = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
       }
     }
@@ -267,7 +267,7 @@ Blockly.Blocks['instruction_wk'] = {
     if(valueBlock !== undefined && valueBlock !== null){
       if(valueBlock.type === 'text'){
         value_instruction = extractValueFromTextBlock(valueBlock);
-      }else if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+      }else if( Blockly.Blocks[valueBlock.type] && Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) ){
         value_instruction = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
       }
     }
@@ -403,7 +403,7 @@ Blockly.Blocks['executor_param_wk'] = {
       if(paramBlock !== undefined && paramBlock !== null){
         if(paramBlock.type === 'text'){
           value_param = extractValueFromTextBlock(paramBlock);
-        }else if( (Blockly.Blocks[paramBlock.type].getValueWK(paramBlock) !== undefined) && (Blockly.Blocks[paramBlock.type].getValueWK(paramBlock) !== null) ){
+        }else if( Blockly.Blocks[paramBlock.type] && Blockly.Blocks[paramBlock.type].getValueWK(paramBlock) ){
           value_param = Blockly.Blocks[paramBlock.type].getValueWK(paramBlock);
         }
       }
@@ -454,7 +454,7 @@ Blockly.Blocks['var_objetc_wk'] = {
     if(valueBlock !== undefined && valueBlock !== null){
       if(valueBlock.type === 'text'){
         value_value = extractValueFromTextBlock(valueBlock);
-      }else if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+      }else if( Blockly.Blocks[valueBlock.type] && Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) ){
         value_value = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
       }
     }
@@ -523,8 +523,12 @@ Blockly.Blocks['collission_wk'] = {
   init: function() {
     this.appendDummyInput()
         .appendField(new Blockly.FieldImage(getIconPathFor('crash'), 35, 35, "",null,null,null))
-        .appendField(new Blockly.FieldTextInput("nombreDelObjeto"), "target_name");
+        /*.appendField(new Blockly.FieldTextInput("nombreDelObjeto"), "target_name")*/;
+    this.appendValueInput("target_name");
+    
     this.appendDummyInput().appendField(new Blockly.FieldTextInput("nombreDeQuienColisiono"), "collided_name")
+    this.setInputsInline(true);
+
     this.appendStatementInput("instructions").setCheck('execution_wk');
     this.setPreviousStatement(true,'execution_wk');
     this.setNextStatement(true,'execution_wk');
@@ -537,7 +541,12 @@ Blockly.Blocks['collission_wk'] = {
     var value_instructions = paramsMap['instructions'];
     return 'game.whenCollideDo('+value_target_name+', \n{'+value_param_name+' =>  \n'+value_instructions.join('\n')+'\n})';
   },getValueWK(aBlock:any){
-     var value_targetName = extractFieldNamed(aBlock,'target_name');
+     //var value_targetName = extractFieldNamed(aBlock,'target_name');
+     
+     var value_targetName = '';
+     var targetValueBlock = getBlockOfInputNamed(aBlock,'target_name');
+     if(targetValueBlock && Blockly.Blocks[targetValueBlock.type] && Blockly.Blocks[targetValueBlock.type].getValueWK(targetValueBlock)){value_targetName = Blockly.Blocks[targetValueBlock.type].getValueWK(targetValueBlock);}
+
      var value_collided = extractFieldNamed(aBlock,'collided_name');
      var value_instructions = extractStatementsAsWkValues(aBlock);
 
@@ -592,7 +601,7 @@ Blockly.Blocks['condition_wk'] = {
     if(conditionBlock){
       if(conditionBlock.type === 'text'){
         value_condition = extractValueFromTextBlock(conditionBlock);
-      }else if( Blockly.Blocks[conditionBlock.type].getValueWK(conditionBlock) ){
+      }else if( Blockly.Blocks[conditionBlock.type] && Blockly.Blocks[conditionBlock.type].getValueWK(conditionBlock) ){
         value_condition = Blockly.Blocks[conditionBlock.type].getValueWK(conditionBlock);
       }
     }
@@ -637,6 +646,8 @@ Blockly.Blocks['sprite_block_wk'] = {
     var options;
     options = getAllSprites().map(function(elem){ return [{'src':elem.url ,'width': 50, 'height': 50, 'alt': elem.alias },elem.alias] });
     this.appendDummyInput()
+        .appendField("sprite ")
+    this.appendDummyInput()
         .appendField(new Blockly.FieldDropdown(options), 'Sprite');
     this.setOutput(true);
   },doActionWK:function(self:any, paramsMap:any){
@@ -672,7 +683,7 @@ Blockly.Blocks['return_wk'] = {
       if(valueBlock !== undefined && valueBlock !== null){
         if(valueBlock.type === 'text'){
           value_value = extractValueFromTextBlock(valueBlock);
-        }else if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+        }else if( Blockly.Blocks[valueBlock.type] && Blockly.Blocks[valueBlock.type].getValueWK(valueBlock)){
           value_value = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
         }
       }
@@ -688,11 +699,12 @@ Blockly.Blocks['operation_block_wk'] = {
     this.setHelpUrl('http://www.example.com/');
     this.appendValueInput("left_operand");
     this.appendDummyInput()
-        .appendField(new Blockly.FieldDropdown([["=", "="], ["==", "=="],["!=", "!="], [">", ">"], [">=", ">="], ["<", "<"], ["<=", "<="],['&&','&&'],['||','||']  ]), "operator"); //numeric operators? 
+        .appendField(new Blockly.FieldDropdown([ ["==", "=="],["!=", "!="], [">", ">"], ['&&','&&'],['||','||'],[">=", ">="], ["<", "<"], ["<=", "<="],["+", "+"],["-", "-"],["*", "*"],["/", "/"],["%", "%"]  ]), "operator");
     this.appendValueInput("right_operand");
     this.setInputsInline(true);
     this.setOutput(true);
     this.setTooltip('');
+    this.setColour('#4f7cc9');
   },doActionWK:function(self:any, paramsMap:any){
     return paramsMap['left_operand']+' '+paramsMap['operator']+' '+paramsMap['right_operand'];
   },getValueWK(aBlock:any){
@@ -704,12 +716,75 @@ Blockly.Blocks['operation_block_wk'] = {
       var value_operator = extractFieldNamed(aBlock,'operator');
       valueBlock = getBlockOfInputNamed(aBlock,'right_operand');
       var value_right_operand = '';
-      if( (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== undefined) && (Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) !== null) ){
+      if( Blockly.Blocks[valueBlock.type] && Blockly.Blocks[valueBlock.type].getValueWK(valueBlock) ){
         value_right_operand = Blockly.Blocks[valueBlock.type].getValueWK(valueBlock);
       }
       var code = Blockly.Blocks['operation_block_wk'].doActionWK(aBlock,{'left_operand':value_left_operand,'operator':value_operator,'right_operand':value_right_operand
       });
       return code;
+  }
+};
+
+Blockly.Blocks['string_literal_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("\"");
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldTextInput(""), "value");
+    this.appendDummyInput()
+        .appendField("\"");
+    this.setInputsInline(true);
+    this.setOutput(true, null);
+    this.setColour(315);
+    this.setTooltip("");
+    this.setHelpUrl("");
+    this.setColour('#4f7cc9');
+  },doActionWK:function(self:any, paramsMap:any){
+    var value_name = paramsMap['value'];
+    return '"'+value_name.replace(/[^A-Za-z]+/g, '')+'"';
+  },getValueWK: function(aBlock:any) {
+    var value_name = extractFieldNamed(aBlock,'value');
+    var code = Blockly.Blocks['string_literal_wk'].doActionWK(aBlock,{'value':value_name});
+    return code;
+  }
+}
+
+Blockly.Blocks['number_literal_wk'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldNumber(0), "value");
+    this.setOutput(true, null);
+    this.setColour(315);
+ this.setTooltip("");
+ this.setHelpUrl("");
+ this.setColour('#4f7cc9');
+  },doActionWK:function(self:any, paramsMap:any){
+    var value_name = paramsMap['value'];
+    return value_name;
+  },getValueWK: function(aBlock:any) {
+    var value_name = extractFieldNamed(aBlock,'value');
+    var code = Blockly.Blocks['number_literal_wk'].doActionWK(aBlock,{'value':value_name});
+    return code;
+  }
+}
+
+Blockly.Blocks['boolean_literal_wk'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.appendDummyInput()
+        .appendField(new Blockly.FieldDropdown([ ["true", "true"],["false", "false"]]), "value");
+    this.setInputsInline(true);
+    this.setOutput(true);
+    this.setTooltip('');
+    this.setColour('#4f7cc9');
+  },doActionWK:function(self:any, paramsMap:any){
+    return paramsMap['value'];
+  },getValueWK(aBlock:any){
+
+      var value_name = extractFieldNamed(aBlock,'value');
+      var code = Blockly.Blocks['operation_block_wk'].doActionWK(aBlock,{'value':value_name});
+      return code;
+
   }
 };
 

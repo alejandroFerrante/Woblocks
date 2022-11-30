@@ -64,7 +64,9 @@ function App() {
     /* NEW OBJECT*/
     proposedNewObjName:'',
     proposedNewObjIsVisual:false,
-    selectedRepresentation: imagePathManager.representations[0]
+    selectedRepresentation: imagePathManager.representations[0],
+
+    lastUsedName:''
 
   }); 
 

@@ -160,7 +160,7 @@ export default function ObjectTabs (props:any) {
 
         </Tabs>
 
-        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(newObjectAccept)} onClose={()=>{globalState.proposedNewObjIsVisual = false;setGlobalState(globalState);valSetter( (val + 1) % 2);}}>
+        <DialogButton  Icon = {AddIcon} title="Nuevo Objeto" tooltip="Nuevo Objeto" onAccept={(newObjectAccept)} onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} onClose={()=>{globalState.proposedNewObjIsVisual = false;setGlobalState(globalState);valSetter( (val + 1) % 2);}}>
             <NewObject />
         </DialogButton>
 

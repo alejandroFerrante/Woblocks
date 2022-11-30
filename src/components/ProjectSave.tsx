@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import WBContext from '../WBContext'
 import woblocksControl from '../models/woblocksControl'
 
@@ -38,17 +38,21 @@ export default function ProjectSave(){
 
 	const onFilenameChange = function(event:any){
 		globalState.proposedSaveName = event.target.value;
+		setSaveName(event.target.value);
+		//globalState.lastUsedName //save name even if not accepted?
 		setGlobalState(globalState);
 		valSetter( (val + 1) % 2);
 	}
 
 	const cellStyle = {paddingLeft:"20%",paddingRight:"10%"};
 
-		
+	const [saveName, setSaveName] = useState(globalState.lastUsedName);
+
+
 	return <>
 			<br/>
 		    <div style={cellStyle} >
-		       	<TextField  label="Nombre de archivo" onChange={onFilenameChange} error={(!globalState.proposedSaveName || globalState.proposedSaveName === '')} helperText={(!globalState.proposedSaveName || globalState.proposedSaveName === '') && 'Debe completar un nombre'} /> *.wbk
+		       	<TextField  value={saveName} label="Nombre de archivo" onChange={onFilenameChange} error={(!globalState.proposedSaveName || globalState.proposedSaveName === '')} helperText={(!globalState.proposedSaveName || globalState.proposedSaveName === '') && 'Debe completar un nombre'} /> *.wbk
 		    </div>
 		    <br/>
 		     

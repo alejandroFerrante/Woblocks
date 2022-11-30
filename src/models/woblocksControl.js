@@ -42,6 +42,7 @@ woblocksControl.addObjectNamed = function(aNewObjectName,aRepresentationName,isV
 //WORKSPACE XML & BLOCKS UTILS
 
 woblocksControl.saveSceneXmlContent = function(){
+	this.sanitizeTextInputBlocks();
 	this.mainSceneInfo.xml = Blockly.Xml.domToText( Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace()) );
 	//console.log('saveSceneXmlContent>> '+ this.mainSceneInfo.xml );
 	return true;
@@ -65,6 +66,7 @@ woblocksControl.addDefaultObjectXmlToWorkspaceWithNameAndImage = function(anObje
 }
 
 woblocksControl.saveObjectTabXmlContentWithIndex = function(anIndex){
+	this.sanitizeTextInputBlocks();
 	if(anIndex < 0 || anIndex >= this.definedObjectsInfo.objectNames.length){return false;}
 	
 	var objName = this.definedObjectsInfo.objectNames[anIndex];
@@ -349,7 +351,7 @@ woblocksControl.loadLocalStorage = function(){
 }
 
 //SAVE CONFIG INFO
-woblocksControl.saveConfigInfo = function(aHeight,aWidth, aBackgroundImageUrl){
+woblocksControl.saveConfigInfo = function(aWidth,aHeight, aBackgroundImageUrl){
 	this.config.height = aHeight;
 	this.config.width = aWidth;
 	this.config.backgroundImage = aBackgroundImageUrl;
@@ -414,6 +416,30 @@ woblocksControl.sanitizedeletedObjects = function(){
 	woblocksControl.toRemove = [];
 }
 
+woblocksControl.sanitizeTextInputBlocks = function(){
+
+	this.sanitizeBlocks('method_create_wk',['name']);
+	this.sanitizeBlocks('objetc_property_wk',['name']);
+	this.sanitizeBlocks('objetc_create_wk',['name']);
+	this.sanitizeBlocks('param_wk',['paramName']);
+	this.sanitizeBlocks('executor_wk',['method']); 
+	this.sanitizeBlocks('execution_res_wk',['method']); 
+	this.sanitizeBlocks('var_objetc_wk',['name']);
+	this.sanitizeBlocks('tick_event_wk',['event_name']); 
+	this.sanitizeBlocks('collission_wk',['target_name','collided_name']);  
+	
+}
+
+woblocksControl.sanitizeBlocks = function(aType,aFieldList){
+	var fieldBlock;
+	Blockly.getMainWorkspace().getAllBlocks().filter(function(elem){return elem.type == aType}).forEach(function(aBlock){
+		for(var i = 0; i < aFieldList.length;i++){
+			fieldBlock = aBlock.getField(aFieldList[i]); 
+			if(fieldBlock){fieldBlock.setValue( fieldBlock.value_.replace(/[^A-Za-z]+/g, '') );}
+		}
+	});
+}
+
 woblocksControl.closeToolbox = function(){
 	Blockly.getMainWorkspace().getToolbox().clearSelection();
 }
@@ -454,6 +480,9 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="param_wk" >
 	    </block>
 	
+	    <block type="return_wk" >
+	    </block>
+
 	</category>
 
 	<category name="OBJETOS Y MENSAJES">
@@ -519,13 +548,22 @@ woblocksControl.getMainToolboxXmlString =	function(){
 	    <block type="sprite_block_wk" >
 	    </block>
 
-	    <block type="return_wk" >
-	    </block>
-
 	    <block type="var_objetc_wk">
 	        <value name="value">
 	        </value>
 	    </block>
+
+	    <block type="operation_block_wk" >
+	    </block>
+
+		<block type="string_literal_wk" >
+		</block>
+
+		<block type="number_literal_wk" >
+		</block>
+
+		<block type="boolean_literal_wk" >
+		</block>		
 
 	</category>	
 	
@@ -563,6 +601,9 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    </block>
 
 	    <block type="param_wk" >
+	    </block>
+
+	    <block type="return_wk" >
 	    </block>
 
 	</category>
@@ -631,13 +672,22 @@ woblocksControl.getObjectToolboxXmlString =	function(currentObject){
 	    <block type="sprite_block_wk" >
 	    </block>
 
-	    <block type="return_wk" >
-	    </block>
-
 	    <block type="var_objetc_wk">
 	        <value name="value">
 	        </value>
 	    </block>
+
+	    <block type="operation_block_wk" >
+	    </block>
+	    
+		<block type="string_literal_wk" >
+		</block>
+		
+		<block type="number_literal_wk" >
+		</block>
+		
+		<block type="boolean_literal_wk" >
+		</block>	    
 
 	</category>	
 	

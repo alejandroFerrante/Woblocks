@@ -8,6 +8,7 @@ type DialogButtonProps = {
     tooltip: string,
     children: ReactNode,
     onAccept?: ()=>void,
+    onOpen?: ()=>void,
     onClose?: ()=>void,
     buttonProps?: IconButtonProps,
     dialogProps?: Partial<DialogProps>
@@ -18,9 +19,9 @@ type DialogButtonProps = {
  * The dialog contents are the children of the element.
  * @prop When onAccept is provided, this is an "Accept/Cancel" dialog
  */
-export default function DialogButton({Icon, title, tooltip, children, onAccept, onClose, buttonProps, dialogProps}: DialogButtonProps){
+export default function DialogButton({Icon, title, tooltip, children, onAccept, onOpen, onClose, buttonProps, dialogProps}: DialogButtonProps){
     const [open, setOpen] = useState(false)
-    const handleOpen = () => {setOpen(true);}
+    const handleOpen = () => {setOpen(true);if(onOpen){onOpen();}}
     const handleClose = () => {setOpen(false);if(onClose){onClose();}}
     const handleAccept = () => {setOpen(false);onAccept!()}
 

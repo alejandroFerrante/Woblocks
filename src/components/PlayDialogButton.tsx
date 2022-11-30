@@ -3,16 +3,15 @@ import DialogButton from './DialogButton'
 import PlayGame from './PlayGame'
 import { useContext } from "react"
 import WBContext from "../WBContext"
+import woblocksControl from '../models/woblocksControl'
 
 export default function PlayDialogButton() {
 
 	const {globalState} = useContext(WBContext);
 
 	const terminateGame = function(){
-		console.log('HERE');
 		if(globalState.wkGame){
 			globalState.wkGame.stop();
-			console.log('!!');
 		}
 	}
 
@@ -21,6 +20,7 @@ export default function PlayDialogButton() {
 		tooltip="Ejecutar Juego"
 		Icon={SendIcon}
 		dialogProps={{ fullScreen: true }}
+		onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}}
 		onClose={terminateGame}
 	>
 		<PlayGame />
