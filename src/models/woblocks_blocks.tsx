@@ -308,22 +308,25 @@ Blockly.Blocks['executor_wk'] = {
       //check if has method?
       //check if params coincide?
       if(value_executor === undefined || value_executor === null || value_executor === ''){
+        value_executor = '';
         //empty executor
         //alert('No se ha provisto un ejecutor');
         //sceneErrorLog = 'No se ha provisto un ejecutor';
-        return false;
+        //return false;
       }
       if(value_method === undefined || value_method === null || value_method === ''){
+        value_method = '';
         //empty method
         //if(sceneAlertErrors){alert('No se ha provisto un mensaje a enviar');}
         //sceneErrorLog = 'No se ha provisto un mensaje a enviar';
-        return false;
+        //return false;
       }
       if(value_params === undefined || value_params === null){
+        value_params = '';
         //empty params
         //if(sceneAlertErrors){alert('No se han provisto parametros de ejecucion');}
         //sceneErrorLog = 'No se han provisto parametros de ejecucion';
-        return false;
+        //return false;
       }
 
       return value_executor+'.'+value_method+'('+value_params+')  ';

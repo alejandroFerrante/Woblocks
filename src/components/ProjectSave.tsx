@@ -47,7 +47,7 @@ export default function ProjectSave(){
 	const cellStyle = {paddingLeft:"20%",paddingRight:"10%"};
 
 	const [saveName, setSaveName] = useState(globalState.lastUsedName);
-
+	globalState.proposedSaveName = globalState.lastUsedName;
 
 	return <>
 			<br/>
