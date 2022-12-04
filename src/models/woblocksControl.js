@@ -196,10 +196,7 @@ game.height(`+this.config.height+`)
 		`;	
 	}
 
-    result += `keyboard.backspace().onPressDo{
-	game.remove()
-}
-game.start()
+    result += `game.start()
     `;
 
     result += Object.keys(this.definedObjectsInfo.objectsInfoMap).filter(function(key){return woblocksControl.definedObjectsInfo.objectsInfoMap[key].definedObjectsMappingInfo.isVisual }).map(function(key){ return 'game.addVisual('+key+')'  }).join('\n');
