@@ -117,9 +117,11 @@ export default function HeaderContent(props:any) {
                     <DialogButton Icon = {Code} title="Codigo Generado" tooltip="Codigo Generado" onOpen={()=>{woblocksControl.sanitizeTextInputBlocks();}} >
                         <GeneratedCode />                            
                     </DialogButton>
+            
+                    <PlayDialogButton/>
+                    
                 </>
             }
-            <PlayDialogButton/>
         </Toolbar>
     </AppBar>
 }
