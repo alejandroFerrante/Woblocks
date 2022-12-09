@@ -39,7 +39,7 @@ export default function ProjectSave(){
 	const onFilenameChange = function(event:any){
 		globalState.proposedSaveName = event.target.value;
 		setSaveName(event.target.value);
-		//globalState.lastUsedName //save name even if not accepted?
+		globalState.lastUsedName = globalState.proposedSaveName;//save name even if not accepted?
 		setGlobalState(globalState);
 		valSetter( (val + 1) % 2);
 	}
